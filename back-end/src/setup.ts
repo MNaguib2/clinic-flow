@@ -2,6 +2,11 @@ import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { RawServerDefault } from 'fastify';
 import { ValidationPipe } from '@nestjs/common';
 import rateLimit from '@fastify/rate-limit';
+import { fastifyCookie } from '@fastify/cookie';
+import { fastifySession } from '@fastify/session';
+import { sessionConfig } from './core/config/session.config';
+import { PrismaSessionStore } from './core/session/session.store';
+import { PrismaService } from './core/service/prisma.service';
 
 export async function setup(app: NestFastifyApplication<RawServerDefault>) {
   // Add any setup logic here
@@ -17,6 +22,23 @@ export async function setup(app: NestFastifyApplication<RawServerDefault>) {
     }),
   });
 
+  // Cookie
+  await app.register(fastifyCookie);
+  // Session
+  await app.register(fastifySession, {
+    secret: sessionConfig.secret,
+    cookieName: sessionConfig.cookieName,
+    cookie: {
+      path: sessionConfig.cookie.path,
+      httpOnly: sessionConfig.cookie.httpOnly,
+      secure: sessionConfig.cookie.secure,
+      sameSite: sessionConfig.cookie.sameSite,
+      maxAge: sessionConfig.ttl,
+    },
+    saveUninitialized: false,
+    rolling: true,
+    store: new PrismaSessionStore(app.get(PrismaService)),
+  });
   // ✅ Global prefix (optional)
   app.setGlobalPrefix('api');
 

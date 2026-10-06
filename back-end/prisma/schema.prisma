@@ -777,3 +777,18 @@ model AuditLog {
   @@index([userId, createdAt])
   @@map("audit_logs")
 }
+
+model Session {
+  id        String   @id @default(uuid()) @db.Char(36)
+
+  data      Json
+
+  expiresAt DateTime? @map("expires_at") @db.DateTime(6)
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.DateTime(6)
+
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.DateTime(6)
+
+  @@index([expiresAt])
+  @@map("sessions")
+}
