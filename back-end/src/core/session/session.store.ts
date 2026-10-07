@@ -22,9 +22,11 @@ export class PrismaSessionStore {
         create: {
           sessionId,
           data: session as object,
+          expiresAt: session.cookie.expires,
         },
         update: {
           data: session as object,
+          expiresAt: session.cookie.expires,
         },
       })
       .then(() => callback(undefined))

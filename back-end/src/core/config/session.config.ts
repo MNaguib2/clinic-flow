@@ -5,6 +5,10 @@ export const sessionConfig = {
 
   ttl: Number(process.env.SESSION_TTL ?? 60 * 60 * 1000),
 
+  rememberMeTtl: Number(
+    process.env.SESSION_REMEMBER_TTL ?? 30 * 24 * 60 * 60 * 1000,
+  ),
+
   cookie: {
     httpOnly: process.env.SESSION_HTTP_ONLY !== 'false',
 
