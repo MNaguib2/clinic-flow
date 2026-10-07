@@ -1,3 +1,5 @@
+import 'fastify';
+
 declare global {
   // @types/node exposes ProcessEnv inside this namespace.
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -7,6 +9,17 @@ declare global {
       PORT?: string;
       DATABASE_URL?: string;
     }
+  }
+}
+
+declare module 'fastify' {
+  interface FastifyRequest {
+    user?: {
+      id: bigint;
+      organizationId: bigint;
+      fullName: string;
+      phoneNumber: string | null;
+    };
   }
 }
 

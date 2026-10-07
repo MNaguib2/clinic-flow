@@ -7,6 +7,7 @@ import { fastifySession } from '@fastify/session';
 import { sessionConfig } from './core/config/session.config';
 import { PrismaSessionStore } from './core/session/session.store';
 import { PrismaService } from './core/service/prisma.service';
+import { sessionUserMiddleware } from './core/middleware/session-user.middleware';
 
 export async function setup(app: NestFastifyApplication<RawServerDefault>) {
   // Add any setup logic here
@@ -39,6 +40,12 @@ export async function setup(app: NestFastifyApplication<RawServerDefault>) {
     rolling: true,
     store: new PrismaSessionStore(app.get(PrismaService)),
   });
+  // Attach the session user to the request
+  app
+    .getHttpAdapter()
+    .getInstance()
+    .addHook('onRequest', sessionUserMiddleware(app.get(PrismaService)));
+
   // ✅ Global prefix (optional)
   app.setGlobalPrefix('api');
 
