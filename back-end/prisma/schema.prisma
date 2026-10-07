@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Organization {
-  id                  String                           @id @default(uuid()) @db.Char(36)
+  id                  BigInt                           @id @default(autoincrement())
   name                String                           @db.VarChar(150)
   logoUrl             String?                          @map("logo_url") @db.Text
   createdAt           DateTime                         @default(now()) @map("created_at") @db.DateTime(6)
@@ -70,7 +70,7 @@ model UnitCategory {
 
 model Clinic {
   id             BigInt             @id @default(autoincrement())
-  organizationId String             @map("organization_id") @db.Char(36)
+  organizationId BigInt             @map("organization_id")
   name           String             @db.VarChar(150)
   phone          String?            @db.VarChar(30)
   address        String?            @db.Text
@@ -94,11 +94,12 @@ model Clinic {
 }
 
 model User {
-  id                       String                 @id @default(uuid()) @db.Char(36)
-  organizationId           String                 @map("organization_id") @db.Char(36)
+  id                       BigInt                 @id @default(autoincrement())
+  organizationId           BigInt                 @map("organization_id")
   fullName                 String                 @map("full_name") @db.VarChar(150)
   email                    String                 @unique @db.VarChar(255)
   phoneNumber              String?                @map("phone_number") @db.VarChar(30)
+  birthday                 DateTime?              @db.Date
   passwordHash             String                 @map("password_hash") @db.Text
   isActive                 Boolean                @default(true) @map("is_active")
   lastLoginAt              DateTime?              @map("last_login_at") @db.DateTime(6)
@@ -130,7 +131,7 @@ model User {
 
 model Role {
   id                     BigInt                      @id @default(autoincrement())
-  organizationId         String                      @map("organization_id") @db.Char(36)
+  organizationId         BigInt                      @map("organization_id")
   name                   String                      @db.VarChar(100)
   description            String?                     @db.Text
   isSystemRole           Boolean                     @default(false) @map("is_system_role")
@@ -148,7 +149,7 @@ model Role {
 }
 
 model OrganizationSettings {
-  organizationId String       @id @map("organization_id") @db.Char(36)
+  organizationId BigInt       @id @map("organization_id")
   currencyCode   String       @default("EGP") @map("currency_code") @db.VarChar(10)
   timezone       String       @default("Africa/Cairo") @db.VarChar(100)
   createdAt      DateTime     @default(now()) @map("created_at") @db.DateTime(6)
@@ -159,7 +160,7 @@ model OrganizationSettings {
 }
 
 model OrganizationAppointmentSettings {
-  organizationId          String       @id @map("organization_id") @db.Char(36)
+  organizationId          BigInt       @id @map("organization_id")
   mainExamPrice           Decimal      @default(0) @map("main_exam_price") @db.Decimal(12, 2)
   followUpPrice           Decimal      @default(0) @map("follow_up_price") @db.Decimal(12, 2)
   discountedFollowUpCount Int          @default(1) @map("discounted_follow_up_count")
@@ -187,7 +188,7 @@ model Unit {
 }
 
 model UserRole {
-  userId    String   @map("user_id") @db.Char(36)
+  userId    BigInt   @map("user_id")
   roleId    BigInt   @map("role_id")
   createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -212,7 +213,7 @@ model RolePermission {
 
 model ClinicUser {
   clinicId  BigInt   @map("clinic_id")
-  userId    String   @map("user_id") @db.Char(36)
+  userId    BigInt   @map("user_id")
   createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
   clinic    Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -223,7 +224,7 @@ model ClinicUser {
 }
 
 model DoctorSpecialty {
-  userId      String    @map("user_id") @db.Char(36)
+  userId      BigInt    @map("user_id")
   specialtyId BigInt    @map("specialty_id")
   createdAt   DateTime  @default(now()) @map("created_at") @db.DateTime(6)
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -247,7 +248,7 @@ model ClinicSpecialty {
 }
 
 model PatientAccount {
-  id          String          @id @default(uuid()) @db.Char(36)
+  id          BigInt          @id @default(autoincrement())
   fullName    String          @map("full_name") @db.VarChar(150)
   phone       String          @db.VarChar(30)
   dateOfBirth DateTime?       @map("date_of_birth") @db.Date
@@ -265,8 +266,8 @@ model PatientAccount {
 
 model PatientRecord {
   id                  BigInt         @id @default(autoincrement())
-  organizationId      String         @map("organization_id") @db.Char(36)
-  patientAccountId    String         @map("patient_account_id") @db.Char(36)
+  organizationId      BigInt         @map("organization_id")
+  patientAccountId    BigInt         @map("patient_account_id")
   medicalRecordNumber String?        @map("medical_record_number") @db.VarChar(100)
   notes               String?        @db.Text
   createdAt           DateTime       @default(now()) @map("created_at") @db.DateTime(6)
@@ -286,9 +287,9 @@ model PatientRecord {
 
 model PatientShare {
   id                 BigInt         @id @default(autoincrement())
-  patientAccountId   String         @map("patient_account_id") @db.Char(36)
-  fromOrganizationId String         @map("from_organization_id") @db.Char(36)
-  toOrganizationId   String         @map("to_organization_id") @db.Char(36)
+  patientAccountId   BigInt         @map("patient_account_id")
+  fromOrganizationId BigInt         @map("from_organization_id")
+  toOrganizationId   BigInt         @map("to_organization_id")
   grantedAt          DateTime       @default(now()) @map("granted_at") @db.DateTime(6)
   revokedAt          DateTime?      @map("revoked_at") @db.DateTime(6)
   patient            PatientAccount @relation(fields: [patientAccountId], references: [id], onDelete: Cascade)
@@ -301,7 +302,7 @@ model PatientShare {
 
 model DoctorSchedule {
   id        BigInt   @id @default(autoincrement())
-  userId    String   @map("user_id") @db.Char(36)
+  userId    BigInt   @map("user_id")
   dayOfWeek Int      @map("day_of_week") @db.SmallInt
   startTime DateTime @map("start_time") @db.Time(0)
   endTime   DateTime @map("end_time") @db.Time(0)
@@ -329,10 +330,10 @@ model ClinicSchedule {
 
 model MedicalCase {
   id              BigInt        @id @default(autoincrement())
-  organizationId  String        @map("organization_id") @db.Char(36)
+  organizationId  BigInt        @map("organization_id")
   patientRecordId BigInt        @map("patient_record_id")
   clinicId        BigInt?       @map("clinic_id")
-  openedBy        String?       @map("opened_by") @db.Char(36)
+  openedBy        BigInt?       @map("opened_by")
   openedAt        DateTime      @default(now()) @map("opened_at") @db.DateTime(6)
   closedAt        DateTime?     @map("closed_at") @db.DateTime(6)
   status          String        @default("open") @db.VarChar(20)
@@ -351,11 +352,11 @@ model MedicalCase {
 
 model Appointment {
   id              BigInt        @id @default(autoincrement())
-  organizationId  String        @map("organization_id") @db.Char(36)
+  organizationId  BigInt        @map("organization_id")
   clinicId        BigInt        @map("clinic_id")
   patientRecordId BigInt        @map("patient_record_id")
   medicalCaseId   BigInt?       @map("medical_case_id")
-  doctorId        String        @map("doctor_id") @db.Char(36)
+  doctorId        BigInt        @map("doctor_id")
   appointmentAt   DateTime      @map("appointment_at") @db.DateTime(6)
   bookingType     String        @map("booking_type") @db.VarChar(20)
   followUpNumber  Int?          @map("follow_up_number")
@@ -381,7 +382,7 @@ model Appointment {
 model Visit {
   id            BigInt           @id @default(autoincrement())
   appointmentId BigInt           @unique @map("appointment_id")
-  doctorId      String           @map("doctor_id") @db.Char(36)
+  doctorId      BigInt           @map("doctor_id")
   startedAt     DateTime?        @map("started_at") @db.DateTime(6)
   completedAt   DateTime?        @map("completed_at") @db.DateTime(6)
   notes         String?          @db.Text
@@ -452,7 +453,7 @@ model MedicalRequest {
 
 model Attachment {
   id               BigInt          @id @default(autoincrement())
-  organizationId   String          @map("organization_id") @db.Char(36)
+  organizationId   BigInt          @map("organization_id")
   patientRecordId  BigInt?         @map("patient_record_id")
   visitId          BigInt?         @map("visit_id")
   medicalRequestId BigInt?         @map("medical_request_id")
@@ -460,7 +461,7 @@ model Attachment {
   fileUrl          String          @map("file_url") @db.Text
   mimeType         String?         @map("mime_type") @db.VarChar(100)
   fileSize         BigInt?         @map("file_size")
-  uploadedBy       String?         @map("uploaded_by") @db.Char(36)
+  uploadedBy       BigInt?         @map("uploaded_by")
   createdAt        DateTime        @default(now()) @map("created_at") @db.DateTime(6)
   organization     Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   patient          PatientRecord?  @relation(fields: [patientRecordId], references: [id], onDelete: Cascade)
@@ -474,7 +475,7 @@ model Attachment {
 
 model Product {
   id             BigInt        @id @default(autoincrement())
-  organizationId String        @map("organization_id") @db.Char(36)
+  organizationId BigInt        @map("organization_id")
   name           String        @db.VarChar(200)
   barcode        String?       @db.VarChar(100)
   description    String?       @db.Text
@@ -527,7 +528,7 @@ model ProductUnitRolePermission {
 
 model Service {
   id             BigInt        @id @default(autoincrement())
-  organizationId String        @map("organization_id") @db.Char(36)
+  organizationId BigInt        @map("organization_id")
   name           String        @db.VarChar(200)
   description    String?       @db.Text
   price          Decimal       @default(0) @db.Decimal(12, 2)
@@ -542,7 +543,7 @@ model Service {
 
 model Invoice {
   id              BigInt         @id @default(autoincrement())
-  organizationId  String         @map("organization_id") @db.Char(36)
+  organizationId  BigInt         @map("organization_id")
   clinicId        BigInt?        @map("clinic_id")
   patientRecordId BigInt?        @map("patient_record_id")
   invoiceNumber   String         @map("invoice_number") @db.VarChar(100)
@@ -553,7 +554,7 @@ model Invoice {
   total           Decimal        @default(0) @db.Decimal(12, 2)
   status          String         @default("unpaid") @db.VarChar(30)
   notes           String?        @db.Text
-  createdBy       String?        @map("created_by") @db.Char(36)
+  createdBy       BigInt?        @map("created_by")
   createdAt       DateTime       @default(now()) @map("created_at") @db.DateTime(6)
   updatedAt       DateTime       @updatedAt @map("updated_at") @db.DateTime(6)
   organization    Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -597,7 +598,7 @@ model Payment {
   paymentMethod String   @map("payment_method") @db.VarChar(50)
   paidAt        DateTime @default(now()) @map("paid_at") @db.DateTime(6)
   notes         String?  @db.Text
-  createdBy     String?  @map("created_by") @db.Char(36)
+  createdBy     BigInt?  @map("created_by")
   createdAt     DateTime @default(now()) @map("created_at") @db.DateTime(6)
   invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   creator       User?    @relation("PaymentCreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
@@ -632,7 +633,7 @@ model InventoryTransaction {
   referenceType   String?      @map("reference_type") @db.VarChar(50)
   referenceId     BigInt?      @map("reference_id")
   notes           String?      @db.Text
-  createdBy       String?      @map("created_by") @db.Char(36)
+  createdBy       BigInt?      @map("created_by")
   createdAt       DateTime     @default(now()) @map("created_at") @db.DateTime(6)
   inventory       Inventory    @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
   productUnit     ProductUnit? @relation(fields: [productUnitId], references: [id], onDelete: Restrict)
@@ -644,7 +645,7 @@ model InventoryTransaction {
 
 model ExpenseCategory {
   id                BigInt             @id @default(autoincrement())
-  organizationId    String             @map("organization_id") @db.Char(36)
+  organizationId    BigInt             @map("organization_id")
   name              String             @db.VarChar(150)
   description       String?            @db.Text
   isActive          Boolean            @default(true) @map("is_active")
@@ -661,7 +662,7 @@ model ExpenseCategory {
 
 model Expense {
   id                 BigInt            @id @default(autoincrement())
-  organizationId     String            @map("organization_id") @db.Char(36)
+  organizationId     BigInt            @map("organization_id")
   clinicId           BigInt?           @map("clinic_id")
   categoryId         BigInt?           @map("category_id")
   recurringExpenseId BigInt?           @map("recurring_expense_id")
@@ -671,7 +672,7 @@ model Expense {
   expenseDate        DateTime          @default(dbgenerated("(CURRENT_DATE)")) @map("expense_date") @db.Date
   paymentMethod      String?           @map("payment_method") @db.VarChar(50)
   referenceNumber    String?           @map("reference_number") @db.VarChar(100)
-  createdBy          String?           @map("created_by") @db.Char(36)
+  createdBy          BigInt?           @map("created_by")
   createdAt          DateTime          @default(now()) @map("created_at") @db.DateTime(6)
   updatedAt          DateTime          @updatedAt @map("updated_at") @db.DateTime(6)
   organization       Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -689,7 +690,7 @@ model Expense {
 
 model RecurringExpense {
   id             BigInt           @id @default(autoincrement())
-  organizationId String           @map("organization_id") @db.Char(36)
+  organizationId BigInt           @map("organization_id")
   clinicId       BigInt?          @map("clinic_id")
   categoryId     BigInt?          @map("category_id")
   title          String           @db.VarChar(200)
@@ -701,7 +702,7 @@ model RecurringExpense {
   nextDueDate    DateTime         @map("next_due_date") @db.Date
   paymentMethod  String?          @map("payment_method") @db.VarChar(50)
   isActive       Boolean          @default(true) @map("is_active")
-  createdBy      String?          @map("created_by") @db.Char(36)
+  createdBy      BigInt?          @map("created_by")
   createdAt      DateTime         @default(now()) @map("created_at") @db.DateTime(6)
   updatedAt      DateTime         @updatedAt @map("updated_at") @db.DateTime(6)
   organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -715,8 +716,8 @@ model RecurringExpense {
 }
 
 model RefreshToken {
-  id        String         @id @default(uuid()) @db.Char(36)
-  userId    String         @map("user_id") @db.Char(36)
+  id        BigInt         @id @default(autoincrement())
+  userId    BigInt         @map("user_id")
   tokenHash String         @unique @map("token_hash") @db.VarChar(255)
   expiresAt DateTime       @map("expires_at") @db.DateTime(6)
   revokedAt DateTime?      @map("revoked_at") @db.DateTime(6)
@@ -730,9 +731,9 @@ model RefreshToken {
 }
 
 model LoginSession {
-  id             String        @id @default(uuid()) @db.Char(36)
-  userId         String        @map("user_id") @db.Char(36)
-  refreshTokenId String?       @map("refresh_token_id") @db.Char(36)
+  id             BigInt        @id @default(autoincrement())
+  userId         BigInt        @map("user_id")
+  refreshTokenId BigInt?       @map("refresh_token_id")
   deviceName     String?       @map("device_name") @db.VarChar(150)
   deviceType     String?       @map("device_type") @db.VarChar(50)
   ipAddress      String?       @map("ip_address") @db.VarChar(45)
@@ -748,8 +749,8 @@ model LoginSession {
 }
 
 model PasswordResetToken {
-  id        String    @id @default(uuid()) @db.Char(36)
-  userId    String    @map("user_id") @db.Char(36)
+  id        BigInt    @id @default(autoincrement())
+  userId    BigInt    @map("user_id")
   tokenHash String    @unique @map("token_hash") @db.VarChar(255)
   expiresAt DateTime  @map("expires_at") @db.DateTime(6)
   usedAt    DateTime? @map("used_at") @db.DateTime(6)
@@ -761,8 +762,8 @@ model PasswordResetToken {
 
 model AuditLog {
   id             BigInt        @id @default(autoincrement())
-  organizationId String?       @map("organization_id") @db.Char(36)
-  userId         String?       @map("user_id") @db.Char(36)
+  organizationId BigInt?       @map("organization_id")
+  userId         BigInt?       @map("user_id")
   action         String        @db.VarChar(100)
   entityType     String?       @map("entity_type") @db.VarChar(100)
   entityId       String?       @map("entity_id") @db.Text
@@ -779,7 +780,8 @@ model AuditLog {
 }
 
 model Session {
-  id        String   @id @default(uuid()) @db.Char(36)
+  id        BigInt   @id @default(autoincrement())
+  sessionId String   @unique @map("session_id") @db.VarChar(255)
 
   data      Json
 

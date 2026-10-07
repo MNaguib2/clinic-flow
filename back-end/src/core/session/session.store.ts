@@ -17,10 +17,10 @@ export class PrismaSessionStore {
     void this.prisma.session
       .upsert({
         where: {
-          id: sessionId,
+          sessionId,
         },
         create: {
-          id: sessionId,
+          sessionId,
           data: session as object,
         },
         update: {
@@ -39,7 +39,7 @@ export class PrismaSessionStore {
     void this.prisma.session
       .findUnique({
         where: {
-          id: sessionId,
+          sessionId,
         },
       })
       .then((record) => {
@@ -52,7 +52,7 @@ export class PrismaSessionStore {
           return this.prisma.session
             .delete({
               where: {
-                id: sessionId,
+                sessionId,
               },
             })
             .then(() => callback(undefined, null));
@@ -71,7 +71,7 @@ export class PrismaSessionStore {
     void this.prisma.session
       .deleteMany({
         where: {
-          id: sessionId,
+          sessionId,
         },
       })
       .then(() => callback(undefined))
