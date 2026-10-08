@@ -1,0 +1,47 @@
+{
+  "home": {
+    "navigationLabel": "Main navigation",
+    "navBenefits": "Benefits",
+    "navWorkflow": "How it works",
+    "navPartners": "Partners",
+    "languageLabel": "Switch language",
+    "lightMode": "Light",
+    "darkMode": "Dark",
+    "getStarted": "Explore the system",
+    "eyebrow": "More time for what matters",
+    "heroTitle": "Care for patients.",
+    "heroAccent": "Clarity for your clinic.",
+    "heroDescription": "ClinicFlow brings appointments, patient records, and daily clinic operations into one calm, connected workspace, so doctors can spend less time on admin and more time with people.",
+    "primaryCta": "Explore the benefits",
+    "secondaryCta": "See how it works",
+    "heroNote": "Designed around the way care teams work",
+    "previewLabel": "Reserved space for a ClinicFlow system preview",
+    "previewTitle": "System preview",
+    "previewCaption": "Your product image will appear here",
+    "previewStamp": "Product image",
+    "benefitsKicker": "A clearer day, from the first appointment",
+    "benefitsTitle": "Less admin. More attentive care.",
+    "benefitsDescription": "One connected system helps your team stay organized without getting between a doctor and a patient.",
+    "benefits": [
+      { "number": "01", "title": "Appointments in view", "description": "See the day's schedule at a glance and keep patient visits moving smoothly." },
+      { "number": "02", "title": "Patient records, together", "description": "Keep essential patient information organized and ready for the next conversation." },
+      { "number": "03", "title": "A team on the same page", "description": "Give your clinic a shared view of the work, with fewer handoffs and less duplication." },
+      { "number": "04", "title": "Clinic operations, simplified", "description": "Bring everyday tasks into one place and make room for a more focused workday." }
+    ],
+    "workflowKicker": "Built for real clinic routines",
+    "workflowTitle": "From check-in to follow-up.",
+    "workflowDescription": "Bring the moving parts of a clinic day into a simple flow your whole team can follow.",
+    "steps": [
+      { "number": "01", "title": "Plan the day", "description": "Keep upcoming appointments and the day's priorities in view." },
+      { "number": "02", "title": "Focus on care", "description": "Find the patient information you need when it matters." },
+      { "number": "03", "title": "Stay in sync", "description": "Keep your team aligned on what needs attention next." }
+    ],
+    "partnersKicker": "Growing together",
+    "partnersTitle": "Our partners",
+    "partnersDescription": "We look forward to introducing the organizations helping us make clinic care work better.",
+    "partnerSlotsLabel": "Reserved spaces for partner logos",
+    "partnerPlaceholder": "Partner logo",
+    "footerText": "Thoughtful tools for better-connected care.",
+    "backToTop": "Back to top"
+  }
+}
