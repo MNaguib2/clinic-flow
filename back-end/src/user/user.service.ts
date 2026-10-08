@@ -1,10 +1,16 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { createHash, randomBytes } from 'node:crypto';
 import { PrismaService } from '../core/service/prisma.service';
 import { sessionConfig } from '../core/config/session.config';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -122,6 +128,107 @@ export class UserService {
       sessionTtl: refreshTtl,
       userId: result.id.toString(),
     };
+  }
+
+  private static readonly crudSelect = {
+    id: true,
+    fullName: true,
+    email: true,
+    phoneNumber: true,
+    birthday: true,
+    isActive: true,
+  } as const;
+
+  private toCrudUser(user: {
+    id: bigint;
+    fullName: string;
+    email: string;
+    phoneNumber: string | null;
+    birthday: Date | null;
+    isActive: boolean;
+  }) {
+    return {
+      id: user.id.toString(),
+      fullName: user.fullName,
+      email: user.email,
+      phone: user.phoneNumber,
+      birthday: user.birthday,
+      isActive: user.isActive,
+    };
+  }
+
+  async findAll(organizationId: bigint) {
+    console.log("🚀 ~ UserService ~ findAll ~ organizationId:", organizationId)
+    const rows = await this.prisma.user.findMany({
+      where: { organizationId },
+      select: UserService.crudSelect,
+      orderBy: { id: 'asc' },
+    });
+    return rows.map((u) => this.toCrudUser(u));
+  }
+
+  async findOne(organizationId: bigint, id: number) {
+    const user = await this.prisma.user.findFirst({
+      where: { id: BigInt(id), organizationId },
+      select: UserService.crudSelect,
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return this.toCrudUser(user);
+  }
+
+  async create(organizationId: bigint, dto: CreateUserDto) {
+    const email = dto.email.toLowerCase();
+    await this.assertEmailFree(email);
+    const user = await this.prisma.user.create({
+      data: {
+        organizationId,
+        fullName: dto.fullName,
+        email,
+        phoneNumber: dto.phone,
+        birthday: dto.birthday ? new Date(dto.birthday) : undefined,
+        passwordHash: await bcrypt.hash(dto.password, 12),
+      },
+      select: UserService.crudSelect,
+    });
+    return this.toCrudUser(user);
+  }
+
+  async update(organizationId: bigint, id: number, dto: UpdateUserDto) {
+    await this.findOne(organizationId, id);
+    const email = dto.email?.toLowerCase();
+    if (email) await this.assertEmailFree(email, id);
+    const user = await this.prisma.user.update({
+      where: { id: BigInt(id) },
+      data: {
+        fullName: dto.fullName,
+        email,
+        phoneNumber: dto.phone,
+        birthday: dto.birthday ? new Date(dto.birthday) : undefined,
+        isActive: dto.isActive,
+      },
+      select: UserService.crudSelect,
+    });
+    return this.toCrudUser(user);
+  }
+
+  // Soft delete: users are referenced by appointments, invoices, etc.
+  async remove(organizationId: bigint, id: number) {
+    await this.findOne(organizationId, id);
+    await this.prisma.user.update({
+      where: { id: BigInt(id) },
+      data: { isActive: false },
+    });
+    await this.prisma.refreshToken.updateMany({
+      where: { userId: BigInt(id), revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+  }
+
+  private async assertEmailFree(email: string, exceptId?: number) {
+    const existing = await this.prisma.user.findUnique({ where: { email } });
+    if (existing && existing.id !== BigInt(exceptId ?? -1)) {
+      throw new ConflictException('Email is already registered');
+    }
   }
 
   private hashToken(token: string): string {

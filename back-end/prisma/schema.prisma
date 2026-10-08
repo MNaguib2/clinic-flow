@@ -32,6 +32,7 @@ model Organization {
   expenses            Expense[]
   recurringExpenses   RecurringExpense[]
   auditLogs           AuditLog[]
+  specialties         Specialty[]
 
   @@map("organizations")
 }
@@ -40,6 +41,8 @@ model Specialty {
   id                BigInt            @id @default(autoincrement())
   name              String            @unique @db.VarChar(150)
   createdAt         DateTime          @default(now()) @map("created_at") @db.DateTime(6)
+  organizationId      BigInt
+  organization        Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   doctorSpecialties DoctorSpecialty[]
   clinicSpecialties ClinicSpecialty[]
 

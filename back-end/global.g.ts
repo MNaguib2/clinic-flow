@@ -1,4 +1,5 @@
 import 'fastify';
+import { IUserRequest } from 'src/core/interfaces/user-request.interface';
 
 declare global {
   // @types/node exposes ProcessEnv inside this namespace.
@@ -14,12 +15,7 @@ declare global {
 
 declare module 'fastify' {
   interface FastifyRequest {
-    user?: {
-      id: bigint;
-      organizationId: bigint;
-      fullName: string;
-      phoneNumber: string | null;
-    };
+    user?: IUserRequest;
   }
 }
 
