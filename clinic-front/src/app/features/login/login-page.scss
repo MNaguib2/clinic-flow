@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  color: var(--clinic-ink);
+  background: var(--clinic-paper);
+  font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
+}
+
+.login-page { min-height: 100vh; display: flex; flex-direction: column; }
+.login-header { min-height: 76px; padding-inline: max(24px, calc((100vw - 1120px) / 2)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--clinic-line); }
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.login-brand { display: inline-flex; align-items: center; gap: 10px; color: var(--clinic-ink); font-size: 19px; font-weight: 700; text-decoration: none; }
+.brand-accent { color: var(--clinic-primary); }
+.brand-mark { width: 28px; height: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; transform: rotate(-8deg); }
+.brand-mark span { border-radius: 3px; background: var(--clinic-primary); }
+.brand-mark span:nth-child(2), .brand-mark span:nth-child(3) { background: var(--clinic-coral); }
+.login-content { flex: 1; padding: 48px 20px; display: grid; place-items: center; }
+.login-card { width: min(100%, 440px); padding: 42px; border: 1px solid var(--clinic-line); border-radius: 8px; background: var(--clinic-surface); box-shadow: 0 28px 70px rgb(22 65 54 / 10%); }
+.login-symbol { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--clinic-line); border-radius: 50%; color: var(--clinic-primary); font-size: 25px; font-weight: 300; }
+.login-eyebrow { margin: 25px 0 8px; color: var(--clinic-primary); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+h1 { margin: 0; font-size: 30px; font-weight: 600; line-height: 1.25; }
+.login-description { margin: 12px 0 28px; color: var(--clinic-muted); font-size: 14px; line-height: 1.7; }
+.field-group { margin-bottom: 19px; display: grid; gap: 8px; }
+.field-group label { font-size: 13px; font-weight: 600; }
+.field-group input { width: 100%; min-height: 46px; padding: 0 13px; border: 1px solid var(--clinic-line); border-radius: 4px; color: var(--clinic-ink); background: var(--clinic-surface); font: inherit; font-size: 14px; }
+.field-group input:focus { border-color: var(--clinic-primary); outline: 2px solid color-mix(in srgb, var(--clinic-primary) 14%, transparent); }
+.field-group input[aria-invalid='true'] { border-color: var(--clinic-danger); }
+.field-error { color: var(--clinic-danger); font-size: 12px; }
+.remember-option { margin: 1px 0 20px; display: flex; align-items: center; gap: 9px; color: var(--clinic-muted); font-size: 13px; }
+.remember-option input { width: 16px; height: 16px; accent-color: var(--clinic-primary); }
+.form-message { margin: 0 0 16px; font-size: 13px; line-height: 1.5; }
+.form-error { color: var(--clinic-danger); }
+.form-success { color: var(--clinic-primary); }
+.back-home { margin-top: 23px; display: block; color: var(--clinic-muted); font-size: 13px; text-align: center; text-decoration: none; }
+.back-home:hover { color: var(--clinic-primary); }
+.register-link { margin-top: 13px; display: block; color: var(--clinic-primary); font-size: 13px; font-weight: 600; text-align: center; text-decoration: none; }
+.register-link:hover { color: var(--clinic-primary-hover); text-decoration: underline; }
+
+@media (max-width: 520px) {
+  .login-header { min-height: 66px; padding-inline: 20px; }
+  .login-content { padding: 28px 16px; }
+  .login-card { padding: 30px 22px; }
+  h1 { font-size: 26px; }
+}

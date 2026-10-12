@@ -1,0 +1,71 @@
+:host {
+  display: inline-block;
+}
+
+:host(.submit-button) {
+  display: block;
+  width: 100%;
+}
+
+.ui-button {
+  min-height: 48px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 4px;
+  color: var(--clinic-primary-contrast);
+  background: var(--clinic-primary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.ui-button:not(:disabled):hover {
+  background: var(--clinic-primary-hover);
+}
+
+.ui-button:focus-visible {
+  outline: 2px solid var(--clinic-primary);
+  outline-offset: 3px;
+}
+
+.ui-button:disabled {
+  cursor: wait;
+  opacity: .7;
+}
+
+.ui-button-text {
+  min-height: 38px;
+  padding: 8px 11px;
+  border-radius: 5px;
+  color: var(--clinic-ink);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.ui-button-text:not(:disabled):hover {
+  color: var(--clinic-primary);
+  background: var(--clinic-soft);
+}
+
+:host(.submit-button) .ui-button {
+  width: 100%;
+}
+
+:host(.language-button) .ui-button {
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  :host(.utility-button) .ui-button,
+  :host(.theme-button) .ui-button {
+    min-height: 34px;
+    padding: 6px 7px;
+    font-size: 10px;
+  }
+}

@@ -1,27 +1,28 @@
 import { TestBed } from '@angular/core/testing';
 import { afterEach, vi } from 'vitest';
 import { clinicTranslationProviders } from './app.config';
-import { App } from './app';
+import { HomePage } from './home-page';
+import { provideRouter } from '@angular/router';
 
 describe('App', () => {
   afterEach(() => vi.unstubAllGlobals());
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [App],
-      providers: [...clinicTranslationProviders],
+      imports: [HomePage],
+      providers: [...clinicTranslationProviders, provideRouter([])],
     })
       .compileComponents();
   });
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(HomePage);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
   it('should render the clinic overview', async () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(HomePage);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Care for patients.');
@@ -30,10 +31,10 @@ describe('App', () => {
 
   it('switches to Arabic and right-to-left layout', async () => {
     vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => undefined });
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(HomePage);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    compiled.querySelector<HTMLButtonElement>('button.language-button')?.click();
+    compiled.querySelector<HTMLButtonElement>('app-ui-button.language-button button')?.click();
     fixture.detectChanges();
 
     expect(compiled.querySelector('.site-shell')?.getAttribute('dir')).toBe('rtl');

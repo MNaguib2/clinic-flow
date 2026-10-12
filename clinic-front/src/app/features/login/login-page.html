@@ -1,0 +1,96 @@
+@let copy = 'login' | translate;
+
+<main
+  class="login-page"
+  [attr.lang]="language()"
+  [attr.dir]="language() === 'ar' ? 'rtl' : 'ltr'"
+>
+  <header class="login-header">
+    <a class="login-brand" routerLink="/" aria-label="ClinicFlow home">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span>Clinic<span class="brand-accent">Flow</span></span>
+    </a>
+    <div class="header-actions">
+      <app-ui-button
+        type="button"
+        variant="text"
+        class="language-button"
+        (click)="toggleLanguage()"
+        [ariaLabel]="copy.language"
+      >{{ copy.language }}</app-ui-button>
+      <app-theme-toggle />
+    </div>
+  </header>
+
+  <section class="login-content" aria-labelledby="login-title">
+    <div class="login-card">
+      <div class="login-symbol" aria-hidden="true">+</div>
+      <p class="login-eyebrow">{{ copy.eyebrow }}</p>
+      <h1 id="login-title">{{ copy.title }}</h1>
+      <p class="login-description">{{ copy.description }}</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field-group">
+          <label for="phone">{{ copy.phone }}</label>
+          <input
+            id="phone"
+            type="tel"
+            formControlName="phone"
+            autocomplete="tel"
+            [placeholder]="copy.phonePlaceholder"
+            [attr.aria-invalid]="form.controls.phone.invalid && form.controls.phone.touched"
+            [attr.aria-describedby]="form.controls.phone.touched ? 'phone-error' : null"
+          />
+          @if (form.controls.phone.hasError('required') && form.controls.phone.touched) {
+            <span class="field-error" id="phone-error">{{ copy.phoneRequired }}</span>
+          } @else if (form.controls.phone.hasError('pattern') && form.controls.phone.touched) {
+            <span class="field-error" id="phone-error">{{ copy.phoneInvalid }}</span>
+          }
+        </div>
+
+        <div class="field-group">
+          <label for="password">{{ copy.password }}</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            autocomplete="current-password"
+            [placeholder]="copy.passwordPlaceholder"
+            [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+            [attr.aria-describedby]="form.controls.password.invalid && form.controls.password.touched ? 'password-error' : null"
+          />
+          @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+            <span class="field-error" id="password-error">{{ copy.passwordRequired }}</span>
+          } @else if (form.controls.password.hasError('maxlength') && form.controls.password.touched) {
+            <span class="field-error" id="password-error">{{ copy.passwordTooLong }}</span>
+          }
+        </div>
+
+        <label class="remember-option">
+          <input type="checkbox" formControlName="remember_me" />
+          <span>{{ copy.rememberMe }}</span>
+        </label>
+
+        @if (authStore.error(); as error) {
+          <p class="form-message form-error" role="alert">
+            {{ error.kind === 'generic' ? copy.genericError : error.message }}
+          </p>
+        }
+        @if (authStore.user()) {
+          <p class="form-message form-success" role="status">{{ copy.signedIn }}</p>
+        }
+
+        <app-ui-button
+          type="submit"
+          class="submit-button"
+          [disabled]="authStore.isLoading()"
+        >
+          {{ authStore.isLoading() ? copy.submitting : copy.submit }}
+        </app-ui-button>
+      </form>
+
+      <a class="back-home" routerLink="/">{{ copy.backHome }}</a>
+      <a class="register-link" routerLink="/register">{{ copy.createAccount }}</a>
+    </div>
+  </section>
+</main>

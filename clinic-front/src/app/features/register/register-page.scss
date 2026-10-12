@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  color: var(--clinic-ink);
+  background: var(--clinic-paper);
+  font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
+}
+
+.register-page { min-height: 100vh; display: flex; flex-direction: column; }
+.register-header { min-height: 76px; padding-inline: max(24px, calc((100vw - 1120px) / 2)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--clinic-line); }
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.register-brand { display: inline-flex; align-items: center; gap: 10px; color: var(--clinic-ink); font-size: 19px; font-weight: 700; text-decoration: none; }
+.brand-accent { color: var(--clinic-primary); }
+.brand-mark { width: 28px; height: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; transform: rotate(-8deg); }
+.brand-mark span { border-radius: 3px; background: var(--clinic-primary); }
+.brand-mark span:nth-child(2), .brand-mark span:nth-child(3) { background: var(--clinic-coral); }
+.register-content { flex: 1; padding: 40px 20px; display: grid; place-items: center; }
+.register-card { width: min(100%, 620px); padding: 38px 42px; border: 1px solid var(--clinic-line); border-radius: 8px; background: var(--clinic-surface); box-shadow: 0 28px 70px rgb(22 65 54 / 10%); }
+.register-symbol { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--clinic-line); border-radius: 50%; color: var(--clinic-primary); font-size: 25px; font-weight: 300; }
+.register-eyebrow { margin: 22px 0 8px; color: var(--clinic-primary); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+h1 { margin: 0; font-size: 30px; font-weight: 600; line-height: 1.25; }
+.register-description { margin: 12px 0 25px; color: var(--clinic-muted); font-size: 14px; line-height: 1.7; }
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+.field-full { grid-column: 1 / -1; }
+.field-group { margin-bottom: 16px; display: grid; gap: 7px; }
+.field-group label { font-size: 13px; font-weight: 600; }
+.field-group input { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--clinic-line); border-radius: 4px; color: var(--clinic-ink); background: var(--clinic-surface); font: inherit; font-size: 14px; }
+.field-group input:focus { border-color: var(--clinic-primary); outline: 2px solid color-mix(in srgb, var(--clinic-primary) 14%, transparent); }
+.field-group input[aria-invalid='true'] { border-color: var(--clinic-danger); }
+.field-error { color: var(--clinic-danger); font-size: 12px; }
+.form-message { margin: 0 0 16px; font-size: 13px; line-height: 1.5; }
+.form-error { color: var(--clinic-danger); }
+.form-success { color: var(--clinic-primary); }
+.login-link { margin-top: 20px; display: block; color: var(--clinic-primary); font-size: 13px; font-weight: 600; text-align: center; text-decoration: none; }
+.login-link:hover { color: var(--clinic-primary-hover); text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .register-header { min-height: 66px; padding-inline: 20px; }
+  .register-content { padding: 26px 16px; }
+  .register-card { padding: 30px 22px; }
+  .field-grid { grid-template-columns: 1fr; }
+  .field-full { grid-column: auto; }
+  h1 { font-size: 26px; }
+}

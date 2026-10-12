@@ -1,14 +1,14 @@
 .site-shell {
 	display: block;
-	--ink: #193631;
-	--muted: #627672;
-	--line: #dce7e1;
-	--paper: #fbfcf8;
-	--surface: #ffffff;
-	--soft: #edf4ef;
-	--teal: #176b5b;
-	--teal-dark: #0e5145;
-	--coral: #e27d65;
+	--ink: var(--clinic-ink);
+	--muted: var(--clinic-muted);
+	--line: var(--clinic-line);
+	--paper: var(--clinic-paper);
+	--surface: var(--clinic-surface);
+	--soft: var(--clinic-soft);
+	--teal: var(--clinic-primary);
+	--teal-dark: var(--clinic-primary-hover);
+	--coral: var(--clinic-coral);
 	--shadow: 0 28px 70px rgb(22 65 54 / 12%);
 	color: var(--ink);
 	font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
@@ -23,19 +23,6 @@
 	transition: background-color 180ms ease, color 180ms ease;
 }
 
-.site-shell.dark-mode {
-	--ink: #e7f1ec;
-	--muted: #a3b7ae;
-	--line: #344941;
-	--paper: #172520;
-	--surface: #202f29;
-	--soft: #263a32;
-	--teal: #71c4a6;
-	--teal-dark: #a6dfc8;
-	--coral: #f29a7d;
-	--shadow: 0 28px 70px rgb(0 0 0 / 24%);
-}
-
 .section-wrap { width: min(100% - 80px, 1200px); margin-inline: auto; }
 .topbar { min-height: 82px; padding-inline: max(40px, calc((100vw - 1200px) / 2)); display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--line); }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-size: 19px; font-weight: 700; text-decoration: none; white-space: nowrap; }
@@ -47,9 +34,7 @@
 .main-nav a, .footer a:not(.brand) { color: var(--muted); font-size: 13px; text-decoration: none; transition: color 160ms ease; }
 .main-nav a:hover, .footer a:hover { color: var(--teal); }
 .header-actions { gap: 8px; }
-.site-shell .utility-button.p-button { min-height: 38px; padding: 8px 11px; border: 0; border-radius: 5px; color: var(--ink); background: transparent; font: inherit; font-size: 12px; }
-.site-shell .utility-button.p-button:hover { color: var(--teal); background: var(--soft); }
-.header-cta { padding: 11px 16px; border-radius: 4px; color: #fff; background: var(--teal); font-size: 12px; font-weight: 600; text-decoration: none; transition: background 160ms ease, transform 160ms ease; }
+.header-cta { padding: 11px 16px; border-radius: 4px; color: var(--clinic-primary-contrast); background: var(--teal); font-size: 12px; font-weight: 600; text-decoration: none; transition: background 160ms ease, transform 160ms ease; }
 .header-cta:hover, .primary-cta:hover { background: var(--teal-dark); transform: translateY(-2px); }
 
 .hero { min-height: 590px; padding-block: 66px 78px; display: grid; grid-template-columns: 1.04fr .96fr; align-items: center; gap: 70px; }
@@ -61,7 +46,7 @@
 .hero h1 span { display: block; color: var(--teal); }
 .hero-description { max-width: 500px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.85; }
 .hero-actions { margin-top: 30px; display: flex; align-items: center; gap: 24px; }
-.primary-cta { min-height: 48px; padding: 0 18px; display: inline-flex; align-items: center; gap: 24px; border-radius: 4px; color: #fff; background: var(--teal); font-size: 13px; font-weight: 600; text-decoration: none; transition: background 160ms ease, transform 160ms ease; }
+.primary-cta { min-height: 48px; padding: 0 18px; display: inline-flex; align-items: center; gap: 24px; border-radius: 4px; color: var(--clinic-primary-contrast); background: var(--teal); font-size: 13px; font-weight: 600; text-decoration: none; transition: background 160ms ease, transform 160ms ease; }
 .primary-cta span { font-size: 17px; }
 .secondary-cta { color: var(--ink); font-size: 13px; font-weight: 600; text-decoration: none; }
 .secondary-cta:hover { color: var(--teal); }
@@ -140,7 +125,6 @@
 	.main-nav { order: 3; width: 100%; justify-content: center; padding-block: 3px 12px; }
 	.main-nav a { font-size: 10px; }
 	.header-actions { margin-inline-start: auto; gap: 0; }
-	.site-shell .utility-button.p-button { min-height: 34px; padding: 6px 7px; font-size: 10px; }
 	.header-cta { padding: 9px 10px; font-size: 10px; }
 	.hero { padding-block: 54px 42px; grid-template-columns: 1fr; gap: 25px; }
 	.hero h1 { margin-top: 19px; font-size: 42px; }
