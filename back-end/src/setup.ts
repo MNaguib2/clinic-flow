@@ -51,9 +51,10 @@ export async function setup(app: NestFastifyApplication<RawServerDefault>) {
 
   // ✅ CORS
   app.enableCors({
-    origin: '*', // Change to your domain in production
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    origin: true, // Change to your domain in production
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
   });
 
   // ✅ Global validation pipe

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { API_URL } from '@core/config/app.config';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { catchError, EMPTY, tap } from 'rxjs';
 
@@ -81,11 +82,12 @@ export const AuthStore = signalStore(
   withState(initialState),
   withMethods((store) => {
     const http = inject(HttpClient);
+    const api_url = inject(API_URL);
     return {
       login(credentials: LoginRequest) {
         patchState(store, { user: null, isLoading: true, error: null });
         return http
-          .post<LoginResponse>('/api/users/login', credentials, { withCredentials: true })
+          .post<LoginResponse>(`${api_url}/users/login`, credentials, { withCredentials: true })
           .pipe(
             tap(({ user }) => patchState(store, { user, isLoading: false })),
             catchError((error: unknown) => {
