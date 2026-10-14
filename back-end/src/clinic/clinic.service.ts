@@ -4,38 +4,16 @@ import { CreateClinicDto, UpdateClinicDto } from './dto/clinic.dto';
 
 const include = { specialties: { include: { specialty: true } } };
 
-type ClinicRow = {
-  id: bigint;
-  name: string;
-  phone: string | null;
-  address: string | null;
-  isActive: boolean;
-  specialties: { specialty: { id: bigint; name: string } }[];
-};
-
-const toPublic = (c: ClinicRow) => ({
-  id: c.id.toString(),
-  name: c.name,
-  phone: c.phone,
-  address: c.address,
-  isActive: c.isActive,
-  specialties: c.specialties.map((s) => ({
-    id: s.specialty.id.toString(),
-    name: s.specialty.name,
-  })),
-});
-
 @Injectable()
 export class ClinicService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(organizationId: bigint) {
-    const rows = await this.prisma.clinic.findMany({
+    return this.prisma.clinic.findMany({
       where: { organizationId },
       include,
       orderBy: { id: 'asc' },
     });
-    return rows.map(toPublic);
   }
 
   async findOne(organizationId: bigint, id: number) {
@@ -44,7 +22,7 @@ export class ClinicService {
       include,
     });
     if (!row) throw new NotFoundException('Clinic not found');
-    return toPublic(row);
+    return row;
   }
 
   async create(organizationId: bigint, dto: CreateClinicDto) {
@@ -59,7 +37,7 @@ export class ClinicService {
       },
       include,
     });
-    return toPublic(row);
+    return row;
   }
 
   async update(organizationId: bigint, id: number, dto: UpdateClinicDto) {
@@ -78,7 +56,7 @@ export class ClinicService {
       },
       include,
     });
-    return toPublic(row);
+    return row;
   }
 
   // Soft delete: clinics are referenced by appointments, invoices, etc.

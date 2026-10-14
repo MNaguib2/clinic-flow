@@ -139,31 +139,12 @@ export class UserService {
     isActive: true,
   } as const;
 
-  private toCrudUser(user: {
-    id: bigint;
-    fullName: string;
-    email: string;
-    phoneNumber: string | null;
-    birthday: Date | null;
-    isActive: boolean;
-  }) {
-    return {
-      id: user.id.toString(),
-      fullName: user.fullName,
-      email: user.email,
-      phone: user.phoneNumber,
-      birthday: user.birthday,
-      isActive: user.isActive,
-    };
-  }
-
   async findAll(organizationId: bigint) {
-    const rows = await this.prisma.user.findMany({
+    return this.prisma.user.findMany({
       where: { organizationId },
       select: UserService.crudSelect,
       orderBy: { id: 'asc' },
     });
-    return rows.map((u) => this.toCrudUser(u));
   }
 
   async findOne(organizationId: bigint, id: number) {
@@ -172,7 +153,7 @@ export class UserService {
       select: UserService.crudSelect,
     });
     if (!user) throw new NotFoundException('User not found');
-    return this.toCrudUser(user);
+    return user;
   }
 
   async create(organizationId: bigint, dto: CreateUserDto) {
@@ -189,7 +170,7 @@ export class UserService {
       },
       select: UserService.crudSelect,
     });
-    return this.toCrudUser(user);
+    return user;
   }
 
   async update(organizationId: bigint, id: number, dto: UpdateUserDto) {
@@ -207,7 +188,7 @@ export class UserService {
       },
       select: UserService.crudSelect,
     });
-    return this.toCrudUser(user);
+    return user;
   }
 
   // Soft delete: users are referenced by appointments, invoices, etc.

@@ -9,11 +9,13 @@ import {
   Patch,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CurrentUser } from '../core/decorators/current-user.decorator';
 import { AuthGuard } from '../core/guards/auth.guard';
 import { ClinicService } from './clinic.service';
 import { CreateClinicDto, UpdateClinicDto } from './dto/clinic.dto';
+import { ToPublicClinicInterceptor } from './interceptor/to-public-clinic.interceptor';
 
 type SessionUser = {
   id: bigint;
@@ -28,11 +30,13 @@ export class ClinicController {
   constructor(private readonly service: ClinicService) {}
 
   @Get()
+  @UseInterceptors(ToPublicClinicInterceptor)
   findAll(@CurrentUser() user: SessionUser) {
     return this.service.findAll(user.organizationId);
   }
 
   @Get(':id')
+  @UseInterceptors(ToPublicClinicInterceptor)
   findOne(
     @CurrentUser() user: SessionUser,
     @Param('id', ParseIntPipe) id: number,
@@ -41,11 +45,13 @@ export class ClinicController {
   }
 
   @Post()
+  @UseInterceptors(ToPublicClinicInterceptor)
   create(@CurrentUser() user: SessionUser, @Body() dto: CreateClinicDto) {
     return this.service.create(user.organizationId, dto);
   }
 
   @Patch(':id')
+  @UseInterceptors(ToPublicClinicInterceptor)
   update(
     @CurrentUser() user: SessionUser,
     @Param('id', ParseIntPipe) id: number,

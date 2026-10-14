@@ -18,6 +18,7 @@ import { AuthGuard } from '../core/guards/auth.guard';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { ToCrudUserInterceptor } from './interceptor/to-crud-user.interceptor';
 import { ToPublicUserInterceptor } from './interceptor/to-public-user.interceptor';
 import { UserService } from './user.service';
 
@@ -29,12 +30,14 @@ export class UserController {
 
   @Get()
   @UseGuards(AuthGuard)
+  @UseInterceptors(ToCrudUserInterceptor)
   findAll(@CurrentUser() user: SessionUser) {
     return this.userService.findAll(user.organizationId);
   }
 
   @Get(':id')
   @UseGuards(AuthGuard)
+  @UseInterceptors(ToCrudUserInterceptor)
   findOne(
     @CurrentUser() user: SessionUser,
     @Param('id', ParseIntPipe) id: number,
@@ -44,12 +47,14 @@ export class UserController {
 
   @Post()
   @UseGuards(AuthGuard)
+  @UseInterceptors(ToCrudUserInterceptor)
   create(@CurrentUser() user: SessionUser, @Body() dto: CreateUserDto) {
     return this.userService.create(user.organizationId, dto);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard)
+  @UseInterceptors(ToCrudUserInterceptor)
   update(
     @CurrentUser() user: SessionUser,
     @Param('id', ParseIntPipe) id: number,
