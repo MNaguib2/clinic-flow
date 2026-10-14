@@ -35,6 +35,7 @@
           <input
             id="phone"
             type="tel"
+            intlTelInput
             formControlName="phone"
             autocomplete="tel"
             [placeholder]="copy.phonePlaceholder"
@@ -43,7 +44,7 @@
           />
           @if (form.controls.phone.hasError('required') && form.controls.phone.touched) {
             <span class="field-error" id="phone-error">{{ copy.phoneRequired }}</span>
-          } @else if (form.controls.phone.hasError('pattern') && form.controls.phone.touched) {
+          } @else if (form.controls.phone.hasError('intlTelInput') && form.controls.phone.touched) {
             <span class="field-error" id="phone-error">{{ copy.phoneInvalid }}</span>
           }
         </div>

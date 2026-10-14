@@ -68,12 +68,13 @@
               <input
                 id="phone"
                 type="tel"
+                intlTelInput
                 formControlName="phone"
                 autocomplete="tel"
                 [placeholder]="copy.phonePlaceholder"
                 [attr.aria-invalid]="form.controls.phone.invalid && form.controls.phone.touched"
               />
-              @if (form.controls.phone.hasError('pattern') && form.controls.phone.touched) {
+              @if (form.controls.phone.hasError('intlTelInput') && form.controls.phone.touched) {
                 <span class="field-error">{{ copy.phoneInvalid }}</span>
               } @else if (form.controls.phone.invalid && form.controls.phone.touched) {
                 <span class="field-error">{{ copy.required }}</span>

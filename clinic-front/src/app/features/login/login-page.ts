@@ -4,10 +4,11 @@ import { RouterLink } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { PhoneInputDirective } from '@share/phone-input/phone-input.directive';
 import { ShareModule } from '@share/share.module';
 
 @Component({
-  imports: [ShareModule, ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ShareModule, PhoneInputDirective, ReactiveFormsModule, RouterLink, TranslatePipe],
   selector: 'app-login-page',
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
@@ -18,7 +19,7 @@ export class LoginPage {
   protected readonly authStore = inject(AuthStore);
   protected readonly language = this.languageService.language;
   protected readonly form = this.formBuilder.nonNullable.group({
-    phone: ['', [Validators.required, Validators.pattern(/^\+?[0-9]{7,20}$/)]],
+    phone: ['', Validators.required],
     password: ['', [Validators.required, Validators.maxLength(72)]],
     remember_me: false,
   });

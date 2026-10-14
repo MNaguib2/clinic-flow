@@ -32,6 +32,7 @@
             ],
             "styles": [
               "src/styles.scss",
+              "node_modules/intl-tel-input/dist/css/intlTelInput.min.css",
               "src/app/app.scss"
             ],
             "server": "src/main.server.ts",
