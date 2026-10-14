@@ -1,0 +1,17 @@
+[dir='rtl'] {
+  direction: rtl;
+
+  input:not([type='email']):not([type='tel']):not([type='password']):not([type='date']) {
+    text-align: right;
+  }
+
+  input.iti__search-input:has(+button.iti__search-clear:not(.iti__hide)) {
+    padding-inline-end: 35px;
+  }
+
+  button.iti__selected-country {
+    div.iti__arrow {
+      margin-inline-start: var(--iti-arrow-padding);
+    }
+  }
+}

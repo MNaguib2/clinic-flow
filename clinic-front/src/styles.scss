@@ -1,4 +1,6 @@
-@use './public/css/fonts.scss';
+@import './public/css/fonts';
+@import './public/css/ltr';
+@import './public/css/rtl';
 
 * {
   box-sizing: border-box;
@@ -39,32 +41,6 @@ html.app-dark {
   --clinic-primary-contrast: #10241d;
   --clinic-coral: #f09a78;
   --clinic-danger: #ff8888;
-}
-
-[dir='ltr'] {
-  direction: ltr;
-
-  input:not([type='email']):not([type='tel']):not([type='password']):not([type='date']) {
-    text-align: left;
-  }
-
-}
-
-[dir='rtl'] {
-  direction: rtl;
-
-  input:not([type='email']):not([type='tel']):not([type='password']):not([type='date']) {
-    text-align: right;
-  }
-
-  input.iti__search-input:has(+button.iti__search-clear:not(.iti__hide)) {
-    padding-inline-end: 35px;
-  }
-  button.iti__selected-country{
-    div.iti__arrow{
-      margin-inline-start: var(--iti-arrow-padding);
-    }
-  }
 }
 
 body {

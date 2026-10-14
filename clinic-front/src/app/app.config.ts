@@ -1,13 +1,14 @@
 import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
 import { provideTranslateLoader, provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import arabicTranslation from '../public/locale/ar.json';
 import englishTranslation from '../public/locale/en.json';
 import { API_URL } from '@core/config/app.config';
+import { httpErrorInterceptor } from '@core/interceptors/http-error.interceptor';
 
 const loadTranslation = () => ({
   getTranslation: (language: string) => of(language === 'ar' ? arabicTranslation : englishTranslation),
@@ -23,7 +24,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([httpErrorInterceptor])),
     provideClientHydration(),
     ...clinicTranslationProviders,
     {

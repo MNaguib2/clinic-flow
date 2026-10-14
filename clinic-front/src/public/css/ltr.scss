@@ -1,0 +1,7 @@
+[dir='ltr'] {
+  direction: ltr;
+
+  input:not([type='email']):not([type='tel']):not([type='password']):not([type='date']) {
+    text-align: left;
+  }
+}
