@@ -1,29 +1,20 @@
-import { afterNextRender, Component, inject, signal } from '@angular/core';
-import { Language, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageService } from '@core/services/language/language.service';
 import { ShareModule } from '@share/share.module';
 
 @Component({
-  imports: [ShareModule, TranslatePipe],
+  imports: [ShareModule, RouterLink, TranslatePipe],
   selector: 'app-home',
   styleUrl: './home.scss',
   templateUrl: './home.html',
 })
 export class Home {
-    private readonly translateService = inject(TranslateService);
-  protected readonly language = signal<Language>('en');
-
-  constructor() {
-    afterNextRender(() => {
-      const language = localStorage.getItem('clinicflow-language') === 'ar' ? 'ar' : 'en';
-      this.language.set(language);
-      this.translateService.use(language).subscribe();
-    });
-  }
+  private readonly languageService = inject(LanguageService);
+  protected readonly language = this.languageService.language;
 
   protected toggleLanguage(): void {
-    const language = this.language() === 'en' ? 'ar' : 'en';
-    this.language.set(language);
-    this.translateService.use(language).subscribe();
-    localStorage.setItem('clinicflow-language', language);
+    this.languageService.toggle();
   }
 }

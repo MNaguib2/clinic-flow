@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -9,10 +9,9 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '@core/services/language/language.service';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ShareModule } from '@share/share.module';
-
-type Language = 'en' | 'ar';
 
 const matchingPasswords: ValidatorFn = (
   control: AbstractControl,
@@ -29,9 +28,9 @@ const matchingPasswords: ValidatorFn = (
 })
 export class RegisterPage {
   private readonly formBuilder = inject(FormBuilder);
-  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   protected readonly authStore = inject(AuthStore);
-  protected readonly language = signal<Language>('en');
+  protected readonly language = this.languageService.language;
   protected readonly form = this.formBuilder.nonNullable.group(
     {
       organizationTitle: ['', [Validators.required, Validators.maxLength(150)]],
@@ -48,19 +47,8 @@ export class RegisterPage {
     { validators: matchingPasswords },
   );
 
-  constructor() {
-    afterNextRender(() => {
-      const language = localStorage.getItem('clinicflow-language') === 'ar' ? 'ar' : 'en';
-      this.language.set(language);
-      this.translateService.use(language).subscribe();
-    });
-  }
-
   protected toggleLanguage(): void {
-    const language = this.language() === 'en' ? 'ar' : 'en';
-    this.language.set(language);
-    this.translateService.use(language).subscribe();
-    localStorage.setItem('clinicflow-language', language);
+    this.languageService.toggle();
   }
 
   protected submit(): void {
