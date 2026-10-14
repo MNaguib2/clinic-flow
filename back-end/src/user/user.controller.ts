@@ -10,6 +10,7 @@ import {
   Post,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import type { FastifyRequest } from 'fastify';
 import { CurrentUser } from '../core/decorators/current-user.decorator';
@@ -17,6 +18,7 @@ import { AuthGuard } from '../core/guards/auth.guard';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { ToPublicUserInterceptor } from './interceptor/to-public-user.interceptor';
 import { UserService } from './user.service';
 
 type SessionUser = { organizationId: bigint };
@@ -67,6 +69,7 @@ export class UserController {
   }
 
   @Post('login')
+  @UseInterceptors(ToPublicUserInterceptor)
   async login(@Body() dto: LoginDto, @Req() request: FastifyRequest) {
     const result = await this.userService.login(dto);
 
@@ -82,6 +85,7 @@ export class UserController {
   }
 
   @Post('refresh')
+  @UseInterceptors(ToPublicUserInterceptor)
   async refresh(@Body() dto: RefreshDto, @Req() request: FastifyRequest) {
     const result = await this.userService.refresh(dto);
 

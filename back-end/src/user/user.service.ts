@@ -57,7 +57,7 @@ export class UserService {
     });
 
     return {
-      user: this.toPublicUser(user),
+      user,
       refreshToken,
       refreshTokenExpiresAt,
       sessionTtl,
@@ -122,7 +122,7 @@ export class UserService {
     });
 
     return {
-      user: this.toPublicUser(result),
+      user: result,
       refreshToken: nextRefreshToken,
       refreshTokenExpiresAt,
       sessionTtl: refreshTtl,
@@ -158,7 +158,6 @@ export class UserService {
   }
 
   async findAll(organizationId: bigint) {
-    console.log("🚀 ~ UserService ~ findAll ~ organizationId:", organizationId)
     const rows = await this.prisma.user.findMany({
       where: { organizationId },
       select: UserService.crudSelect,
@@ -233,19 +232,5 @@ export class UserService {
 
   private hashToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
-  }
-
-  private toPublicUser(user: {
-    id: bigint;
-    organizationId: bigint;
-    fullName: string;
-    phoneNumber: string | null;
-  }) {
-    return {
-      id: user.id.toString(),
-      organizationId: user.organizationId.toString(),
-      fullName: user.fullName,
-      phone: user.phoneNumber,
-    };
   }
 }
