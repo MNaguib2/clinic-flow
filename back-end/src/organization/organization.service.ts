@@ -29,6 +29,10 @@ export class OrganizationService {
         data: { name: dto.organizationTitle },
       });
 
+      const permissions = await tx.permission.findMany({
+        select: { id: true },
+      });
+
       const role = await tx.role.create({
         data: {
           organizationId: organization.id,
@@ -36,6 +40,15 @@ export class OrganizationService {
           isSystemRole: true,
         },
       });
+
+      if (permissions.length > 0) {
+        await tx.rolePermission.createMany({
+          data: permissions.map(({ id }) => ({
+            roleId: role.id,
+            permissionId: id,
+          })),
+        });
+      }
 
       const user = await tx.user.create({
         data: {
