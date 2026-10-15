@@ -41,8 +41,8 @@ model Specialty {
   id                BigInt            @id @default(autoincrement())
   name              String            @unique @db.VarChar(150)
   createdAt         DateTime          @default(now()) @map("created_at") @db.DateTime(6)
-  organizationId      BigInt
-  organization        Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId    BigInt
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   doctorSpecialties DoctorSpecialty[]
   clinicSpecialties ClinicSpecialty[]
 
@@ -52,7 +52,8 @@ model Specialty {
 model Permission {
   id              BigInt           @id @default(autoincrement())
   name            String           @unique @db.VarChar(150)
-  description     String?          @db.Text
+  description_ar  String?          @db.Text
+  description_en  String?          @db.Text
   createdAt       DateTime         @default(now()) @map("created_at") @db.DateTime(6)
   rolePermissions RolePermission[]
 
@@ -783,16 +784,16 @@ model AuditLog {
 }
 
 model Session {
-  id        BigInt   @id @default(autoincrement())
-  sessionId String   @unique @map("session_id") @db.VarChar(255)
+  id        BigInt @id @default(autoincrement())
+  sessionId String @unique @map("session_id") @db.VarChar(255)
 
-  data      Json
+  data Json
 
   expiresAt DateTime? @map("expires_at") @db.DateTime(6)
 
-  createdAt DateTime  @default(now()) @map("created_at") @db.DateTime(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
 
-  updatedAt DateTime  @updatedAt @map("updated_at") @db.DateTime(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(6)
 
   @@index([expiresAt])
   @@map("sessions")

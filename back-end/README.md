@@ -12,3 +12,6 @@ npm i fastify-session-prisma-store
 
 # command prisma 
  npx prisma migrate dev --name init
+
+
+npx prisma db execute --file ./prisma/seeds/permissions.sql
