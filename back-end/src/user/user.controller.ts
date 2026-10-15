@@ -22,7 +22,7 @@ import { ToCrudUserInterceptor } from './interceptor/to-crud-user.interceptor';
 import { ToPublicUserInterceptor } from './interceptor/to-public-user.interceptor';
 import { UserService } from './user.service';
 
-type SessionUser = { organizationId: bigint };
+type SessionUser = { id: bigint; organizationId: bigint };
 
 @Controller('users')
 export class UserController {
@@ -89,7 +89,15 @@ export class UserController {
     };
   }
 
+  @Post('rbac')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(ToPublicUserInterceptor)
+  async rbac(@CurrentUser() user: SessionUser) {
+    return { user: await this.userService.confirmSession(user.id) };
+  }
+
   @Post('refresh')
+  @UseGuards(AuthGuard)
   @UseInterceptors(ToPublicUserInterceptor)
   async refresh(@Body() dto: RefreshDto, @Req() request: FastifyRequest) {
     const result = await this.userService.refresh(dto);

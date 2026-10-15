@@ -1,6 +1,6 @@
-@import './public/css/fonts';
-@import './public/css/ltr';
-@import './public/css/rtl';
+@use './public/css/fonts';
+@use './public/css/ltr';
+@use './public/css/rtl';
 
 * {
   box-sizing: border-box;

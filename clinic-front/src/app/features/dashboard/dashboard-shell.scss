@@ -1,0 +1,37 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.dashboard-shell {
+  min-height: 100vh;
+  color: var(--clinic-ink);
+  background: var(--clinic-paper);
+}
+
+.dashboard-header {
+  display: flex;
+  min-height: 4.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: clamp(1rem, 5vw, 4rem);
+  border-bottom: 1px solid var(--clinic-line);
+  background: var(--clinic-surface);
+}
+
+.dashboard-brand {
+  color: var(--clinic-ink);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dashboard-user {
+  color: var(--clinic-muted);
+}
+
+.dashboard-content {
+  width: min(100% - 2rem, 80rem);
+  margin-inline: auto;
+  padding-block: 2rem;
+}

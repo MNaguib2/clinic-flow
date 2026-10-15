@@ -1,0 +1,9 @@
+<div class="dashboard-shell">
+  <header class="dashboard-header">
+    <a class="dashboard-brand" routerLink="/">ClinicFlow</a>
+    <span class="dashboard-user">{{ authStore.user()?.fullName }}</span>
+  </header>
+  <main class="dashboard-content">
+    <router-outlet />
+  </main>
+</div>

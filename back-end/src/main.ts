@@ -14,11 +14,17 @@ import { AppModule } from './app.module';
 import { setup } from './setup';
 
 async function bootstrap() {
-  const httpsOptions = {
-    key: readFileSync('./certs/localhost-key.pem'),
-    cert: readFileSync('./certs/localhost-cert.pem'),
-    allowHTTP1: true, // <-- هذا هو المكان الصحيح
-  };
+  const TLS_KEY_PATH = process.env.TLS_KEY_PATH ?? null;
+  const TLS_CERT_PATH = process.env.TLS_CERT_PATH ?? null;
+
+  const httpsOptions =
+    TLS_CERT_PATH && TLS_KEY_PATH
+      ? {
+          key: readFileSync(TLS_KEY_PATH),
+          cert: readFileSync(TLS_CERT_PATH),
+          allowHTTP1: true, // <-- هذا هو المكان الصحيح
+        }
+      : null;
 
   // ✅ Create app with Fastify adapter
   const app = await NestFactory.create<NestFastifyApplication>(

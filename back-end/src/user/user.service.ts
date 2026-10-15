@@ -65,6 +65,33 @@ export class UserService {
     };
   }
 
+  async confirmSession(userId: bigint) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: userId,
+        isActive: true,
+        refreshTokens: {
+          some: {
+            revokedAt: null,
+            expiresAt: { gt: new Date() },
+          },
+        },
+      },
+      select: {
+        id: true,
+        organizationId: true,
+        fullName: true,
+        phoneNumber: true,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Session or refresh token is invalid');
+    }
+
+    return user;
+  }
+
   async refresh(dto: RefreshDto) {
     const tokenHash = this.hashToken(dto.refresh_token);
     const token = await this.prisma.refreshToken.findUnique({
