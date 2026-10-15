@@ -33,6 +33,7 @@ model Organization {
   recurringExpenses   RecurringExpense[]
   auditLogs           AuditLog[]
   specialties         Specialty[]
+  rolePermissions     RolePermission[]
 
   @@map("organizations")
 }
@@ -204,11 +205,13 @@ model UserRole {
 }
 
 model RolePermission {
-  roleId       BigInt     @map("role_id")
-  permissionId BigInt     @map("permission_id")
-  createdAt    DateTime   @default(now()) @map("created_at") @db.DateTime(6)
-  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  roleId         BigInt       @map("role_id")
+  permissionId   BigInt       @map("permission_id")
+  organizationId BigInt       @map("organization_id")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  role           Role         @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission     Permission   @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@id([roleId, permissionId])
   @@index([permissionId])

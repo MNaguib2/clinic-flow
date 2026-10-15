@@ -46,6 +46,7 @@ export class OrganizationService {
           data: permissions.map(({ id }) => ({
             roleId: role.id,
             permissionId: id,
+            organizationId: organization.id,
           })),
         });
       }
