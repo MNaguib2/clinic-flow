@@ -173,6 +173,35 @@ describe('AuthStore', () => {
     });
   });
 
+  it('logs out the current user and clears the persisted session', () => {
+    store
+      .login({
+        phone: '+15551234567',
+        password: 'secure-password',
+        remember_me: true,
+      })
+      .subscribe();
+
+    http.expectOne('/api/users/login').flush({
+      user: {
+        id: '42',
+        organizationId: '7',
+        fullName: 'Clinic User',
+        phone: '+15551234567',
+      },
+      refresh_token: 'token',
+      refresh_token_expires_at: '2026-10-15T07:00:00.000Z',
+    });
+
+    expect(store.user()?.fullName).toBe('Clinic User');
+
+    store.logout();
+
+    expect(store.user()).toBeNull();
+    expect(store.isInitialized()).toBe(true);
+    expect(storage.getItem('clinicflow-auth')).toBeNull();
+  });
+
   it('registers a clinic and exposes the success state', () => {
     const details: RegisterRequest = {
       organizationTitle: 'ClinicFlow Demo',

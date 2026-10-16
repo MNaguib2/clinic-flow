@@ -26,7 +26,38 @@
         [ariaLabel]="copy.languageLabel"
       >{{ language() === 'en' ? 'العربية' : 'English' }}</app-ui-button>
       <app-theme-toggle />
-      <a class="header-cta" routerLink="/login">{{ copy.getStarted }}</a>
+
+      @if (authStore.user(); as user) {
+        <div class="user-menu" [class.is-open]="is_menu_open">
+          <button
+            type="button"
+            class="user-menu-button"
+            (click)="toggleUserMenu()"
+            [attr.aria-expanded]="is_menu_open"
+            aria-haspopup="menu"
+          >
+            <span class="user-avatar" aria-hidden="true">{{ user.fullName.charAt(0).toUpperCase() }}</span>
+            <span class="user-name">{{ user.fullName }}</span>
+            <span class="user-chevron" aria-hidden="true">▾</span>
+          </button>
+
+          @if (is_menu_open) {
+            <div class="user-menu-panel" role="menu" aria-label="User menu">
+              <button type="button" class="user-menu-item" role="menuitem" routerLink="/dashboard">
+                Profile
+              </button>
+              <button type="button" class="user-menu-item" role="menuitem" routerLink="/dashboard">
+                My file
+              </button>
+              <button type="button" class="user-menu-item logout-item" role="menuitem" (click)="logout()">
+                Logout
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <a class="header-cta" routerLink="/login">{{ copy.getStarted }}</a>
+      }
     </div>
   </header>
 

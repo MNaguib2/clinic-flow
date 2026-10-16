@@ -274,6 +274,17 @@ export const AuthStore = signalStore(
         );
         return initializationRequest;
       },
+      logout(): void {
+        clearStoredSession();
+        clearRefreshTimer();
+        patchState(store, {
+          user: null,
+          isLoading: false,
+          isRefreshing: false,
+          isInitialized: true,
+          error: null,
+        });
+      },
       login(credentials: LoginRequest) {
         clearStoredSession();
         patchState(store, {
