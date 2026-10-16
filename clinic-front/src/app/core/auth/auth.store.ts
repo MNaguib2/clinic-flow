@@ -267,7 +267,6 @@ export const AuthStore = signalStore(
         if (initializationRequest) return initializationRequest;
 
         initializationRequest = defer(() => confirmStoredSession()).pipe(
-          tap(() => patchState(store, { isInitialized: true })),
           finalize(() => {
             initializationRequest = undefined;
           }),
