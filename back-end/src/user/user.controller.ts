@@ -84,6 +84,7 @@ export class UserController {
 
     return {
       user: result.user,
+      startup: result.startup,
       refresh_token: result.refreshToken,
       refresh_token_expires_at: result.refreshTokenExpiresAt.toISOString(),
     };
@@ -93,7 +94,9 @@ export class UserController {
   @UseGuards(AuthGuard)
   @UseInterceptors(ToPublicUserInterceptor)
   async rbac(@CurrentUser() user: SessionUser) {
-    return { user: await this.userService.confirmSession(user.id) };
+    const { user: confirmedUser, startup } =
+      await this.userService.confirmSession(user.id);
+    return { user: confirmedUser, startup };
   }
 
   @Post('refresh')

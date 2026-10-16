@@ -11,12 +11,14 @@ import { sessionConfig } from '../core/config/session.config';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { User } from 'generated/prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async login(dto: LoginDto) {
+    let startup = false;
     const users = await this.prisma.user.findMany({
       where: { phoneNumber: dto.phone, isActive: true },
       select: {
@@ -52,9 +54,7 @@ export class UserService {
     });
 
     if (clinics.length === 0) {
-      throw new UnauthorizedException(
-        'User is not associated with any clinics in the organization',
-      );
+      startup = await this.checkUserStartup(matchingUser);
     }
 
     const user = matchingUser;
@@ -78,10 +78,12 @@ export class UserService {
       refreshTokenExpiresAt,
       sessionTtl,
       userId: user.id.toString(),
+      startup,
     };
   }
 
   async confirmSession(userId: bigint) {
+    let startup = false;
     const user = await this.prisma.user.findFirst({
       where: {
         id: userId,
@@ -98,6 +100,8 @@ export class UserService {
         organizationId: true,
         fullName: true,
         phoneNumber: true,
+        clinics: true,
+        isActive: true,
       },
     });
 
@@ -105,7 +109,11 @@ export class UserService {
       throw new UnauthorizedException('Session or refresh token is invalid');
     }
 
-    return user;
+    if (user.clinics.length === 0) {
+      startup = await this.checkUserStartup(user);
+    }
+
+    return { user, startup };
   }
 
   async refresh(dto: RefreshDto) {
@@ -256,5 +264,36 @@ export class UserService {
 
   private hashToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
+  }
+
+  private async checkUserStartup(
+    matchingUser: Pick<User, 'id' | 'organizationId'>,
+  ): Promise<boolean> {
+    let startup = false;
+    // first check if have another role in the organization and check if exist clinics for that role
+    // if not, send attribute startup to front end to show the startup page
+    const otherRoles = await this.prisma.user.findMany({
+      where: {
+        organizationId: matchingUser.organizationId,
+        id: { not: matchingUser.id },
+        isActive: true,
+      },
+      select: { id: true },
+    });
+
+    if (otherRoles.length === 0) {
+      const otherRolesClinics = await this.prisma.clinic.findMany({
+        where: {
+          organizationId: matchingUser.organizationId,
+          users: { some: { userId: { in: otherRoles.map((r) => r.id) } } },
+        },
+        select: { id: true, name: true },
+      });
+
+      if (otherRolesClinics.length === 0) {
+        startup = true;
+      }
+    }
+    return startup;
   }
 }
