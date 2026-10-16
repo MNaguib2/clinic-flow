@@ -73,6 +73,7 @@ The UI currently uses reactive forms, lazy-loaded login/registration pages, shar
 - Use Angular standalone components and existing feature/core/share boundaries. Prefer existing services and shared components over duplicating them.
 - Preserve SSR compatibility and the existing translation, directionality, theme, and design-token patterns.
 - Use strong types and explicit error handling. Do not swallow API/database errors or return success-shaped fallbacks.
+- Follow the project naming conventions: variables and local data members should use snake_case; functions and methods should use camelCase; classes, interfaces, and services should use PascalCase.
 - Make focused changes, include/update relevant tests and directly related documentation, and do not modify unrelated user work.
 - Never copy secrets, `.env` contents, session secrets, passwords, or private key contents into source, documentation, logs, or chat. Use `.env.example` only as a configuration-name reference.
 
