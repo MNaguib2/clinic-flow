@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { currentUserResolver } from './core/auth/current-user.resolver';
 import { Home } from './features/home/home';
+import { user_routes } from './features/user-dashboard/routes/routes';
 
 export const routes: Routes = [
   { path: '', component: Home, pathMatch: 'full' },
@@ -17,16 +18,10 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./features/dashboard/dashboard-shell').then((module) => module.DashboardShell),
+      import('./features/user-dashboard/dashboard-shell').then((module) => module.DashboardShell),
     canActivate: [authGuard],
     resolve: { currentUser: currentUserResolver },
-    children: [
-      {
-        path: '',
-        loadComponent: () =>
-          import('./features/dashboard/dashboard-home').then((module) => module.DashboardHome),
-      },
-    ],
+    children: user_routes,
   },
   { path: '**', redirectTo: '' },
 ];
