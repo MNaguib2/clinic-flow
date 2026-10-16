@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { currentUserResolver } from './core/auth/current-user.resolver';
 import { Home } from './features/home/home';
-import { userRoutes } from './features/user-dashboard/routes/routes';
+import { user_routes } from './features/user-dashboard/routes/routes';
 
 export const routes: Routes = [
   { path: '', component: Home, pathMatch: 'full' },
@@ -21,7 +21,7 @@ export const routes: Routes = [
       import('./features/user-dashboard/dashboard-shell').then((module) => module.DashboardShell),
     canActivate: [authGuard],
     resolve: { currentUser: currentUserResolver },
-    children: userRoutes,
+    children: user_routes,
   },
   { path: '**', redirectTo: '' },
 ];
