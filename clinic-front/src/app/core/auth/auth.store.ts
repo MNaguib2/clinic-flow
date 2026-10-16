@@ -54,8 +54,8 @@ interface RegistrationResponse {
 
 interface AuthState {
   user: AuthUser | null;
+  client: any;
   isLoading: boolean;
-  isRefreshing: boolean;
   isInitialized: boolean;
   error: AuthError | null;
   isRegistering: boolean;
@@ -86,8 +86,8 @@ function getErrorMessage(error: unknown): AuthError {
 
 const initialState: AuthState = {
   user: null,
+  client: null,
   isLoading: false,
-  isRefreshing: false,
   isInitialized: false,
   error: null,
   isRegistering: false,
@@ -191,7 +191,7 @@ export const AuthStore = signalStore(
       const session = readStoredSession();
       if (!session) return of(false);
 
-      patchState(store, { isRefreshing: true, error: null });
+      patchState(store, { isLoading: true, error: null });
       const request = http
         .post<AuthResponse>(
           `${apiUrl}/users/refresh`,
@@ -220,7 +220,7 @@ export const AuthStore = signalStore(
           }),
           finalize(() => {
             refreshRequest = undefined;
-            patchState(store, { isRefreshing: false });
+            patchState(store, { isLoading: false });
           }),
           shareReplay({ bufferSize: 1, refCount: false }),
         );
@@ -280,7 +280,6 @@ export const AuthStore = signalStore(
         patchState(store, {
           user: null,
           isLoading: false,
-          isRefreshing: false,
           isInitialized: true,
           error: null,
         });

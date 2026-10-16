@@ -4,13 +4,21 @@ import { CanActivateFn, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { AuthStore } from './auth.store';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (route) => {
   const store = inject(AuthStore);
   const router = inject(Router);
 
   if (!isPlatformBrowser(inject(PLATFORM_ID))) return true;
 
-  return store
-    .initialize()
-    .pipe(map((isAuthenticated) => (isAuthenticated ? true : router.createUrlTree(['/login']))));
+  return store.initialize().pipe(
+    map((isAuthenticated) => {
+      const currentUrl = route.routeConfig?.path ?? '';
+
+      if (currentUrl === 'login') {
+        return isAuthenticated ? router.createUrlTree(['/dashboard']) : true;
+      }
+
+      return isAuthenticated ? true : router.createUrlTree(['/login']);
+    }),
+  );
 };

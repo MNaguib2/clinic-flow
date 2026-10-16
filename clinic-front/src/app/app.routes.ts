@@ -8,6 +8,7 @@ export const routes: Routes = [
   { path: '', component: Home, pathMatch: 'full' },
   {
     path: 'login',
+    canActivate: [authGuard],
     loadComponent: () => import('./features/login/login-page').then((module) => module.LoginPage),
   },
   {
