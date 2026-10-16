@@ -61,6 +61,24 @@ model Permission {
   @@map("permissions")
 }
 
+model Drug {
+  id               BigInt       @id @default(autoincrement())
+  name             String       @db.VarChar(200)
+  activeIngredient String?      @map("active_ingredient") @db.VarChar(200)
+  concentration    String?      @db.VarChar(100)
+  dosageForm       String?      @map("dosage_form") @db.VarChar(100)
+  description      String?      @db.Text
+  isActive         Boolean      @default(true) @map("is_active")
+  createdAt        DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt        DateTime     @updatedAt @map("updated_at") @db.DateTime(6)
+  doctorEntries    DoctorDrug[]
+
+  @@index([name])
+  @@index([activeIngredient])
+  @@index([isActive, name])
+  @@map("drugs")
+}
+
 model UnitCategory {
   id            BigInt   @id @default(autoincrement())
   name          String   @unique @db.VarChar(100)
@@ -99,39 +117,68 @@ model Clinic {
 }
 
 model User {
-  id                       BigInt                 @id @default(autoincrement())
-  organizationId           BigInt                 @map("organization_id")
-  fullName                 String                 @map("full_name") @db.VarChar(150)
-  email                    String                 @unique @db.VarChar(255)
-  phoneNumber              String?                @map("phone_number") @db.VarChar(30)
-  birthday                 DateTime?              @db.Date
-  passwordHash             String                 @map("password_hash") @db.Text
-  isActive                 Boolean                @default(true) @map("is_active")
-  lastLoginAt              DateTime?              @map("last_login_at") @db.DateTime(6)
-  createdAt                DateTime               @default(now()) @map("created_at") @db.DateTime(6)
-  updatedAt                DateTime               @updatedAt @map("updated_at") @db.DateTime(6)
-  organization             Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  roles                    UserRole[]
-  clinics                  ClinicUser[]
-  specialties              DoctorSpecialty[]
-  doctorSchedules          DoctorSchedule[]
-  openedCases              MedicalCase[]          @relation("MedicalCaseOpenedBy")
-  appointments             Appointment[]          @relation("AppointmentDoctor")
-  visits                   Visit[]
-  attachments              Attachment[]
-  createdInvoices          Invoice[]              @relation("InvoiceCreatedBy")
-  createdPayments          Payment[]              @relation("PaymentCreatedBy")
-  inventoryTransactions    InventoryTransaction[]
-  createdExpenses          Expense[]              @relation("ExpenseCreatedBy")
-  createdRecurringExpenses RecurringExpense[]     @relation("RecurringExpenseCreatedBy")
-  refreshTokens            RefreshToken[]
-  loginSessions            LoginSession[]
-  passwordResetTokens      PasswordResetToken[]
-  auditLogs                AuditLog[]
+  id                         BigInt                 @id @default(autoincrement())
+  organizationId             BigInt                 @map("organization_id")
+  fullName                   String                 @map("full_name") @db.VarChar(150)
+  email                      String                 @unique @db.VarChar(255)
+  phoneNumber                String?                @map("phone_number") @db.VarChar(30)
+  birthday                   DateTime?              @db.Date
+  passwordHash               String                 @map("password_hash") @db.Text
+  isActive                   Boolean                @default(true) @map("is_active")
+  lastLoginAt                DateTime?              @map("last_login_at") @db.DateTime(6)
+  createdAt                  DateTime               @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt                  DateTime               @updatedAt @map("updated_at") @db.DateTime(6)
+  certifications             Json?                  @db.Json
+  previousWorkingExperiences Json?                  @map("previous_working_experiences") @db.Json
+  currentWorkingExperiences  Json?                  @map("current_working_experiences") @db.Json
+  jobTitle                   String?                @map("job_title") @db.VarChar(100)
+  portfolioUrl               String?                @map("portfolio_url") @db.Text
+  organization               Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  roles                      UserRole[]
+  clinics                    ClinicUser[]
+  specialties                DoctorSpecialty[]
+  doctorSchedules            DoctorSchedule[]
+  openedCases                MedicalCase[]          @relation("MedicalCaseOpenedBy")
+  appointments               Appointment[]          @relation("AppointmentDoctor")
+  visits                     Visit[]
+  attachments                Attachment[]
+  createdInvoices            Invoice[]              @relation("InvoiceCreatedBy")
+  createdPayments            Payment[]              @relation("PaymentCreatedBy")
+  inventoryTransactions      InventoryTransaction[]
+  createdExpenses            Expense[]              @relation("ExpenseCreatedBy")
+  createdRecurringExpenses   RecurringExpense[]     @relation("RecurringExpenseCreatedBy")
+  refreshTokens              RefreshToken[]
+  loginSessions              LoginSession[]
+  passwordResetTokens        PasswordResetToken[]
+  auditLogs                  AuditLog[]
+  doctorDrugs                DoctorDrug[]
 
   @@unique([organizationId, id])
   @@index([organizationId])
   @@map("users")
+}
+
+model DoctorDrug {
+  id                  BigInt             @id @default(autoincrement())
+  userId              BigInt             @map("user_id")
+  drugId              BigInt?            @map("drug_id")
+  customName          String?            @map("custom_name") @db.VarChar(200)
+  customDescription   String?            @map("custom_description") @db.Text
+  defaultDosage       String?            @map("default_dosage") @db.VarChar(100)
+  defaultFrequency    String?            @map("default_frequency") @db.VarChar(100)
+  defaultDuration     String?            @map("default_duration") @db.VarChar(100)
+  defaultInstructions String?            @map("default_instructions") @db.Text
+  isFavorite          Boolean            @default(false) @map("is_favorite")
+  createdAt           DateTime           @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt           DateTime           @updatedAt @map("updated_at") @db.DateTime(6)
+  doctor              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  drug                Drug?              @relation(fields: [drugId], references: [id], onDelete: Restrict)
+  prescriptionItems   PrescriptionItem[]
+
+  @@unique([userId, drugId])
+  @@index([userId])
+  @@index([drugId])
+  @@map("doctor_drugs")
 }
 
 model Role {
@@ -432,6 +479,7 @@ model Prescription {
 model PrescriptionItem {
   id             BigInt       @id @default(autoincrement())
   prescriptionId BigInt       @map("prescription_id")
+  doctorDrugId   BigInt?      @map("doctor_drug_id")
   medicationName String       @map("medication_name") @db.VarChar(200)
   dosage         String?      @db.VarChar(100)
   frequency      String?      @db.VarChar(100)
@@ -439,7 +487,10 @@ model PrescriptionItem {
   instructions   String?      @db.Text
   createdAt      DateTime     @default(now()) @map("created_at") @db.DateTime(6)
   prescription   Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  doctorDrug     DoctorDrug?  @relation(fields: [doctorDrugId], references: [id], onDelete: SetNull)
 
+  @@index([prescriptionId])
+  @@index([doctorDrugId])
   @@map("prescription_items")
 }
 
@@ -654,9 +705,12 @@ model ExpenseCategory {
   id                BigInt             @id @default(autoincrement())
   organizationId    BigInt             @map("organization_id")
   name              String             @db.VarChar(150)
+
+  // Used for personal drugs or a doctor's custom display name.
   description       String?            @db.Text
   isActive          Boolean            @default(true) @map("is_active")
   createdAt         DateTime           @default(now()) @map("created_at") @db.DateTime(6)
+  // Optional defaults to speed up prescription entry.
   updatedAt         DateTime           @updatedAt @map("updated_at") @db.DateTime(6)
   organization      Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   expenses          Expense[]
@@ -741,6 +795,8 @@ model LoginSession {
   id             BigInt        @id @default(autoincrement())
   userId         BigInt        @map("user_id")
   refreshTokenId BigInt?       @map("refresh_token_id")
+
+  // Historical snapshots: do not derive these from the catalog later.
   deviceName     String?       @map("device_name") @db.VarChar(150)
   deviceType     String?       @map("device_type") @db.VarChar(50)
   ipAddress      String?       @map("ip_address") @db.VarChar(45)

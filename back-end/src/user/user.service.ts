@@ -25,6 +25,8 @@ export class UserService {
         fullName: true,
         phoneNumber: true,
         passwordHash: true,
+        jobTitle: true,
+        specialties: true,
       },
     });
 
@@ -39,6 +41,20 @@ export class UserService {
 
     if (matchingUserCount !== 1 || !matchingUser) {
       throw new UnauthorizedException('Invalid phone or password');
+    }
+
+    const clinics = await this.prisma.clinic.findMany({
+      where: {
+        organizationId: matchingUser.organizationId,
+        users: { some: { userId: matchingUser.id } },
+      },
+      select: { id: true, name: true },
+    });
+
+    if (clinics.length === 0) {
+      throw new UnauthorizedException(
+        'User is not associated with any clinics in the organization',
+      );
     }
 
     const user = matchingUser;
