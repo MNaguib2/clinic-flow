@@ -5,6 +5,7 @@
 /src/generated/prisma
 
 # Logs
+/log/*
 logs
 *.log
 npm-debug.log*

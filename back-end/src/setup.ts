@@ -8,6 +8,13 @@ import { sessionConfig } from './core/config/session.config';
 import { PrismaSessionStore } from './core/session/session.store';
 import { PrismaService } from './core/service/prisma.service';
 import { sessionUserMiddleware } from './core/middleware/session-user.middleware';
+import { HttpAdapterHost } from '@nestjs/core';
+import { LocalizedHttpExceptionFilter } from './core/filters/localized-http-exception.filter';
+import {
+  getApiLanguage,
+  translateApiMessage,
+} from './core/i18n/error-translations';
+import { PrismaQueryContextInterceptor } from './core/database/prisma-query-context.interceptor';
 
 export async function setup(app: NestFastifyApplication<RawServerDefault>) {
   // Add any setup logic here
@@ -16,11 +23,14 @@ export async function setup(app: NestFastifyApplication<RawServerDefault>) {
     global: true,
     max: 8000, // 100 requests
     timeWindow: '15 minute', // per minute, per IP
-    errorResponseBuilder: (_req, context) => ({
-      statusCode: 429,
-      error: 'Too Many Requests',
-      message: `🚫 Rate limit exceeded, retry in ${context.after}`,
-    }),
+    errorResponseBuilder: (request, context) => {
+      const language = getApiLanguage(request.headers['accept-language']);
+      return {
+        statusCode: 429,
+        error: translateApiMessage('Too Many Requests', language),
+        message: `${translateApiMessage('Rate limit exceeded', language)}, ${translateApiMessage('retry in', language)} ${context.after}`,
+      };
+    },
   });
 
   // Cookie
@@ -54,7 +64,13 @@ export async function setup(app: NestFastifyApplication<RawServerDefault>) {
     origin: true, // Change to your domain in production
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Accept',
+      'Accept-Language',
+      'X-Requested-With',
+    ],
   });
 
   // ✅ Global validation pipe
@@ -65,6 +81,13 @@ export async function setup(app: NestFastifyApplication<RawServerDefault>) {
       transform: true, // Auto-transform payloads to DTO types
     }),
   );
+
+  app.useGlobalFilters(
+    new LocalizedHttpExceptionFilter(app.get(HttpAdapterHost)),
+  );
+  if (process.env.NODE_ENV === 'dev') {
+    app.useGlobalInterceptors(new PrismaQueryContextInterceptor());
+  }
 
   // ✅ Enable graceful shutdown
   app.enableShutdownHooks();

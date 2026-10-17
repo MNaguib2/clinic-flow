@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaClient } from '../../../generated/prisma/client';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import { prismaQueryContext } from '../database/prisma-query-context';
 
 @Injectable()
 export class PrismaService
@@ -19,8 +20,22 @@ export class PrismaService
     if (!databaseUrl) {
       throw new Error('DATABASE_URL is not set.');
     }
+    const is_dev = process.env.NODE_ENV === 'dev';
 
-    super({ adapter: new PrismaMariaDb(databaseUrl) });
+    super({
+      adapter: new PrismaMariaDb(databaseUrl),
+      ...(is_dev
+        ? { log: [{ emit: 'event' as const, level: 'query' as const }] }
+        : {}),
+    });
+
+    if (is_dev) {
+      const clientWithQueryEvents = this as unknown as PrismaClient<'query'>;
+      clientWithQueryEvents.$on('query', (event) => {
+        const request = prismaQueryContext.getStore();
+        if (request) request.lastDatabaseQuery = event.query;
+      });
+    }
   }
 
   async onModuleInit(): Promise<void> {

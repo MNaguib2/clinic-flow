@@ -25,7 +25,13 @@ describe('AuthStore', () => {
       providers: [
         AuthStore,
         { provide: API_URL, useValue: '/api' },
-        { provide: DOCUMENT, useValue: { defaultView: { localStorage: storage } } },
+        {
+          provide: DOCUMENT,
+          useValue: {
+            documentElement: { lang: 'en' },
+            defaultView: { localStorage: storage },
+          },
+        },
         provideHttpClient(withInterceptors([httpAuthInterceptor])),
         provideHttpClientTesting(),
       ],
@@ -57,6 +63,7 @@ describe('AuthStore', () => {
     expect(request.request.body).toEqual(credentials);
     expect(request.request.withCredentials).toBe(true);
     expect(request.request.credentials).toBe('include');
+    expect(request.request.headers.get('Accept-Language')).toBe('en');
     expect(store.isLoading()).toBe(true);
 
     request.flush({
@@ -75,6 +82,22 @@ describe('AuthStore', () => {
     expect(JSON.parse(storage.getItem('clinicflow-auth') ?? '{}')).toEqual({
       refreshToken: 'token',
       expiresAt: '2026-10-15T07:00:00.000Z',
+    });
+  });
+
+  it('sends the selected Arabic language in the request header', () => {
+    TestBed.inject(DOCUMENT).documentElement.lang = 'ar';
+
+    store
+      .login({ phone: '+15551234567', password: 'secure-password', remember_me: true })
+      .subscribe();
+    const request = http.expectOne('/api/users/login');
+
+    expect(request.request.headers.get('Accept-Language')).toBe('ar');
+    request.flush({
+      user: { id: '42', organizationId: '7', fullName: 'Clinic User', phone: '+15551234567' },
+      refresh_token: 'token',
+      refresh_token_expires_at: '2026-10-15T07:00:00.000Z',
     });
   });
 
