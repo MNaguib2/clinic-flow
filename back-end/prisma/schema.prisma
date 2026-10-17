@@ -203,6 +203,9 @@ model Role {
 model OrganizationSettings {
   organizationId BigInt       @id @map("organization_id")
   currencyCode   String       @default("EGP") @map("currency_code") @db.VarChar(10)
+  country        String?      @db.VarChar(100)
+  city           String?      @db.VarChar(100)
+  language       String       @default("en") @db.VarChar(10)
   timezone       String       @default("Africa/Cairo") @db.VarChar(100)
   createdAt      DateTime     @default(now()) @map("created_at") @db.DateTime(6)
   updatedAt      DateTime     @updatedAt @map("updated_at") @db.DateTime(6)
