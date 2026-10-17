@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,11 +8,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AuthStore } from '@core/auth/auth.store';
+import { AuthStore, getErrorMessage } from '@core/auth/auth.store';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PhoneInputDirective } from '@share/phone-input/phone-input.directive';
 import { ShareModule } from '@share/share.module';
+import { finalize } from 'rxjs';
 
 const matchingPasswords: ValidatorFn = (
   control: AbstractControl,
@@ -32,6 +33,9 @@ export class RegisterPage {
   private readonly languageService = inject(LanguageService);
   protected readonly authStore = inject(AuthStore);
   protected readonly language = this.languageService.language;
+  protected readonly isRegistering = signal(false);
+  protected readonly registrationError = signal<string | null>(null);
+  protected readonly isRegistered = signal(false);
   protected readonly form = this.formBuilder.nonNullable.group(
     {
       organizationTitle: ['', [Validators.required, Validators.maxLength(150)]],
@@ -53,11 +57,20 @@ export class RegisterPage {
   }
 
   protected submit(): void {
-    if (this.form.invalid || this.authStore.isRegistering()) {
+    if (this.form.invalid || this.isRegistering()) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.authStore.register(this.form.getRawValue()).subscribe();
+    this.isRegistering.set(true);
+    this.registrationError.set(null);
+    this.isRegistered.set(false);
+    this.authStore
+      .register(this.form.getRawValue())
+      .pipe(finalize(() => this.isRegistering.set(false)))
+      .subscribe({
+        next: () => this.isRegistered.set(true),
+        error: (error: unknown) => this.registrationError.set(getErrorMessage(error)),
+      });
   }
 }

@@ -72,9 +72,9 @@
           <span>{{ copy.rememberMe }}</span>
         </label>
 
-        @if (authStore.error(); as error) {
+        @if (error(); as error) {
           <p class="form-message form-error" role="alert">
-            {{ error.kind === 'generic' ? copy.genericError : error.message }}
+            {{ error }}
           </p>
         }
         @if (authStore.user()) {

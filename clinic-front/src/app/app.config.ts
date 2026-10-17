@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import arabicTranslation from '../public/locale/ar.json';
 import englishTranslation from '../public/locale/en.json';
 import { API_URL } from '@core/config/app.config';
-import { httpErrorInterceptor } from '@core/interceptors/http-error.interceptor';
+import { httpAuthInterceptor } from '@core/interceptors/http-auth.interceptor';
 
 const loadTranslation = () => ({
   getTranslation: (language: string) => of(language === 'ar' ? arabicTranslation : englishTranslation),
@@ -24,7 +24,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([httpErrorInterceptor])),
+    provideHttpClient(withInterceptors([httpAuthInterceptor])),
     provideClientHydration(),
     ...clinicTranslationProviders,
     {

@@ -1,71 +1,20 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { inject, PLATFORM_ID } from '@angular/core';
-import { API_URL } from '@core/config/app.config';
+import { API_URL, MAX_TIMEOUT_MS, REFRESH_EARLY_MS, SESSION_STORAGE_KEY } from '@core/config/app.config';
+import type {
+  AuthResponse,
+  AuthState,
+  LoginRequest,
+  RegisterRequest,
+  RegistrationResponse,
+  SessionResponse,
+  StoredAuthSession,
+} from '@core/interfaces/auth.interfaces';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
-import { catchError, defer, EMPTY, finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
+import { catchError, defer, finalize, map, Observable, of, shareReplay, tap, throwError } from 'rxjs';
 
-const SESSION_STORAGE_KEY = 'clinicflow-auth';
-const REFRESH_EARLY_MS = 5 * 60 * 1000;
-const MAX_TIMEOUT_MS = 2_147_483_647;
-
-export interface AuthUser {
-  id: string;
-  organizationId: string;
-  fullName: string;
-  phone: string | null;
-}
-
-export interface LoginRequest {
-  phone: string;
-  password: string;
-  remember_me: boolean;
-}
-
-export interface RegisterRequest {
-  organizationTitle: string;
-  userName: string;
-  phone: string;
-  email: string;
-  birthday: string;
-  password: string;
-  confirmPassword: string;
-}
-
-interface AuthResponse {
-  user: AuthUser;
-  refresh_token: string;
-  refresh_token_expires_at: string;
-}
-
-interface SessionResponse {
-  user: AuthUser;
-}
-
-interface StoredAuthSession {
-  refreshToken: string;
-  expiresAt: string;
-}
-
-interface RegistrationResponse {
-  organization: { id: string; name: string };
-  user: { id: string; fullName: string; email: string };
-}
-
-interface AuthState {
-  user: AuthUser | null;
-  client: any;
-  isLoading: boolean;
-  isInitialized: boolean;
-  error: AuthError | null;
-  isRegistering: boolean;
-  registrationError: AuthError | null;
-  isRegistered: boolean;
-}
-
-type AuthError = { kind: 'api'; message: string } | { kind: 'generic' };
-
-function getErrorMessage(error: unknown): AuthError {
+export function getErrorMessage(error: unknown): string {
   if (
     typeof error === 'object' &&
     error !== null &&
@@ -75,24 +24,17 @@ function getErrorMessage(error: unknown): AuthError {
     'message' in error.error
   ) {
     const message = error.error.message;
-    if (typeof message === 'string') return { kind: 'api', message };
-    if (Array.isArray(message) && message.every((item) => typeof item === 'string')) {
-      return { kind: 'api', message: message.join(' ') };
-    }
+    if (typeof message === 'string') return message;
+    return 'An unknown error occurred.';
   }
 
-  return { kind: 'generic' };
+  return 'An unknown error occurred.';
 }
 
 const initialState: AuthState = {
   user: null,
   client: null,
   isLoading: false,
-  isInitialized: false,
-  error: null,
-  isRegistering: false,
-  registrationError: null,
-  isRegistered: false,
 };
 
 export const AuthStore = signalStore(
@@ -106,6 +48,7 @@ export const AuthStore = signalStore(
     let refreshTimer: ReturnType<typeof setTimeout> | undefined;
     let initializationRequest: Observable<boolean> | undefined;
     let refreshRequest: Observable<boolean> | undefined;
+    let activeHttpRequests = 0;
 
     const getStorage = (): Storage | null =>
       isBrowser ? (document.defaultView?.localStorage ?? null) : null;
@@ -168,6 +111,7 @@ export const AuthStore = signalStore(
     };
 
     const scheduleRefresh = (expiresAt: string): void => {
+      console.log("🚀 ~ scheduleRefresh ~ expiresAt:", expiresAt)
       clearRefreshTimer();
       if (!isBrowser) return;
 
@@ -191,12 +135,10 @@ export const AuthStore = signalStore(
       const session = readStoredSession();
       if (!session) return of(false);
 
-      patchState(store, { isLoading: true, error: null });
       const request = http
         .post<AuthResponse>(
           `${apiUrl}/users/refresh`,
           { refresh_token: session.refreshToken },
-          { withCredentials: true, credentials: 'include' },
         )
         .pipe(
           tap((response) => {
@@ -204,23 +146,18 @@ export const AuthStore = signalStore(
             scheduleRefresh(response.refresh_token_expires_at);
             patchState(store, {
               user: response.user,
-              isInitialized: true,
-              error: null,
             });
           }),
           map(() => true),
-          catchError((error: unknown) => {
+          catchError(() => {
             clearStoredSession();
             patchState(store, {
               user: null,
-              isInitialized: true,
-              error: getErrorMessage(error),
             });
             return of(false);
           }),
           finalize(() => {
             refreshRequest = undefined;
-            patchState(store, { isLoading: false });
           }),
           shareReplay({ bufferSize: 1, refCount: false }),
         );
@@ -236,24 +173,19 @@ export const AuthStore = signalStore(
         .post<SessionResponse>(
           `${apiUrl}/users/rbac`,
           {},
-          { withCredentials: true, credentials: 'include' },
         )
         .pipe(
           tap((response) => {
             scheduleRefresh(session.expiresAt);
             patchState(store, {
               user: response.user,
-              isInitialized: true,
-              error: null,
             });
           }),
           map(() => true),
-          catchError((error: unknown) => {
+          catchError(() => {
             clearStoredSession();
             patchState(store, {
               user: null,
-              isInitialized: true,
-              error: getErrorMessage(error),
             });
             return of(false);
           }),
@@ -261,9 +193,17 @@ export const AuthStore = signalStore(
     };
 
     return {
+      beginHttpRequest(): void {
+        activeHttpRequests += 1;
+        patchState(store, { isLoading: true });
+      },
+      endHttpRequest(): void {
+        activeHttpRequests = Math.max(0, activeHttpRequests - 1);
+        patchState(store, { isLoading: activeHttpRequests > 0 });
+      },
       initialize(): Observable<boolean> {
         if (!isBrowser) return of(false);
-        if (store.isInitialized()) return of(store.user() !== null);
+        if (store.user()) return of(true);
         if (initializationRequest) return initializationRequest;
 
         initializationRequest = defer(() => confirmStoredSession()).pipe(
@@ -279,65 +219,32 @@ export const AuthStore = signalStore(
         clearRefreshTimer();
         patchState(store, {
           user: null,
-          isLoading: false,
-          isInitialized: true,
-          error: null,
         });
       },
       login(credentials: LoginRequest) {
         clearStoredSession();
-        patchState(store, {
-          user: null,
-          isLoading: true,
-          isInitialized: false,
-          error: null,
-        });
+        patchState(store, { user: null });
         return http
-          .post<AuthResponse>(`${apiUrl}/users/login`, credentials, {
-            withCredentials: true,
-          })
+          .post<AuthResponse>(`${apiUrl}/users/login`, credentials)
           .pipe(
             tap((response) => {
               saveSession(response);
               scheduleRefresh(response.refresh_token_expires_at);
               patchState(store, {
                 user: response.user,
-                isLoading: false,
-                isInitialized: true,
               });
             }),
             catchError((error: unknown) => {
               clearStoredSession();
               patchState(store, {
                 user: null,
-                isLoading: false,
-                isInitialized: true,
-                error: getErrorMessage(error),
               });
-              return EMPTY;
+              return throwError(() => error);
             }),
           );
       },
       register(details: RegisterRequest) {
-        patchState(store, {
-          isRegistering: true,
-          registrationError: null,
-          isRegistered: false,
-        });
-        return http
-          .post<RegistrationResponse>('/api/organizations/register', details, {
-            withCredentials: true,
-          })
-          .pipe(
-            tap(() => patchState(store, { isRegistering: false, isRegistered: true })),
-            catchError((error: unknown) => {
-              patchState(store, {
-                isRegistering: false,
-                registrationError: getErrorMessage(error),
-              });
-              return EMPTY;
-            }),
-          );
+        return http.post<RegistrationResponse>('/api/organizations/register', details);
       },
     };
   }),

@@ -29,7 +29,7 @@
       <h1 id="register-title">{{ copy.title }}</h1>
       <p class="register-description">{{ copy.description }}</p>
 
-      @if (authStore.isRegistered()) {
+      @if (isRegistered()) {
         <p class="form-message form-success" role="status">{{ copy.success }}</p>
         <a class="login-link" routerLink="/login">{{ copy.backToLogin }}</a>
       } @else {
@@ -147,18 +147,18 @@
             </div>
           </div>
 
-          @if (authStore.registrationError(); as error) {
+          @if (registrationError(); as error) {
             <p class="form-message form-error" role="alert">
-              {{ error.kind === 'generic' ? copy.genericError : error.message }}
+              {{ error }}
             </p>
           }
 
           <app-ui-button
             type="submit"
             class="submit-button"
-            [disabled]="authStore.isRegistering()"
+            [disabled]="isRegistering()"
           >
-            {{ authStore.isRegistering() ? copy.submitting : copy.submit }}
+            {{ isRegistering() ? copy.submitting : copy.submit }}
           </app-ui-button>
         </form>
 

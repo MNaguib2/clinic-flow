@@ -1,10 +1,12 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { API_URL } from '@core/config/app.config';
+import { httpAuthInterceptor } from '@core/interceptors/http-auth.interceptor';
+import type { LoginRequest, RegisterRequest } from '@core/interfaces/auth.interfaces';
 import { afterEach, vi } from 'vitest';
-import { AuthStore, LoginRequest, RegisterRequest } from './auth.store';
+import { AuthStore } from './auth.store';
 
 describe('AuthStore', () => {
   let store: InstanceType<typeof AuthStore>;
@@ -24,7 +26,7 @@ describe('AuthStore', () => {
         AuthStore,
         { provide: API_URL, useValue: '/api' },
         { provide: DOCUMENT, useValue: { defaultView: { localStorage: storage } } },
-        provideHttpClient(),
+        provideHttpClient(withInterceptors([httpAuthInterceptor])),
         provideHttpClientTesting(),
       ],
     });
@@ -54,6 +56,7 @@ describe('AuthStore', () => {
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual(credentials);
     expect(request.request.withCredentials).toBe(true);
+    expect(request.request.credentials).toBe('include');
     expect(store.isLoading()).toBe(true);
 
     request.flush({
@@ -69,7 +72,6 @@ describe('AuthStore', () => {
 
     expect(store.user()?.fullName).toBe('Clinic User');
     expect(store.isLoading()).toBe(false);
-    expect(store.error()).toBeNull();
     expect(JSON.parse(storage.getItem('clinicflow-auth') ?? '{}')).toEqual({
       refreshToken: 'token',
       expiresAt: '2026-10-15T07:00:00.000Z',
@@ -132,6 +134,7 @@ describe('AuthStore', () => {
     const request = http.expectOne('/api/users/rbac');
     expect(request.request.body).toEqual({});
     expect(request.request.withCredentials).toBe(true);
+    expect(request.request.credentials).toBe('include');
 
     request.flush({
       user: {
@@ -150,14 +153,15 @@ describe('AuthStore', () => {
     http.expectNone('/api/users/refresh');
   });
 
-  it('exposes API login errors to the page', () => {
+  it('propagates login errors to the page', () => {
+    let loginError: unknown;
     store
       .login({
         phone: '+15551234567',
         password: 'wrong-password',
         remember_me: false,
       })
-      .subscribe();
+      .subscribe({ error: (error: unknown) => (loginError = error) });
     const request = http.expectOne('/api/users/login');
 
     request.flush(
@@ -167,10 +171,7 @@ describe('AuthStore', () => {
 
     expect(store.user()).toBeNull();
     expect(store.isLoading()).toBe(false);
-    expect(store.error()).toEqual({
-      kind: 'api',
-      message: 'Invalid phone or password',
-    });
+    expect(loginError).toMatchObject({ status: 401 });
   });
 
   it('logs out the current user and clears the persisted session', () => {
@@ -198,11 +199,10 @@ describe('AuthStore', () => {
     store.logout();
 
     expect(store.user()).toBeNull();
-    expect(store.isInitialized()).toBe(true);
     expect(storage.getItem('clinicflow-auth')).toBeNull();
   });
 
-  it('registers a clinic and exposes the success state', () => {
+  it('sends a clinic registration request', () => {
     const details: RegisterRequest = {
       organizationTitle: 'ClinicFlow Demo',
       userName: 'Clinic Admin',
@@ -219,15 +219,44 @@ describe('AuthStore', () => {
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual(details);
     expect(request.request.withCredentials).toBe(true);
-    expect(store.isRegistering()).toBe(true);
+    expect(request.request.credentials).toBe('include');
 
     request.flush({
       organization: { id: '7', name: details.organizationTitle },
       user: { id: '42', fullName: details.userName, email: details.email },
     });
+  });
 
-    expect(store.isRegistered()).toBe(true);
-    expect(store.isRegistering()).toBe(false);
-    expect(store.registrationError()).toBeNull();
+  it('keeps loading active until all concurrent requests finish', () => {
+    store.login({
+      phone: '+15551234567',
+      password: 'secure-password',
+      remember_me: false,
+    }).subscribe();
+    store.register({
+      organizationTitle: 'ClinicFlow Demo',
+      userName: 'Clinic Admin',
+      phone: '+15551234567',
+      email: 'admin@example.com',
+      birthday: '1990-01-01',
+      password: 'secure-password',
+      confirmPassword: 'secure-password',
+    }).subscribe();
+
+    const loginRequest = http.expectOne('/api/users/login');
+    const registrationRequest = http.expectOne('/api/organizations/register');
+    expect(store.isLoading()).toBe(true);
+
+    loginRequest.flush(
+      { message: 'Invalid phone or password' },
+      { status: 401, statusText: 'Unauthorized' },
+    );
+
+    expect(store.isLoading()).toBe(true);
+    registrationRequest.flush({
+      organization: { id: '7', name: 'ClinicFlow Demo' },
+      user: { id: '42', fullName: 'Clinic Admin', email: 'admin@example.com' },
+    });
+    expect(store.isLoading()).toBe(false);
   });
 });

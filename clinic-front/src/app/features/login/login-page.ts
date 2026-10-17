@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthStore } from '@core/auth/auth.store';
+import { AuthStore, getErrorMessage } from '@core/auth/auth.store';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PhoneInputDirective } from '@share/phone-input/phone-input.directive';
@@ -19,6 +19,7 @@ export class LoginPage {
   private readonly router = inject(Router);
   protected readonly authStore = inject(AuthStore);
   protected readonly language = this.languageService.language;
+  protected readonly error = signal<string | null>(null);
   protected readonly form = this.formBuilder.nonNullable.group({
     phone: ['', Validators.required],
     password: ['', [Validators.required, Validators.maxLength(72)]],
@@ -35,8 +36,10 @@ export class LoginPage {
       return;
     }
 
+    this.error.set(null);
     this.authStore.login(this.form.getRawValue()).subscribe({
       next: () => this.router.navigateByUrl('/dashboard'),
+      error: (error: unknown) => this.error.set(getErrorMessage(error)),
     });
   }
 }
