@@ -53,7 +53,7 @@ export class LocalizedHttpExceptionFilter implements ExceptionFilter {
     try {
       await mkdir(log_directory, { recursive: true });
       await appendFile(
-        join(log_directory, 'error.jsonl'),
+        join(log_directory, 'error.json'),
         `${JSON.stringify(log_entry)}\n`,
         'utf8',
       );
