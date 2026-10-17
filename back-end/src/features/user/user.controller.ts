@@ -13,8 +13,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import type { FastifyRequest } from 'fastify';
-import { CurrentUser } from '../core/decorators/current-user.decorator';
-import { AuthGuard } from '../core/guards/auth.guard';
+import { CurrentUser } from '../../core/decorators/current-user.decorator';
+import { AuthGuard } from '../../core/guards/auth.guard';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';

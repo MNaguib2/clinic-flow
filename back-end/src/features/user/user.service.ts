@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { createHash, randomBytes } from 'node:crypto';
-import { PrismaService } from '../core/service/prisma.service';
-import { sessionConfig } from '../core/config/session.config';
+import { PrismaService } from '../../core/service/prisma.service';
+import { sessionConfig } from '../../core/config/session.config';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';

@@ -12,7 +12,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '../core/guards/auth.guard';
+import { AuthGuard } from '../../core/guards/auth.guard';
 import { CreateSpecialtyDto, UpdateSpecialtyDto } from './dto/specialty.dto';
 import { SpecialtyService } from './specialty.service';
 import { ToPublicInterceptor } from './interceptor/to-public-interceptor';

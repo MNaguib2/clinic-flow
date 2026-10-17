@@ -11,8 +11,8 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { CurrentUser } from '../core/decorators/current-user.decorator';
-import { AuthGuard } from '../core/guards/auth.guard';
+import { CurrentUser } from '../../core/decorators/current-user.decorator';
+import { AuthGuard } from '../../core/guards/auth.guard';
 import { ClinicService } from './clinic.service';
 import { CreateClinicDto, UpdateClinicDto } from './dto/clinic.dto';
 import { ToPublicClinicInterceptor } from './interceptor/to-public-clinic.interceptor';

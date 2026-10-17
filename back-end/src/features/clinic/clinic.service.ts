@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../core/service/prisma.service';
+import { PrismaService } from '../../core/service/prisma.service';
 import { CreateClinicDto, UpdateClinicDto } from './dto/clinic.dto';
 
 const include = { specialties: { include: { specialty: true } } };

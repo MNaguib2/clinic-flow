@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from '../core/service/prisma.service';
+import { PrismaService } from '../../core/service/prisma.service';
 import { RegisterOrganizationDto } from './dto/register-organization.dto';
 
 @Injectable()
