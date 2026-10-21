@@ -38,7 +38,10 @@ export class LoginPage {
 
     this.error.set(null);
     this.authStore.login(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigateByUrl('/dashboard'),
+      next: () =>
+        this.router.navigateByUrl(
+          this.authStore.startup() ? '/dashboard/startup' : '/dashboard',
+        ),
       error: (error: unknown) => this.error.set(getErrorMessage(error)),
     });
   }

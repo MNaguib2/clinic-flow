@@ -14,6 +14,7 @@ model Organization {
   logoUrl             String?                          @map("logo_url") @db.Text
   createdAt           DateTime                         @default(now()) @map("created_at") @db.DateTime(6)
   updatedAt           DateTime                         @updatedAt @map("updated_at") @db.DateTime(6)
+  briefDescription    String?                          @map("brief_description") @db.Text
   clinics             Clinic[]
   users               User[]
   roles               Role[]
@@ -132,6 +133,7 @@ model User {
   previousWorkingExperiences Json?                  @map("previous_working_experiences") @db.Json
   currentWorkingExperiences  Json?                  @map("current_working_experiences") @db.Json
   jobTitle                   String?                @map("job_title") @db.VarChar(100)
+  profileImageUrl            String?                @map("profile_image_url") @db.Text
   portfolioUrl               String?                @map("portfolio_url") @db.Text
   organization               Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   roles                      UserRole[]
@@ -705,9 +707,9 @@ model InventoryTransaction {
 }
 
 model ExpenseCategory {
-  id                BigInt             @id @default(autoincrement())
-  organizationId    BigInt             @map("organization_id")
-  name              String             @db.VarChar(150)
+  id             BigInt @id @default(autoincrement())
+  organizationId BigInt @map("organization_id")
+  name           String @db.VarChar(150)
 
   // Used for personal drugs or a doctor's custom display name.
   description       String?            @db.Text
@@ -795,20 +797,20 @@ model RefreshToken {
 }
 
 model LoginSession {
-  id             BigInt        @id @default(autoincrement())
-  userId         BigInt        @map("user_id")
-  refreshTokenId BigInt?       @map("refresh_token_id")
+  id             BigInt  @id @default(autoincrement())
+  userId         BigInt  @map("user_id")
+  refreshTokenId BigInt? @map("refresh_token_id")
 
   // Historical snapshots: do not derive these from the catalog later.
-  deviceName     String?       @map("device_name") @db.VarChar(150)
-  deviceType     String?       @map("device_type") @db.VarChar(50)
-  ipAddress      String?       @map("ip_address") @db.VarChar(45)
-  lastUsedAt     DateTime?     @map("last_used_at") @db.DateTime(6)
-  expiresAt      DateTime      @map("expires_at") @db.DateTime(6)
-  revokedAt      DateTime?     @map("revoked_at") @db.DateTime(6)
-  createdAt      DateTime      @default(now()) @map("created_at") @db.DateTime(6)
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  refreshToken   RefreshToken? @relation(fields: [refreshTokenId], references: [id], onDelete: SetNull)
+  deviceName   String?       @map("device_name") @db.VarChar(150)
+  deviceType   String?       @map("device_type") @db.VarChar(50)
+  ipAddress    String?       @map("ip_address") @db.VarChar(45)
+  lastUsedAt   DateTime?     @map("last_used_at") @db.DateTime(6)
+  expiresAt    DateTime      @map("expires_at") @db.DateTime(6)
+  revokedAt    DateTime?     @map("revoked_at") @db.DateTime(6)
+  createdAt    DateTime      @default(now()) @map("created_at") @db.DateTime(6)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshToken RefreshToken? @relation(fields: [refreshTokenId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@map("login_sessions")

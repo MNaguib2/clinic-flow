@@ -88,7 +88,7 @@ describe('LocalizedHttpExceptionFilter', () => {
     const log_path = (appendFile as jest.Mock).mock.calls[0][0] as string;
     const log_line = (appendFile as jest.Mock).mock.calls[0][1] as string;
     const log_entry: unknown = JSON.parse(log_line);
-    expect(log_path).toMatch(/log[\\/]error\.jsonl$/);
+    expect(log_path).toMatch(/log[\\/]error\.json$/);
     expect(log_entry).toEqual(
       expect.objectContaining({
         url: '/api/users/login?source=form',

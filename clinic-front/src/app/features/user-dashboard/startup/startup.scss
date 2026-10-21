@@ -1,0 +1,47 @@
+.startup-page { max-width: 1080px; margin: 0 auto; padding: 36px 28px 56px; }
+.startup-heading { margin: 0 0 24px; }
+.startup-heading h1 { margin: 4px 0 8px; font-size: 32px; }
+.startup-heading p { color: var(--clinic-muted); }
+.startup-eyebrow { color: var(--clinic-primary); font-size: 13px; font-weight: 700; }
+.startup-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 24px; border-bottom: 1px solid var(--clinic-line); counter-reset: startup-step; }
+.startup-steps button { min-height: 48px; padding: 10px 8px; border: 0; border-bottom: 3px solid transparent; color: var(--clinic-muted); background: transparent; font: inherit; cursor: pointer; counter-increment: startup-step; }
+.startup-steps button::before { content: counter(startup-step) "."; margin-inline-end: 6px; color: var(--clinic-muted); font-size: 12px; font-weight: 700; }
+.startup-steps button.active { border-color: var(--clinic-primary); color: var(--clinic-primary); font-weight: 700; }
+.startup-section { padding: 24px; border: 1px solid var(--clinic-line); border-radius: 8px; background: var(--clinic-surface); }
+.startup-section h2 { margin: 0 0 8px; font-size: 22px; }
+.startup-grid, .entry-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; }
+.startup-field { display: grid; gap: 6px; min-width: 0; color: var(--clinic-ink); font-size: 14px; font-weight: 600; }
+.startup-field input, .startup-field textarea, .startup-field select { width: 100%; min-width: 0; min-height: 42px; padding: 9px 11px; border: 1px solid var(--clinic-line); border-radius: 4px; color: var(--clinic-ink); background: var(--clinic-paper); font: inherit; font-weight: 400; }
+.profile-preview { display: block; width: 88px; height: 88px; margin-top: 16px; border-radius: 50%; object-fit: cover; }
+.organization-identity { margin: -4px -4px 28px; padding: 0 4px 24px; border-bottom: 1px solid var(--clinic-line); }
+.organization-identity h2 { margin-bottom: 16px; }
+.identity-fields { display: grid; grid-template-columns: minmax(0, 1fr) 104px; align-items: center; gap: 16px 22px; }
+.organization-logo-preview, .organization-logo-placeholder { grid-column: 2; grid-row: 1; width: 104px; height: 104px; border: 1px solid var(--clinic-line); border-radius: 6px; object-fit: contain; background: var(--clinic-surface); }
+.organization-logo-placeholder { display: grid; place-items: center; color: var(--clinic-primary); font-size: 30px; font-weight: 700; }
+.logo-field { grid-column: 1; grid-row: 1; }
+.startup-subsection { margin-top: 28px; }
+.subsection-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.entry-fields { margin: 12px 0; padding: 16px; border: 1px solid var(--clinic-line); border-radius: 6px; }
+.field-wide { grid-column: 1 / -1; }
+.inline-entry { display: flex; align-items: end; gap: 14px; margin: 12px 0; }
+.inline-entry .startup-field { flex: 1; }
+.text-action { padding: 8px 4px; border: 0; color: var(--clinic-primary); background: transparent; font: inherit; font-weight: 700; cursor: pointer; }
+.danger-action { justify-self: start; color: var(--clinic-danger); }
+.empty-state, .startup-status { padding: 18px 0; color: var(--clinic-muted); }
+.startup-error { margin: 16px 0 0; color: var(--clinic-danger); }
+.startup-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; }
+.primary-button, .secondary-button { min-height: 46px; padding: 10px 20px; border: 1px solid var(--clinic-primary); border-radius: 4px; font: inherit; font-weight: 700; cursor: pointer; }
+.primary-button { margin-inline-start: auto; color: var(--clinic-primary-contrast); background: var(--clinic-primary); }
+.primary-button:disabled { opacity: .65; cursor: wait; }
+.secondary-button { color: var(--clinic-primary); background: transparent; }
+@media (max-width: 640px) {
+	.startup-page { padding: 28px 16px 40px; }
+	.startup-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.startup-grid, .entry-fields { grid-template-columns: 1fr; }
+	.field-wide { grid-column: auto; }
+	.startup-section { padding: 20px 14px; }
+	.organization-identity { margin-inline: 0; padding: 16px 12px; }
+	.identity-fields { grid-template-columns: minmax(0, 1fr) 76px; gap: 14px; }
+	.organization-logo-preview, .organization-logo-placeholder { width: 76px; height: 76px; }
+	.inline-entry { align-items: start; }
+}

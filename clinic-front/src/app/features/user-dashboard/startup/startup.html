@@ -1,1 +1,195 @@
-<p>startup works!</p>
+@let copy = 'startup' | translate;
+
+<main class="startup-page" [attr.lang]="language()" [attr.dir]="language() === 'ar' ? 'rtl' : 'ltr'">
+	<header class="startup-heading">
+		<p class="startup-eyebrow">{{ copy.eyebrow }}</p>
+		<h1>{{ copy.title }}</h1>
+		<p>{{ copy.description }}</p>
+	</header>
+
+	<nav class="startup-steps" [attr.aria-label]="copy.stepsLabel">
+		<button type="button" [class.active]="step() === 0" [attr.aria-current]="step() === 0 ? 'step' : null" (click)="set_step(0)">{{ copy.profileStep }}</button>
+		<button type="button" [class.active]="step() === 1" [attr.aria-current]="step() === 1 ? 'step' : null" (click)="set_step(1)">{{ copy.rolesStep }}</button>
+		<button type="button" [class.active]="step() === 2" [attr.aria-current]="step() === 2 ? 'step' : null" (click)="set_step(2)">{{ copy.specialtiesStep }}</button>
+		<button type="button" [class.active]="step() === 3" [attr.aria-current]="step() === 3 ? 'step' : null" (click)="set_step(3)">{{ copy.clinicsStep }}</button>
+	</nav>
+
+	@if (is_loading()) {
+		<p class="startup-status" role="status">{{ copy.loading }}</p>
+	} @else {
+		<form (ngSubmit)="save()" novalidate>
+			@if (step() === 0) {
+				<section class="startup-section" [formGroup]="profile_form" aria-labelledby="profile-step-title">
+					<div class="organization-identity">
+						<h2>{{ copy.organizationTitle }}</h2>
+						<div class="identity-fields">
+							<label class="startup-field logo-field">
+								<span>{{ copy.organizationLogo }}</span>
+								<input type="file" accept="image/jpeg,image/png,image/gif,image/webp" (change)="upload_organization_logo($event)" />
+								<small>{{ copy.organizationLogoHint }}</small>
+							</label>
+							@if (organization_logo_preview_url(); as logo_url) {
+								<img class="organization-logo-preview" [src]="logo_url" [alt]="copy.organizationLogoPreview" />
+							} @else {
+								<div class="organization-logo-placeholder" aria-hidden="true">{{ copy.logoPlaceholder }}</div>
+							}
+							<label class="startup-field field-wide">
+								<span>{{ copy.organizationBrief }}</span>
+								<textarea formControlName="briefDescription" [placeholder]="copy.organizationBriefPlaceholder" maxlength="1000" rows="3"></textarea>
+							</label>
+						</div>
+					</div>
+					<h2 id="profile-step-title">{{ copy.profileTitle }}</h2>
+					<div class="startup-grid">
+						<label class="startup-field">
+							<span>{{ copy.profileImage }}</span>
+							<input type="file" accept="image/jpeg,image/png,image/gif,image/webp" (change)="upload_profile_image($event)" />
+							<small>{{ copy.profileImageFileHint }}</small>
+						</label>
+						<label class="startup-field">
+							<span>{{ copy.jobTitle }}</span>
+							<input type="text" formControlName="jobTitle" [placeholder]="copy.jobTitlePlaceholder" maxlength="100" />
+						</label>
+					</div>
+
+					@if (profile_preview_url(); as image_url) {
+						<img class="profile-preview" [src]="image_url" [alt]="copy.profileImagePreview" />
+					}
+					<div class="startup-subsection">
+						<div class="subsection-heading">
+							<h3>{{ copy.previousExperience }}</h3>
+							<button type="button" class="text-action" (click)="add_experience('previous')">+ {{ copy.addExperience }}</button>
+						</div>
+						@for (experience of previous_experiences.controls; track $index) {
+							<fieldset class="entry-fields" [formGroup]="experience">
+								<legend>{{ copy.experience }} {{ $index + 1 }}</legend>
+								<label class="startup-field"><span>{{ copy.workplace }}</span><input formControlName="workplace" maxlength="150" /></label>
+								<label class="startup-field"><span>{{ copy.position }}</span><input formControlName="title" maxlength="150" /></label>
+								<label class="startup-field"><span>{{ copy.startDate }}</span><input type="date" formControlName="startDate" /></label>
+								<label class="startup-field"><span>{{ copy.endDate }}</span><input type="date" formControlName="endDate" /></label>
+								<label class="startup-field field-wide"><span>{{ copy.descriptionField }}</span><textarea formControlName="description" maxlength="2000" rows="2"></textarea></label>
+								<button type="button" class="text-action danger-action" (click)="remove_experience('previous', $index)">{{ copy.remove }}</button>
+							</fieldset>
+						}
+					</div>
+
+					<div class="startup-subsection">
+						<div class="subsection-heading">
+							<h3>{{ copy.currentExperience }}</h3>
+							<button type="button" class="text-action" (click)="add_experience('current')">+ {{ copy.addExperience }}</button>
+						</div>
+						@for (experience of current_experiences.controls; track $index) {
+							<fieldset class="entry-fields" [formGroup]="experience">
+								<legend>{{ copy.experience }} {{ $index + 1 }}</legend>
+								<label class="startup-field"><span>{{ copy.workplace }}</span><input formControlName="workplace" maxlength="150" /></label>
+								<label class="startup-field"><span>{{ copy.position }}</span><input formControlName="title" maxlength="150" /></label>
+								<label class="startup-field"><span>{{ copy.startDate }}</span><input type="date" formControlName="startDate" /></label>
+								<label class="startup-field"><span>{{ copy.endDate }}</span><input type="date" formControlName="endDate" /></label>
+								<label class="startup-field field-wide"><span>{{ copy.descriptionField }}</span><textarea formControlName="description" maxlength="2000" rows="2"></textarea></label>
+								<button type="button" class="text-action danger-action" (click)="remove_experience('current', $index)">{{ copy.remove }}</button>
+							</fieldset>
+						}
+					</div>
+
+					<div class="startup-subsection">
+						<div class="subsection-heading">
+							<h3>{{ copy.certifications }}</h3>
+							<button type="button" class="text-action" (click)="add_certification()">+ {{ copy.addCertification }}</button>
+						</div>
+						@for (certification of certifications.controls; track $index) {
+							<fieldset class="entry-fields" [formGroup]="certification">
+								<legend>{{ copy.certification }} {{ $index + 1 }}</legend>
+								<label class="startup-field"><span>{{ copy.certificationName }}</span><input formControlName="name" maxlength="150" /></label>
+								<label class="startup-field"><span>{{ copy.issuer }}</span><input formControlName="issuer" maxlength="150" /></label>
+								<label class="startup-field"><span>{{ copy.issuedAt }}</span><input type="date" formControlName="issuedAt" /></label>
+								<label class="startup-field"><span>{{ copy.certificateFile }}</span><input type="file" accept="application/pdf,image/jpeg,image/png,image/gif,image/webp" (change)="upload_certification_file($index, $event)" /><small>{{ copy.certificateFileHint }}</small></label>
+								@if (has_certification_file($index) || certification.controls.certificateUrl.value) {
+									<span class="uploaded-file">{{ copy.fileUploaded }}</span>
+								}
+								<button type="button" class="text-action danger-action" (click)="remove_certification($index)">{{ copy.remove }}</button>
+							</fieldset>
+						}
+					</div>
+				</section>
+			}
+
+			@if (step() === 1) {
+				<section class="startup-section" aria-labelledby="roles-step-title">
+					<div class="subsection-heading">
+						<div><h2 id="roles-step-title">{{ copy.rolesTitle }}</h2><p>{{ copy.optionalStep }}</p></div>
+						<button type="button" class="text-action" (click)="add_role()">+ {{ copy.addRole }}</button>
+					</div>
+					@if (roles.length === 0) { <p class="empty-state">{{ copy.noRoles }}</p> }
+					@for (role of roles.controls; track $index) {
+						<fieldset class="entry-fields" [formGroup]="role">
+							<legend>{{ copy.role }} {{ $index + 1 }}</legend>
+							<label class="startup-field"><span>{{ copy.roleName }}</span><input formControlName="name" maxlength="100" /></label>
+							<label class="startup-field field-wide"><span>{{ copy.permissions }}</span>
+								<select formControlName="permissionIds" multiple size="6">
+									@for (permission of permissions(); track permission.id) {
+										<option [value]="permission.id">{{ permission_description(permission) }}</option>
+									}
+								</select>
+							</label>
+							<button type="button" class="text-action danger-action" (click)="remove_role($index)">{{ copy.remove }}</button>
+						</fieldset>
+					}
+				</section>
+			}
+
+			@if (step() === 2) {
+				<section class="startup-section" aria-labelledby="specialties-step-title">
+					<div class="subsection-heading">
+						<div><h2 id="specialties-step-title">{{ copy.specialtiesTitle }}</h2><p>{{ copy.optionalStep }}</p></div>
+						<button type="button" class="text-action" (click)="add_specialty()">+ {{ copy.addSpecialty }}</button>
+					</div>
+					@if (specialty_names.length === 0) { <p class="empty-state">{{ copy.noSpecialties }}</p> }
+					@for (specialty of specialty_names.controls; track $index) {
+						<div class="inline-entry">
+							<label class="startup-field"><span>{{ copy.specialtyName }}</span><input [formControl]="specialty" maxlength="150" /></label>
+							<button type="button" class="text-action danger-action" (click)="remove_specialty($index)">{{ copy.remove }}</button>
+						</div>
+					}
+				</section>
+			}
+
+			@if (step() === 3) {
+				<section class="startup-section" aria-labelledby="clinics-step-title">
+					<div class="subsection-heading">
+						<div><h2 id="clinics-step-title">{{ copy.clinicsTitle }}</h2><p>{{ copy.clinicRequired }}</p></div>
+						<button type="button" class="text-action" (click)="add_clinic()">+ {{ copy.addClinic }}</button>
+					</div>
+					@for (clinic of clinics.controls; track $index) {
+						<fieldset class="entry-fields" [formGroup]="clinic">
+							<legend>{{ copy.clinic }} {{ $index + 1 }}</legend>
+							<label class="startup-field"><span>{{ copy.clinicName }}</span><input formControlName="name" maxlength="150" required /></label>
+							<label class="startup-field"><span>{{ copy.phone }}</span><input type="tel" formControlName="phone" maxlength="30" /></label>
+							<label class="startup-field field-wide"><span>{{ copy.address }}</span><textarea formControlName="address" maxlength="2000" rows="2"></textarea></label>
+							<label class="startup-field field-wide"><span>{{ copy.clinicSpecialties }}</span>
+								<select formControlName="specialties" multiple size="4">
+									@for (specialty of specialty_names.controls; track $index) {
+										@if (specialty.value.trim()) { <option [value]="specialty.value.trim()">{{ specialty.value.trim() }}</option> }
+									}
+								</select>
+							</label>
+							@if (clinics.length > 1) { <button type="button" class="text-action danger-action" (click)="remove_clinic($index)">{{ copy.remove }}</button> }
+						</fieldset>
+					}
+				</section>
+			}
+
+			@if (error_message()) {
+				<p class="startup-error" role="alert">{{ error_message() | translate }}</p>
+			}
+
+			<footer class="startup-actions">
+				@if (step() > 0) { <button type="button" class="secondary-button" (click)="set_step(step() - 1)">{{ copy.back }}</button> }
+				@if (step() < 3) {
+					<button type="button" class="primary-button" (click)="set_step(step() + 1)">{{ copy.continue }}</button>
+				} @else {
+					<button type="submit" class="primary-button" [disabled]="is_saving()">{{ is_saving() ? copy.saving : copy.finish }}</button>
+				}
+			</footer>
+		</form>
+	}
+</main>

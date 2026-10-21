@@ -13,7 +13,7 @@ export const httpAuthInterceptor: HttpInterceptorFn = (request, next) => {
   return next(
     request.clone({
       setHeaders: { 'Accept-Language': language },
-      withCredentials: true,
+      // withCredentials: true,
       credentials: 'include',
     }),
   ).pipe(finalize(() => authStore.endHttpRequest()));

@@ -35,6 +35,7 @@ const initialState: AuthState = {
   user: null,
   client: null,
   isLoading: false,
+  startup: false,
 };
 
 export const AuthStore = signalStore(
@@ -146,6 +147,7 @@ export const AuthStore = signalStore(
             scheduleRefresh(response.refresh_token_expires_at);
             patchState(store, {
               user: response.user,
+              startup: response.startup ?? store.startup(),
             });
           }),
           map(() => true),
@@ -179,6 +181,7 @@ export const AuthStore = signalStore(
             scheduleRefresh(session.expiresAt);
             patchState(store, {
               user: response.user,
+              startup: response.startup ?? false,
             });
           }),
           map(() => true),
@@ -219,6 +222,7 @@ export const AuthStore = signalStore(
         clearRefreshTimer();
         patchState(store, {
           user: null,
+          startup: false,
         });
       },
       login(credentials: LoginRequest) {
@@ -232,6 +236,7 @@ export const AuthStore = signalStore(
               scheduleRefresh(response.refresh_token_expires_at);
               patchState(store, {
                 user: response.user,
+                startup: response.startup ?? false,
               });
             }),
             catchError((error: unknown) => {
@@ -245,6 +250,9 @@ export const AuthStore = signalStore(
       },
       register(details: RegisterRequest) {
         return http.post<RegistrationResponse>('/api/organizations/register', details);
+      },
+      markStartupComplete(): void {
+        patchState(store, { startup: false });
       },
     };
   }),

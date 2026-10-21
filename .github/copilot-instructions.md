@@ -16,10 +16,11 @@ The domain is organization-centric: organizations have clinics, staff, roles, an
 ### Backend (`back-end/`)
 
 - `src/main.ts`, `src/setup.ts`: load environment configuration, create the HTTPS Fastify-backed Nest app, and configure middleware, sessions, validation, CORS, rate limiting, and the `/api` prefix.
-- `src/app.module.ts`: root module; currently imports database, organization, user, clinic, and specialty modules.
+- `src/app.module.ts`: root module; registers app-level controllers and imports database, organization, user, clinic, and specialty modules.
+- `src/app.controller.ts`: app-level root and public file routes.
 - `src/core/`:
   - `config/`: environment and session configuration.
-  - `database/`, `service/`: database module and Prisma service.
+  - `database/`, `service/`: database module, Prisma service, local file storage, and the shared `FormDataService` for multipart form-data parsing and validation.
   - `decorators/`, `guards/`, `interfaces/`: current-user and request/auth infrastructure.
   - `middleware/`, `session/`: session user attachment and Prisma-backed session store.
 - `src/user/`: user endpoints, login/refresh, DTOs, and user service.
@@ -35,6 +36,7 @@ The domain is organization-centric: organizations have clinics, staff, roles, an
 Current API surface (all routes are under `/api`):
 
 - `POST /organizations/register`
+- `GET /public/*path` serves files under `UPLOAD_DIR/public` and organization profile images under `UPLOAD_DIR/organizations/profile_images`.
 - `POST /users/login`, `POST /users/refresh`
 - Authenticated user CRUD under `/users`
 - Authenticated clinic CRUD under `/clinics`
@@ -68,6 +70,8 @@ The UI currently uses reactive forms, lazy-loaded login/registration pages, shar
 ## Implementation conventions
 
 - Keep backend concerns in the existing Nest module/controller/DTO/service structure. Validate input through DTOs and the global validation pipe; follow existing endpoint patterns.
+- For multipart endpoints, use the globally provided `FormDataService` (`src/core/service/form-data.service.ts`) instead of parsing `request.parts()` in each controller. Send the JSON payload in the `data` field and define accepted file fields in `MultipartFormDataOptions.files` (`src/core/interfaces/form-data.interface.ts`). Each file rule specifies `field_name` (literal or regex), `file_type` (`image`, `document`, `pdf`, or `any`), and optional `max_size`; options can also set `max_files`, `max_size_total`, and `max_size_one`. Use `assign_to` to attach a validated file to its DTO field, including indexed fields; keep endpoint-specific matching and persistence in that endpoint's controller/service. `any` permits unknown file signatures and uses a sanitized filename extension with `application/octet-stream`, so only enable it where arbitrary formats are intended. The service returns `{ dto, files }`; avoid duplicating multipart parsing or file signature validation.
+- Serve public uploads through `GET /api/public/*path`; `LocalFileService.read_public()` allows only `public/` and `organizations/profile_images/` under `UPLOAD_DIR`. Keep private or tenant-owned files, including organization certifications, outside these allowed paths and do not expose the upload root directly.
 - Preserve organization scoping and authorization in every tenant-owned read or write. Do not trust organization IDs supplied by a client when session identity provides the scope.
 - Keep Prisma schema, migrations, and generated-client workflow consistent. Use existing Prisma scripts/tooling; never edit generated output directly.
 - Use Angular standalone components and existing feature/core/share boundaries. Prefer existing services and shared components over duplicating them.

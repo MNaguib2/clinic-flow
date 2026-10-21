@@ -75,9 +75,11 @@ describe('AuthStore', () => {
       },
       refresh_token: 'token',
       refresh_token_expires_at: '2026-10-15T07:00:00.000Z',
+      startup: true,
     });
 
     expect(store.user()?.fullName).toBe('Clinic User');
+    expect(store.startup()).toBe(true);
     expect(store.isLoading()).toBe(false);
     expect(JSON.parse(storage.getItem('clinicflow-auth') ?? '{}')).toEqual({
       refreshToken: 'token',
@@ -166,10 +168,12 @@ describe('AuthStore', () => {
         fullName: 'Clinic User',
         phone: '+15551234567',
       },
+      startup: true,
     });
 
     expect(initialized).toBe(true);
     expect(store.user()?.id).toBe('42');
+    expect(store.startup()).toBe(true);
     expect(JSON.parse(storage.getItem('clinicflow-auth') ?? '{}').refreshToken).toBe(
       'saved-token',
     );
@@ -248,6 +252,31 @@ describe('AuthStore', () => {
       organization: { id: '7', name: details.organizationTitle },
       user: { id: '42', fullName: details.userName, email: details.email },
     });
+  });
+
+  it('marks startup as complete', () => {
+    store.login({
+      phone: '+15551234567',
+      password: 'secure-password',
+      remember_me: true,
+    }).subscribe();
+    const request = http.expectOne('/api/users/login');
+    request.flush({
+      user: {
+        id: '42',
+        organizationId: '7',
+        fullName: 'Clinic User',
+        phone: '+15551234567',
+      },
+      refresh_token: 'token',
+      refresh_token_expires_at: '2026-10-15T07:00:00.000Z',
+      startup: true,
+    });
+
+    expect(store.startup()).toBe(true);
+    store.markStartupComplete();
+
+    expect(store.startup()).toBe(false);
   });
 
   it('keeps loading active until all concurrent requests finish', () => {

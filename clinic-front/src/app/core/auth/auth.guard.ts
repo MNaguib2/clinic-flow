@@ -22,3 +22,19 @@ export const authGuard: CanActivateFn = (route) => {
     }),
   );
 };
+
+export const dashboardEntryGuard: CanActivateFn = () => {
+  const store = inject(AuthStore);
+  const router = inject(Router);
+
+  if (!isPlatformBrowser(inject(PLATFORM_ID))) return true;
+  return store.startup() ? router.createUrlTree(['/dashboard/startup']) : true;
+};
+
+export const startupGuard: CanActivateFn = () => {
+  const store = inject(AuthStore);
+  const router = inject(Router);
+
+  if (!isPlatformBrowser(inject(PLATFORM_ID))) return true;
+  return store.startup() ? true : router.createUrlTree(['/dashboard']);
+};

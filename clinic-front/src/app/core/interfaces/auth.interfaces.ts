@@ -25,10 +25,12 @@ export interface AuthResponse {
   user: AuthUser;
   refresh_token: string;
   refresh_token_expires_at: string;
+  startup?: boolean;
 }
 
 export interface SessionResponse {
   user: AuthUser;
+  startup?: boolean;
 }
 
 export interface StoredAuthSession {
@@ -45,4 +47,5 @@ export interface AuthState {
   user: AuthUser | null;
   client: any;
   isLoading: boolean;
+  startup: boolean;
 }

@@ -2,6 +2,7 @@ import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { RawServerDefault } from 'fastify';
 import { ValidationPipe } from '@nestjs/common';
 import rateLimit from '@fastify/rate-limit';
+import multipart from '@fastify/multipart';
 import { fastifyCookie } from '@fastify/cookie';
 import { fastifySession } from '@fastify/session';
 import { sessionConfig } from './core/config/session.config';
@@ -18,6 +19,10 @@ import { PrismaQueryContextInterceptor } from './core/database/prisma-query-cont
 
 export async function setup(app: NestFastifyApplication<RawServerDefault>) {
   // Add any setup logic here
+
+  await app.register(multipart, {
+    limits: { files: 21, fileSize: 10 * 1024 * 1024, fields: 1 },
+  });
 
   await app.register(rateLimit, {
     global: true,
