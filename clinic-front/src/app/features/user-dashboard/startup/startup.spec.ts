@@ -32,22 +32,30 @@ describe('Startup', () => {
                   permissions: [
                     {
                       id: '1',
-                      name: 'clinic.read',
+                      code: 'clinic.read',
+                      name_en: 'View clinics',
+                      name_ar: 'عرض العيادات',
                       description_en: 'View clinics',
                       description_ar: 'عرض العيادات',
                       page: {
-                        name: 'clinic',
+                        key: 'clinic',
+                        name_en: 'Clinics',
+                        name_ar: 'العيادات',
                         description_en: 'Clinic access',
                         description_ar: 'إدارة العيادات',
                       },
                     },
                     {
                       id: '2',
-                      name: 'organization.read',
+                      code: 'organization.read',
+                      name_en: 'View organization',
+                      name_ar: 'عرض المؤسسة',
                       description_en: 'View organization',
                       description_ar: 'عرض المؤسسة',
                       page: {
-                        name: 'organization',
+                        key: 'organization',
+                        name_en: 'Organization',
+                        name_ar: 'المؤسسة',
                         description_en: 'Organization settings',
                         description_ar: 'إعدادات المؤسسة',
                       },
@@ -94,8 +102,8 @@ describe('Startup', () => {
     expect(Array.from(groups).map((group) =>
       group.querySelector('.permission-page-name strong')?.textContent.trim(),
     )).toEqual([
-      'Clinic access',
-      'Organization settings',
+      'Clinics',
+      'Organization',
     ]);
     expect(groups[0].querySelector('.permission-option-copy small')?.textContent.trim()).toBe('View clinics');
 

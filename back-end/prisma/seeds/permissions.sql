@@ -1,51 +1,53 @@
--- Create or refresh the bilingual page catalog before seeding its permissions.
-INSERT INTO `pages` (`name`, `description_en`, `description_ar`)
+-- Create or refresh bilingual permission pages before seeding permissions.
+INSERT INTO `permission_pages` (`key`, `name_en`, `name_ar`, `description_en`, `description_ar`)
 VALUES
-    ('organization', 'Organization details and configuration.', 'بيانات المؤسسة وإعداداتها.'),
-    ('clinic', 'Clinic locations, schedules, and assignments.', 'مواقع العيادات وجداولها وتعييناتها.'),
-    ('user', 'User profiles, roles, and schedules.', 'ملفات المستخدمين وأدوارهم وجداولهم.'),
-    ('role', 'Organization roles and their permissions.', 'أدوار المؤسسة وصلاحياتها.'),
-    ('permission', 'The permission catalog and access rules.', 'كتالوج الصلاحيات وقواعد الوصول.'),
-    ('specialty', 'Medical specialties and clinic assignments.', 'التخصصات الطبية وتعييناتها للعيادات.'),
-    ('patient_account', 'Patient identity and account records.', 'بيانات هوية المريض وحسابه.'),
-    ('patient_record', 'Organization-scoped patient records.', 'سجلات المرضى ضمن المؤسسة.'),
-    ('patient_share', 'Patient record sharing between organizations.', 'مشاركة سجلات المرضى بين المؤسسات.'),
-    ('medical_case', 'Patient medical cases and case status.', 'الحالات الطبية للمرضى وحالتها.'),
-    ('appointment', 'Appointment booking and scheduling.', 'حجز المواعيد وجدولتها.'),
-    ('visit', 'Patient visit records and completion.', 'سجلات زيارات المرضى وإتمامها.'),
-    ('diagnosis', 'Diagnoses recorded during visits.', 'التشخيصات المسجلة أثناء الزيارات.'),
-    ('prescription', 'Prescriptions and their items.', 'الوصفات الطبية وعناصرها.'),
-    ('medical_request', 'Medical requests associated with visits.', 'الطلبات الطبية المرتبطة بالزيارات.'),
-    ('attachment', 'Files attached to patient care records.', 'الملفات المرفقة بسجلات رعاية المرضى.'),
-    ('unit_category', 'Categories for units of measure.', 'فئات وحدات القياس.'),
-    ('unit', 'Units of measure.', 'وحدات القياس.'),
-    ('product', 'Organization product catalog.', 'كتالوج منتجات المؤسسة.'),
-    ('product_unit', 'Product units, prices, and role access.', 'وحدات المنتجات وأسعارها وصلاحيات الأدوار.'),
-    ('service', 'Organization service catalog and prices.', 'كتالوج خدمات المؤسسة وأسعارها.'),
-    ('inventory', 'Clinic inventory balances.', 'أرصدة مخزون العيادات.'),
-    ('inventory_transaction', 'Inventory receipts, usage, and adjustments.', 'استلام المخزون واستخدامه وتسويته.'),
-    ('invoice', 'Organization invoices and their status.', 'فواتير المؤسسة وحالتها.'),
-    ('invoice_item', 'Invoice line items.', 'بنود الفواتير.'),
-    ('payment', 'Invoice payment records.', 'سجلات دفعات الفواتير.'),
-    ('expense_category', 'Organization expense categories.', 'فئات مصروفات المؤسسة.'),
-    ('expense', 'Organization expense records.', 'سجلات مصروفات المؤسسة.'),
-    ('recurring_expense', 'Recurring expense schedules.', 'جداول المصروفات المتكررة.'),
-    ('login_session', 'User login session records.', 'سجلات جلسات دخول المستخدمين.'),
-    ('audit_log', 'Organization audit history.', 'سجل تدقيق المؤسسة.')
+    ('organization', 'Organization', 'المؤسسة', 'Organization details and configuration.', 'بيانات المؤسسة وإعداداتها.'),
+    ('clinic', 'Clinics', 'العيادات', 'Clinic locations, schedules, and assignments.', 'مواقع العيادات وجداولها وتعييناتها.'),
+    ('user', 'Users', 'المستخدمون', 'User profiles, roles, and schedules.', 'ملفات المستخدمين وأدوارهم وجداولهم.'),
+    ('role', 'Roles', 'الأدوار', 'Organization roles and their permissions.', 'أدوار المؤسسة وصلاحياتها.'),
+    ('permission', 'Permissions', 'الصلاحيات', 'The permission catalog and access rules.', 'كتالوج الصلاحيات وقواعد الوصول.'),
+    ('specialty', 'Specialties', 'التخصصات', 'Medical specialties and clinic assignments.', 'التخصصات الطبية وتعييناتها للعيادات.'),
+    ('patient_account', 'Patient accounts', 'حسابات المرضى', 'Patient identity and account records.', 'بيانات هوية المريض وحسابه.'),
+    ('patient_record', 'Patient records', 'سجلات المرضى', 'Organization-scoped patient records.', 'سجلات المرضى ضمن المؤسسة.'),
+    ('patient_share', 'Patient sharing', 'مشاركة المرضى', 'Patient record sharing between organizations.', 'مشاركة سجلات المرضى بين المؤسسات.'),
+    ('medical_case', 'Medical cases', 'الحالات الطبية', 'Patient medical cases and case status.', 'الحالات الطبية للمرضى وحالتها.'),
+    ('appointment', 'Appointments', 'المواعيد', 'Appointment booking and scheduling.', 'حجز المواعيد وجدولتها.'),
+    ('visit', 'Visits', 'الزيارات', 'Patient visit records and completion.', 'سجلات زيارات المرضى وإتمامها.'),
+    ('diagnosis', 'Diagnoses', 'التشخيصات', 'Diagnoses recorded during visits.', 'التشخيصات المسجلة أثناء الزيارات.'),
+    ('prescription', 'Prescriptions', 'الوصفات الطبية', 'Prescriptions and their items.', 'الوصفات الطبية وعناصرها.'),
+    ('medical_request', 'Medical requests', 'الطلبات الطبية', 'Medical requests associated with visits.', 'الطلبات الطبية المرتبطة بالزيارات.'),
+    ('attachment', 'Attachments', 'المرفقات', 'Files attached to patient care records.', 'الملفات المرفقة بسجلات رعاية المرضى.'),
+    ('unit_category', 'Unit categories', 'فئات الوحدات', 'Categories for units of measure.', 'فئات وحدات القياس.'),
+    ('unit', 'Units', 'الوحدات', 'Units of measure.', 'وحدات القياس.'),
+    ('product', 'Products', 'المنتجات', 'Organization product catalog.', 'كتالوج منتجات المؤسسة.'),
+    ('product_unit', 'Product units', 'وحدات المنتجات', 'Product units, prices, and role access.', 'وحدات المنتجات وأسعارها وصلاحيات الأدوار.'),
+    ('service', 'Services', 'الخدمات', 'Organization service catalog and prices.', 'كتالوج خدمات المؤسسة وأسعارها.'),
+    ('inventory', 'Inventory', 'المخزون', 'Clinic inventory balances.', 'أرصدة مخزون العيادات.'),
+    ('inventory_transaction', 'Inventory transactions', 'حركات المخزون', 'Inventory receipts, usage, and adjustments.', 'استلام المخزون واستخدامه وتسويته.'),
+    ('invoice', 'Invoices', 'الفواتير', 'Organization invoices and their status.', 'فواتير المؤسسة وحالتها.'),
+    ('invoice_item', 'Invoice items', 'بنود الفواتير', 'Invoice line items.', 'بنود الفواتير.'),
+    ('payment', 'Payments', 'المدفوعات', 'Invoice payment records.', 'سجلات دفعات الفواتير.'),
+    ('expense_category', 'Expense categories', 'فئات المصروفات', 'Organization expense categories.', 'فئات مصروفات المؤسسة.'),
+    ('expense', 'Expenses', 'المصروفات', 'Organization expense records.', 'سجلات مصروفات المؤسسة.'),
+    ('recurring_expense', 'Recurring expenses', 'المصروفات المتكررة', 'Recurring expense schedules.', 'جداول المصروفات المتكررة.'),
+    ('login_session', 'Login sessions', 'جلسات الدخول', 'User login session records.', 'سجلات جلسات دخول المستخدمين.'),
+    ('audit_log', 'Audit log', 'سجل التدقيق', 'Organization audit history.', 'سجل تدقيق المؤسسة.')
 ON DUPLICATE KEY UPDATE
+    `name_en` = VALUES(`name_en`),
+    `name_ar` = VALUES(`name_ar`),
     `description_en` = VALUES(`description_en`),
     `description_ar` = VALUES(`description_ar`);
 
 -- Stage the catalog so permission rows can be linked by their name prefix.
 DROP TEMPORARY TABLE IF EXISTS `permission_seed`;
 CREATE TEMPORARY TABLE `permission_seed` (
-    `name` VARCHAR(150) NOT NULL,
+    `code` VARCHAR(150) NOT NULL,
     `description_en` TEXT NULL,
     `description_ar` TEXT NULL,
-    PRIMARY KEY (`name`)
+    PRIMARY KEY (`code`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-INSERT INTO `permission_seed` (`name`, `description_en`, `description_ar`)
+INSERT INTO `permission_seed` (`code`, `description_en`, `description_ar`)
 VALUES
     ('organization.create', 'Create a clinic organization.', 'إنشاء منشأة طبية.'),
     ('organization.read', 'View organization details.', 'عرض تفاصيل المنشأة.'),
@@ -200,13 +202,18 @@ ON DUPLICATE KEY UPDATE
     `description_en` = VALUES(`description_en`),
     `description_ar` = VALUES(`description_ar`);
 
-INSERT INTO `permissions` (`page_id`, `name`, `description_en`, `description_ar`)
-SELECT page.`id`, permission.`name`, permission.`description_en`, permission.`description_ar`
+INSERT INTO `permissions` (`page_id`, `code`, `name_en`, `name_ar`, `description_en`, `description_ar`)
+SELECT page.`id`, permission.`code`,
+    LEFT(permission.`description_en`, 150),
+    LEFT(permission.`description_ar`, 150),
+    permission.`description_en`, permission.`description_ar`
 FROM `permission_seed` AS permission
-JOIN `pages` AS page
-    ON page.`name` = SUBSTRING_INDEX(permission.`name`, '.', 1)
+JOIN `permission_pages` AS page
+    ON page.`key` = SUBSTRING_INDEX(permission.`code`, '.', 1)
 ON DUPLICATE KEY UPDATE
     `page_id` = VALUES(`page_id`),
+    `name_en` = VALUES(`name_en`),
+    `name_ar` = VALUES(`name_ar`),
     `description_en` = VALUES(`description_en`),
     `description_ar` = VALUES(`description_ar`);
 

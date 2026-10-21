@@ -88,15 +88,19 @@ export class OrganizationService {
 
   async getStartupOptions() {
     const permissions = await this.prisma.permission.findMany({
-      orderBy: { name: 'asc' },
+      orderBy: { code: 'asc' },
       select: {
         id: true,
-        name: true,
+        code: true,
+        name_en: true,
+        name_ar: true,
         description_en: true,
         description_ar: true,
         page: {
           select: {
-            name: true,
+            key: true,
+            name_en: true,
+            name_ar: true,
             description_en: true,
             description_ar: true,
           },

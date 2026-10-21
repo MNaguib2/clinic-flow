@@ -51,25 +51,29 @@ model Specialty {
   @@map("specialties")
 }
 
-model Page {
+model PermissionPage {
   id            BigInt       @id @default(autoincrement())
-  name          String       @unique @db.VarChar(150)
+  key           String       @unique @db.VarChar(150)
+  name_en       String       @db.VarChar(150)
+  name_ar       String       @db.VarChar(150)
   description_en String      @db.Text
   description_ar String      @db.Text
   createdAt     DateTime     @default(now()) @map("created_at") @db.DateTime(6)
   permissions   Permission[]
 
-  @@map("pages")
+  @@map("permission_pages")
 }
 
 model Permission {
   id              BigInt           @id @default(autoincrement())
   pageId          BigInt           @map("page_id")
-  name            String           @unique @db.VarChar(150)
+  code            String           @unique @db.VarChar(150)
+  name_en         String           @db.VarChar(150)
+  name_ar         String           @db.VarChar(150)
   description_ar  String?          @db.Text
   description_en  String?          @db.Text
   createdAt       DateTime         @default(now()) @map("created_at") @db.DateTime(6)
-  page            Page             @relation(fields: [pageId], references: [id], onDelete: Restrict)
+  page            PermissionPage   @relation(fields: [pageId], references: [id], onDelete: Restrict)
   rolePermissions RolePermission[]
 
   @@index([pageId])

@@ -39,14 +39,18 @@ export interface StartupPayload {
 
 export interface StartupPermission {
   id: string;
-  name: string;
+  code: string;
+  name_en: string;
+  name_ar: string;
   description_en: string | null;
   description_ar: string | null;
   page: StartupPage;
 }
 
 export interface StartupPage {
-  name: string;
+  key: string;
+  name_en: string;
+  name_ar: string;
   description_en: string;
   description_ar: string;
 }

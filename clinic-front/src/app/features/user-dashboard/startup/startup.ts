@@ -79,12 +79,12 @@ export class Startup implements OnInit {
   protected readonly permission_pages = computed(() => {
     const page_map = new Map<string, { page: StartupPage; permissions: StartupPermission[] }>();
     for (const permission of this.permissions()) {
-      const group = page_map.get(permission.page.name) ?? {
+      const group = page_map.get(permission.page.key) ?? {
         page: permission.page,
         permissions: [],
       };
       group.permissions.push(permission);
-      page_map.set(permission.page.name, group);
+      page_map.set(permission.page.key, group);
     }
     return [...page_map.values()];
   });
@@ -303,16 +303,29 @@ export class Startup implements OnInit {
       });
   }
 
+  protected permission_name(permission: StartupPermission): string {
+    return this.language() === 'ar'
+      ? permission.name_ar || permission.code
+      : permission.name_en || permission.code;
+  }
+
   protected permission_description(permission: StartupPermission): string {
     return this.language() === 'ar'
-      ? permission.description_ar ?? permission.name
-      : permission.description_en ?? permission.name;
+      ? permission.description_ar ?? permission.code
+      : permission.description_en ?? permission.code;
+  }
+
+  protected page_name(page: StartupPage): string {
+    console.log('page_name called with page:', page);
+    return this.language() === 'ar'
+      ? page.name_ar || page.key
+      : page.name_en || page.key;
   }
 
   protected page_description(page: StartupPage): string {
     return this.language() === 'ar'
-      ? page.description_ar || page.name
-      : page.description_en || page.name;
+      ? page.description_ar || page.key
+      : page.description_en || page.key;
   }
 
   protected permission_is_selected(role: RoleForm, permission_id: string): boolean {
