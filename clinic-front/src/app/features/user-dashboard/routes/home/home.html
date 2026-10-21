@@ -1,4 +1,7 @@
-    <section aria-labelledby="dashboard-title">
-      <h1 id="dashboard-title">Dashboard</h1>
-      <p>Welcome, {{ authStore.user()?.fullName }}.</p>
-    </section>
+@let copy = 'dashboard' | translate;
+
+<section class="welcome" aria-labelledby="dashboard-title">
+  <p class="welcome-kicker">{{ copy.title }}</p>
+  <h1 id="dashboard-title">{{ 'dashboard.welcome' | translate: { name: authStore.user()?.fullName } }}</h1>
+  <p class="welcome-text">{{ copy.ready }}</p>
+</section>

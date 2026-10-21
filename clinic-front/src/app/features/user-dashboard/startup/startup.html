@@ -8,11 +8,9 @@
 	</header>
 
 	<nav class="startup-steps" [attr.aria-label]="copy.stepsLabel">
-		<button type="button" [class.active]="step() === 0" [attr.aria-current]="step() === 0 ? 'step' : null" (click)="set_step(0)">{{ copy.organizationStep }}</button>
-		<button type="button" [class.active]="step() === 1" [attr.aria-current]="step() === 1 ? 'step' : null" (click)="set_step(1)">{{ copy.profileStep }}</button>
-		<button type="button" [class.active]="step() === 2" [attr.aria-current]="step() === 2 ? 'step' : null" (click)="set_step(2)">{{ copy.rolesStep }}</button>
-		<button type="button" [class.active]="step() === 3" [attr.aria-current]="step() === 3 ? 'step' : null" (click)="set_step(3)">{{ copy.specialtiesStep }}</button>
-		<button type="button" [class.active]="step() === 4" [attr.aria-current]="step() === 4 ? 'step' : null" (click)="set_step(4)">{{ copy.clinicsStep }}</button>
+		@for (key of step_keys; track key; let index = $index) {
+			<button type="button" [class.active]="step() === index" [class.done]="step() > index" [attr.aria-current]="step() === index ? 'step' : null" (click)="set_step(index)">{{ copy[key] }}</button>
+		}
 	</nav>
 
 	@if (is_loading()) {

@@ -96,6 +96,13 @@
     "success": "Your clinic account has been created. You can now sign in.",
     "genericError": "Unable to create your account. Please try again."
   },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {{name}}",
+    "ready": "Your workspace is ready. Manage your clinics, team, and patients from here.",
+    "logout": "Log out",
+    "languageLabel": "Change language"
+  },
   "startup": {
     "eyebrow": "Clinic setup",
     "title": "Set up your workspace",

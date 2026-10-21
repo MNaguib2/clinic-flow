@@ -65,6 +65,13 @@ export class Startup implements OnInit {
 
   protected readonly language = this.language_service.language;
   protected readonly step = signal(0);
+  protected readonly step_keys = [
+    'organizationStep',
+    'profileStep',
+    'rolesStep',
+    'specialtiesStep',
+    'clinicsStep',
+  ] as const;
   protected readonly is_loading = signal(false);
   protected readonly is_saving = signal(false);
   protected readonly error_message = signal<string | null>(null);

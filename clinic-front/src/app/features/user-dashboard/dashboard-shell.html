@@ -1,7 +1,28 @@
-<div class="dashboard-shell">
+@let copy = 'dashboard' | translate;
+
+<div class="dashboard-shell" [attr.lang]="language()" [attr.dir]="language() === 'ar' ? 'rtl' : 'ltr'">
   <header class="dashboard-header">
-    <a class="dashboard-brand" routerLink="/">ClinicFlow</a>
-    <span class="dashboard-user">{{ authStore.user()?.fullName }}</span>
+    <a class="dashboard-brand" routerLink="/" aria-label="ClinicFlow">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span>Clinic<span class="brand-accent">Flow</span></span>
+    </a>
+    <div class="dashboard-actions">
+      <app-ui-button
+        type="button"
+        variant="text"
+        class="utility-button language-button"
+        (click)="toggleLanguage()"
+        [ariaLabel]="copy.languageLabel"
+      >{{ language() === 'en' ? 'العربية' : 'English' }}</app-ui-button>
+      <app-theme-toggle />
+      @if (authStore.user(); as user) {
+        <span class="dashboard-user">
+          <span class="user-avatar" aria-hidden="true">{{ user.fullName.charAt(0).toUpperCase() }}</span>
+          <span class="user-name">{{ user.fullName }}</span>
+        </span>
+        <button type="button" class="logout-button" (click)="logout()">{{ copy.logout }}</button>
+      }
+    </div>
   </header>
   <main class="dashboard-content">
     <router-outlet />
