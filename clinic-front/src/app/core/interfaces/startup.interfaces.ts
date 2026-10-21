@@ -42,6 +42,13 @@ export interface StartupPermission {
   name: string;
   description_en: string | null;
   description_ar: string | null;
+  page: StartupPage;
+}
+
+export interface StartupPage {
+  name: string;
+  description_en: string;
+  description_ar: string;
 }
 
 export interface StartupOptions {

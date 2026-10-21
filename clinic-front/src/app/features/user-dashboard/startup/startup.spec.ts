@@ -27,7 +27,33 @@ describe('Startup', () => {
           {
             provide: StartupService,
             useValue: {
-              getOptions: () => of({ permissions: [] }),
+              getOptions: () =>
+                of({
+                  permissions: [
+                    {
+                      id: '1',
+                      name: 'clinic.read',
+                      description_en: 'View clinics',
+                      description_ar: 'عرض العيادات',
+                      page: {
+                        name: 'clinic',
+                        description_en: 'Clinic access',
+                        description_ar: 'إدارة العيادات',
+                      },
+                    },
+                    {
+                      id: '2',
+                      name: 'organization.read',
+                      description_en: 'View organization',
+                      description_ar: 'عرض المؤسسة',
+                      page: {
+                        name: 'organization',
+                        description_en: 'Organization settings',
+                        description_ar: 'إعدادات المؤسسة',
+                      },
+                    },
+                  ],
+                }),
               complete: () => of({ completed: true, clinics: [] }),
             },
           },
@@ -54,5 +80,21 @@ describe('Startup', () => {
 
     expect(fixture.nativeElement.querySelector('#profile-step-title')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('#organization-step-title')).toBeNull();
+  });
+
+  it('groups role permissions by page description', () => {
+    fixture.nativeElement.querySelectorAll('.startup-steps button')[2].click();
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('.startup-section .text-action').click();
+    fixture.detectChanges();
+
+    const groups = fixture.nativeElement.querySelectorAll(
+      'optgroup',
+    ) as NodeListOf<HTMLOptGroupElement>;
+    expect(Array.from(groups).map((group) => group.label)).toEqual([
+      'Clinic access',
+      'Organization settings',
+    ]);
+    expect(groups[0].querySelector('option')?.textContent.trim()).toBe('View clinics');
   });
 });

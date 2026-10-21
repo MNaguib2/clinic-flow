@@ -94,6 +94,13 @@ export class OrganizationService {
         name: true,
         description_en: true,
         description_ar: true,
+        page: {
+          select: {
+            name: true,
+            description_en: true,
+            description_ar: true,
+          },
+        },
       },
     });
 

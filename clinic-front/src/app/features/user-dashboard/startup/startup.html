@@ -145,8 +145,12 @@
 							<label class="startup-field"><span>{{ copy.roleName }}</span><input formControlName="name" maxlength="100" /></label>
 							<label class="startup-field field-wide"><span>{{ copy.permissions }}</span>
 								<select formControlName="permissionIds" multiple size="6">
-									@for (permission of permissions(); track permission.id) {
-										<option [value]="permission.id">{{ permission_description(permission) }}</option>
+									@for (page_group of permission_pages(); track page_group.page.name) {
+										<optgroup [label]="page_description(page_group.page)">
+											@for (permission of page_group.permissions; track permission.id) {
+												<option [value]="permission.id">{{ permission_description(permission) }}</option>
+											}
+										</optgroup>
 									}
 								</select>
 							</label>

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -13,6 +13,7 @@ import { StartupService } from './service/startup.service';
 import type {
   StartupCertification,
   StartupOptions,
+  StartupPage,
   StartupPayload,
   StartupPermission,
   StartupRole,
@@ -68,6 +69,18 @@ export class Startup implements OnInit {
   protected readonly is_saving = signal(false);
   protected readonly error_message = signal<string | null>(null);
   protected readonly permissions = signal<StartupPermission[]>([]);
+  protected readonly permission_pages = computed(() => {
+    const page_map = new Map<string, { page: StartupPage; permissions: StartupPermission[] }>();
+    for (const permission of this.permissions()) {
+      const group = page_map.get(permission.page.name) ?? {
+        page: permission.page,
+        permissions: [],
+      };
+      group.permissions.push(permission);
+      page_map.set(permission.page.name, group);
+    }
+    return [...page_map.values()];
+  });
   protected readonly profile_preview_url = signal<string | null>(null);
   protected readonly organization_logo_preview_url = signal<string | null>(null);
   protected readonly organization_logo_file_name = signal<string | null>(null);
@@ -287,6 +300,12 @@ export class Startup implements OnInit {
     return this.language() === 'ar'
       ? permission.description_ar ?? permission.name
       : permission.description_en ?? permission.name;
+  }
+
+  protected page_description(page: StartupPage): string {
+    return this.language() === 'ar'
+      ? page.description_ar || page.name
+      : page.description_en || page.name;
   }
 
   private experience_array(target: 'previous' | 'current'): FormArray<ExperienceForm> {
