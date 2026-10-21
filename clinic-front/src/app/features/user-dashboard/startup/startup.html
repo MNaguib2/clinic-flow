@@ -143,17 +143,34 @@
 						<fieldset class="entry-fields" [formGroup]="role">
 							<legend>{{ copy.role }} {{ $index + 1 }}</legend>
 							<label class="startup-field"><span>{{ copy.roleName }}</span><input formControlName="name" maxlength="100" /></label>
-							<label class="startup-field field-wide"><span>{{ copy.permissions }}</span>
-								<select formControlName="permissionIds" multiple size="6">
+							<div class="startup-field field-wide permission-field">
+								<span>{{ copy.permissions }}</span>
+								<div class="permission-pages">
 									@for (page_group of permission_pages(); track page_group.page.name) {
-										<optgroup [label]="page_description(page_group.page)">
-											@for (permission of page_group.permissions; track permission.id) {
-												<option [value]="permission.id">{{ permission_description(permission) }}</option>
-											}
-										</optgroup>
+										<details class="permission-page">
+											<summary class="permission-page-summary">
+												<span class="permission-page-name"><strong>{{ page_description(page_group.page) }}</strong><small>{{ page_group.page.name }}</small></span>
+												<span class="permission-page-count">{{ selected_permission_count(role, page_group) }} / {{ page_group.permissions.length }}</span>
+											</summary>
+											<div class="permission-page-options">
+												<label class="permission-select-all">
+													<input type="checkbox"
+														[checked]="selected_permission_count(role, page_group) === page_group.permissions.length"
+														[indeterminate]="selected_permission_count(role, page_group) > 0 && selected_permission_count(role, page_group) < page_group.permissions.length"
+														(change)="toggle_page_permissions(role, page_group, $event)" />
+													<span>{{ copy.selectAllPagePermissions }}</span>
+												</label>
+												@for (permission of page_group.permissions; track permission.id) {
+													<label class="permission-option">
+														<input type="checkbox" [checked]="permission_is_selected(role, permission.id)" (change)="toggle_permission(role, permission.id, $event)" />
+														<span class="permission-option-copy"><strong>{{ permission.name }}</strong><small>{{ permission_description(permission) }}</small></span>
+													</label>
+												}
+											</div>
+										</details>
 									}
-								</select>
-							</label>
+								</div>
+							</div>
 							<button type="button" class="text-action danger-action" (click)="remove_role($index)">{{ copy.remove }}</button>
 						</fieldset>
 					}

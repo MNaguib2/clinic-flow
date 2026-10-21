@@ -308,6 +308,52 @@ export class Startup implements OnInit {
       : page.description_en || page.name;
   }
 
+  protected permission_is_selected(role: RoleForm, permission_id: string): boolean {
+    return role.controls.permissionIds.value.includes(permission_id);
+  }
+
+  protected selected_permission_count(
+    role: RoleForm,
+    page_group: { page: StartupPage; permissions: StartupPermission[] },
+  ): number {
+    const selected_ids = new Set(role.controls.permissionIds.value);
+    return page_group.permissions.filter((permission) =>
+      selected_ids.has(permission.id),
+    ).length;
+  }
+
+  protected toggle_permission(
+    role: RoleForm,
+    permission_id: string,
+    event: Event,
+  ): void {
+    const selected_ids = new Set(role.controls.permissionIds.value);
+    if ((event.target as HTMLInputElement).checked) {
+      selected_ids.add(permission_id);
+    } else {
+      selected_ids.delete(permission_id);
+    }
+    role.controls.permissionIds.setValue([...selected_ids]);
+    role.controls.permissionIds.markAsDirty();
+  }
+
+  protected toggle_page_permissions(
+    role: RoleForm,
+    page_group: { page: StartupPage; permissions: StartupPermission[] },
+    event: Event,
+  ): void {
+    const selected_ids = new Set(role.controls.permissionIds.value);
+    for (const permission of page_group.permissions) {
+      if ((event.target as HTMLInputElement).checked) {
+        selected_ids.add(permission.id);
+      } else {
+        selected_ids.delete(permission.id);
+      }
+    }
+    role.controls.permissionIds.setValue([...selected_ids]);
+    role.controls.permissionIds.markAsDirty();
+  }
+
   private experience_array(target: 'previous' | 'current'): FormArray<ExperienceForm> {
     return target === 'previous'
       ? this.previous_experiences

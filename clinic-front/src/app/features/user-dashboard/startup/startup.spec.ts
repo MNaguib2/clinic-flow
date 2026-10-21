@@ -82,19 +82,30 @@ describe('Startup', () => {
     expect(fixture.nativeElement.querySelector('#organization-step-title')).toBeNull();
   });
 
-  it('groups role permissions by page description', () => {
+  it('shows permission descriptions and selects all permissions within a page', () => {
     fixture.nativeElement.querySelectorAll('.startup-steps button')[2].click();
     fixture.detectChanges();
     fixture.nativeElement.querySelector('.startup-section .text-action').click();
     fixture.detectChanges();
 
     const groups = fixture.nativeElement.querySelectorAll(
-      'optgroup',
-    ) as NodeListOf<HTMLOptGroupElement>;
-    expect(Array.from(groups).map((group) => group.label)).toEqual([
+      '.permission-page',
+    ) as NodeListOf<HTMLDetailsElement>;
+    expect(Array.from(groups).map((group) =>
+      group.querySelector('.permission-page-name strong')?.textContent.trim(),
+    )).toEqual([
       'Clinic access',
       'Organization settings',
     ]);
-    expect(groups[0].querySelector('option')?.textContent.trim()).toBe('View clinics');
+    expect(groups[0].querySelector('.permission-option-copy small')?.textContent.trim()).toBe('View clinics');
+
+    const select_page = groups[0].querySelector(
+      '.permission-select-all input',
+    ) as HTMLInputElement;
+    select_page.click();
+    fixture.detectChanges();
+
+    expect(groups[0].querySelector('.permission-page-count')?.textContent.trim()).toBe('1 / 1');
+    expect(groups[0].querySelector('.permission-option input:checked')).toBeTruthy();
   });
 });
