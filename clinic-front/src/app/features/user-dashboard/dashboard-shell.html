@@ -15,13 +15,11 @@
         [ariaLabel]="copy.languageLabel"
       >{{ language() === 'en' ? 'العربية' : 'English' }}</app-ui-button>
       <app-theme-toggle />
-      @if (authStore.user(); as user) {
         <span class="dashboard-user">
-          <span class="user-avatar" aria-hidden="true">{{ user.fullName.charAt(0).toUpperCase() }}</span>
-          <span class="user-name">{{ user.fullName }}</span>
+          <span class="user-avatar" aria-hidden="true">{{ user()?.fullName.charAt(0).toUpperCase() }}</span>
+          <span class="user-name">{{ user()?.fullName }}</span>
         </span>
         <button type="button" class="logout-button" (click)="logout()">{{ copy.logout }}</button>
-      }
     </div>
   </header>
   <main class="dashboard-content">
