@@ -44,4 +44,15 @@ describe('Startup', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('shows organization setup separately before the profile step', () => {
+    expect(fixture.nativeElement.querySelector('#organization-step-title')).toBeTruthy();
+    expect(fixture.nativeElement.querySelectorAll('.startup-steps button')).toHaveLength(5);
+
+    fixture.nativeElement.querySelectorAll('.startup-steps button')[1].click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#profile-step-title')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('#organization-step-title')).toBeNull();
+  });
 });

@@ -8,10 +8,11 @@
 	</header>
 
 	<nav class="startup-steps" [attr.aria-label]="copy.stepsLabel">
-		<button type="button" [class.active]="step() === 0" [attr.aria-current]="step() === 0 ? 'step' : null" (click)="set_step(0)">{{ copy.profileStep }}</button>
-		<button type="button" [class.active]="step() === 1" [attr.aria-current]="step() === 1 ? 'step' : null" (click)="set_step(1)">{{ copy.rolesStep }}</button>
-		<button type="button" [class.active]="step() === 2" [attr.aria-current]="step() === 2 ? 'step' : null" (click)="set_step(2)">{{ copy.specialtiesStep }}</button>
-		<button type="button" [class.active]="step() === 3" [attr.aria-current]="step() === 3 ? 'step' : null" (click)="set_step(3)">{{ copy.clinicsStep }}</button>
+		<button type="button" [class.active]="step() === 0" [attr.aria-current]="step() === 0 ? 'step' : null" (click)="set_step(0)">{{ copy.organizationStep }}</button>
+		<button type="button" [class.active]="step() === 1" [attr.aria-current]="step() === 1 ? 'step' : null" (click)="set_step(1)">{{ copy.profileStep }}</button>
+		<button type="button" [class.active]="step() === 2" [attr.aria-current]="step() === 2 ? 'step' : null" (click)="set_step(2)">{{ copy.rolesStep }}</button>
+		<button type="button" [class.active]="step() === 3" [attr.aria-current]="step() === 3 ? 'step' : null" (click)="set_step(3)">{{ copy.specialtiesStep }}</button>
+		<button type="button" [class.active]="step() === 4" [attr.aria-current]="step() === 4 ? 'step' : null" (click)="set_step(4)">{{ copy.clinicsStep }}</button>
 	</nav>
 
 	@if (is_loading()) {
@@ -19,26 +20,44 @@
 	} @else {
 		<form (ngSubmit)="save()" novalidate>
 			@if (step() === 0) {
-				<section class="startup-section" [formGroup]="profile_form" aria-labelledby="profile-step-title">
-					<div class="organization-identity">
-						<h2>{{ copy.organizationTitle }}</h2>
-						<div class="identity-fields">
-							<label class="startup-field logo-field">
-								<span>{{ copy.organizationLogo }}</span>
-								<input type="file" accept="image/jpeg,image/png,image/gif,image/webp" (change)="upload_organization_logo($event)" />
-								<small>{{ copy.organizationLogoHint }}</small>
-							</label>
-							@if (organization_logo_preview_url(); as logo_url) {
-								<img class="organization-logo-preview" [src]="logo_url" [alt]="copy.organizationLogoPreview" />
-							} @else {
-								<div class="organization-logo-placeholder" aria-hidden="true">{{ copy.logoPlaceholder }}</div>
-							}
-							<label class="startup-field field-wide">
-								<span>{{ copy.organizationBrief }}</span>
-								<textarea formControlName="briefDescription" [placeholder]="copy.organizationBriefPlaceholder" maxlength="1000" rows="3"></textarea>
-							</label>
-						</div>
+				<section class="startup-section organization-section" [formGroup]="profile_form" aria-labelledby="organization-step-title">
+					<div class="section-intro">
+						<p class="section-kicker">{{ copy.organizationDetails }}</p>
+						<h2 id="organization-step-title">{{ copy.organizationTitle }}</h2>
 					</div>
+					<div class="organization-layout">
+						<div class="logo-panel">
+							<div class="logo-preview-frame">
+								@if (organization_logo_preview_url(); as logo_url) {
+									<img class="organization-logo-preview" [src]="logo_url" [alt]="copy.organizationLogoPreview" />
+								} @else {
+									<div class="organization-logo-placeholder" aria-hidden="true">{{ copy.logoPlaceholder }}</div>
+								}
+							</div>
+							<div class="logo-controls">
+								<label class="logo-select-button">{{ copy.selectLogo }}
+									<input #organizationLogoInput id="organizationLogo" class="visually-hidden" type="file" accept="image/jpeg,image/png,image/gif,image/webp" (change)="upload_organization_logo($event)" />
+								</label>
+								@if (organization_logo_file_name(); as file_name) {
+									<p class="selected-file" [title]="file_name">{{ file_name }}</p>
+									<button type="button" class="text-action danger-action" (click)="clear_organization_logo(organizationLogoInput)">{{ copy.removeLogo }}</button>
+								}
+								@if (organization_logo_error(); as logo_error) {
+									<p class="field-error" role="alert">{{ logo_error | translate }}</p>
+								}
+								<small>{{ copy.organizationLogoHint }}</small>
+							</div>
+						</div>
+						<label class="startup-field organization-description">
+							<span>{{ copy.organizationBrief }}</span>
+							<textarea formControlName="briefDescription" [placeholder]="copy.organizationBriefPlaceholder" maxlength="1000" rows="5"></textarea>
+						</label>
+					</div>
+				</section>
+			}
+
+			@if (step() === 1) {
+				<section class="startup-section" [formGroup]="profile_form" aria-labelledby="profile-step-title">
 					<h2 id="profile-step-title">{{ copy.profileTitle }}</h2>
 					<div class="startup-grid">
 						<label class="startup-field">
@@ -113,7 +132,7 @@
 				</section>
 			}
 
-			@if (step() === 1) {
+			@if (step() === 2) {
 				<section class="startup-section" aria-labelledby="roles-step-title">
 					<div class="subsection-heading">
 						<div><h2 id="roles-step-title">{{ copy.rolesTitle }}</h2><p>{{ copy.optionalStep }}</p></div>
@@ -137,7 +156,7 @@
 				</section>
 			}
 
-			@if (step() === 2) {
+			@if (step() === 3) {
 				<section class="startup-section" aria-labelledby="specialties-step-title">
 					<div class="subsection-heading">
 						<div><h2 id="specialties-step-title">{{ copy.specialtiesTitle }}</h2><p>{{ copy.optionalStep }}</p></div>
@@ -153,7 +172,7 @@
 				</section>
 			}
 
-			@if (step() === 3) {
+			@if (step() === 4) {
 				<section class="startup-section" aria-labelledby="clinics-step-title">
 					<div class="subsection-heading">
 						<div><h2 id="clinics-step-title">{{ copy.clinicsTitle }}</h2><p>{{ copy.clinicRequired }}</p></div>
@@ -184,7 +203,7 @@
 
 			<footer class="startup-actions">
 				@if (step() > 0) { <button type="button" class="secondary-button" (click)="set_step(step() - 1)">{{ copy.back }}</button> }
-				@if (step() < 3) {
+				@if (step() < 4) {
 					<button type="button" class="primary-button" (click)="set_step(step() + 1)">{{ copy.continue }}</button>
 				} @else {
 					<button type="submit" class="primary-button" [disabled]="is_saving()">{{ is_saving() ? copy.saving : copy.finish }}</button>

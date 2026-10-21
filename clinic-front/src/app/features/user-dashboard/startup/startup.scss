@@ -1,24 +1,36 @@
 .startup-page { max-width: 1080px; margin: 0 auto; padding: 36px 28px 56px; }
 .startup-heading { margin: 0 0 24px; }
-.startup-heading h1 { margin: 4px 0 8px; font-size: 32px; }
+.startup-heading h1 { margin: 4px 0 8px; font-size: calc(var(--font-size-xxxl) * 1.0667); }
 .startup-heading p { color: var(--clinic-muted); }
-.startup-eyebrow { color: var(--clinic-primary); font-size: 13px; font-weight: 700; }
-.startup-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 24px; border-bottom: 1px solid var(--clinic-line); counter-reset: startup-step; }
+.startup-eyebrow { color: var(--clinic-primary); font-size: calc(var(--font-size-sm) * 0.9286); font-weight: 700; }
+.startup-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-bottom: 24px; border-bottom: 1px solid var(--clinic-line); counter-reset: startup-step; }
 .startup-steps button { min-height: 48px; padding: 10px 8px; border: 0; border-bottom: 3px solid transparent; color: var(--clinic-muted); background: transparent; font: inherit; cursor: pointer; counter-increment: startup-step; }
-.startup-steps button::before { content: counter(startup-step) "."; margin-inline-end: 6px; color: var(--clinic-muted); font-size: 12px; font-weight: 700; }
+.startup-steps button::before { content: counter(startup-step) "."; margin-inline-end: 6px; color: var(--clinic-muted); font-size: var(--font-size-xs); font-weight: 700; }
 .startup-steps button.active { border-color: var(--clinic-primary); color: var(--clinic-primary); font-weight: 700; }
 .startup-section { padding: 24px; border: 1px solid var(--clinic-line); border-radius: 8px; background: var(--clinic-surface); }
-.startup-section h2 { margin: 0 0 8px; font-size: 22px; }
+.startup-section h2 { margin: 0 0 8px; font-size: calc(var(--font-size-xxl) * 0.9167); }
 .startup-grid, .entry-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; }
-.startup-field { display: grid; gap: 6px; min-width: 0; color: var(--clinic-ink); font-size: 14px; font-weight: 600; }
+.startup-field { display: grid; gap: 6px; min-width: 0; color: var(--clinic-ink); font-size: var(--font-size-sm); font-weight: 600; }
 .startup-field input, .startup-field textarea, .startup-field select { width: 100%; min-width: 0; min-height: 42px; padding: 9px 11px; border: 1px solid var(--clinic-line); border-radius: 4px; color: var(--clinic-ink); background: var(--clinic-paper); font: inherit; font-weight: 400; }
 .profile-preview { display: block; width: 88px; height: 88px; margin-top: 16px; border-radius: 50%; object-fit: cover; }
-.organization-identity { margin: -4px -4px 28px; padding: 0 4px 24px; border-bottom: 1px solid var(--clinic-line); }
-.organization-identity h2 { margin-bottom: 16px; }
-.identity-fields { display: grid; grid-template-columns: minmax(0, 1fr) 104px; align-items: center; gap: 16px 22px; }
-.organization-logo-preview, .organization-logo-placeholder { grid-column: 2; grid-row: 1; width: 104px; height: 104px; border: 1px solid var(--clinic-line); border-radius: 6px; object-fit: contain; background: var(--clinic-surface); }
-.organization-logo-placeholder { display: grid; place-items: center; color: var(--clinic-primary); font-size: 30px; font-weight: 700; }
-.logo-field { grid-column: 1; grid-row: 1; }
+.section-intro { margin-bottom: 24px; }
+.section-kicker { margin: 0 0 6px; color: var(--clinic-primary); font-size: calc(var(--font-size-sm) * 0.9286); font-weight: 700; }
+.section-intro h2 { margin: 0; }
+.organization-layout { display: grid; grid-template-columns: minmax(230px, 0.8fr) minmax(0, 1.5fr); gap: 24px; align-items: stretch; }
+.logo-panel { display: flex; min-width: 0; align-items: center; gap: 18px; padding: 18px; border: 1px solid var(--clinic-line); border-radius: 6px; background: var(--clinic-paper); }
+.logo-preview-frame, .organization-logo-placeholder { display: grid; width: 112px; height: 112px; flex: 0 0 112px; place-items: center; overflow: hidden; border: 1px solid var(--clinic-line); border-radius: 6px; background: var(--clinic-surface); }
+.organization-logo-preview { width: 100%; height: 100%; object-fit: contain; }
+.organization-logo-placeholder { color: var(--clinic-primary); font-size: var(--font-size-lg); font-weight: 700; }
+.logo-controls { display: grid; justify-items: start; gap: 8px; min-width: 0; }
+.logo-select-button { display: inline-flex; min-height: 40px; align-items: center; padding: 8px 12px; border: 1px solid var(--clinic-primary); border-radius: 4px; color: var(--clinic-primary); background: var(--clinic-surface); font-size: var(--font-size-sm); font-weight: 700; cursor: pointer; }
+.logo-select-button:hover { background: var(--clinic-soft); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.logo-select-button:focus-within { outline: 2px solid var(--clinic-primary); outline-offset: 2px; }
+.logo-controls small { color: var(--clinic-muted); font-size: var(--font-size-xs); line-height: 1.5; }
+.selected-file { max-width: 100%; overflow: hidden; margin: 0; color: var(--clinic-ink); font-size: var(--font-size-xs); text-overflow: ellipsis; white-space: nowrap; }
+.logo-controls .text-action { padding: 0; font-size: var(--font-size-xs); }
+.field-error { margin: 0; color: var(--clinic-danger); font-size: var(--font-size-xs); }
+.organization-description textarea { height: 100%; min-height: 150px; }
 .startup-subsection { margin-top: 28px; }
 .subsection-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
 .entry-fields { margin: 12px 0; padding: 16px; border: 1px solid var(--clinic-line); border-radius: 6px; }
@@ -40,8 +52,8 @@
 	.startup-grid, .entry-fields { grid-template-columns: 1fr; }
 	.field-wide { grid-column: auto; }
 	.startup-section { padding: 20px 14px; }
-	.organization-identity { margin-inline: 0; padding: 16px 12px; }
-	.identity-fields { grid-template-columns: minmax(0, 1fr) 76px; gap: 14px; }
-	.organization-logo-preview, .organization-logo-placeholder { width: 76px; height: 76px; }
+	.organization-layout { grid-template-columns: 1fr; gap: 16px; }
+	.logo-panel { gap: 14px; padding: 14px; }
+	.logo-preview-frame, .organization-logo-placeholder { width: 88px; height: 88px; flex-basis: 88px; }
 	.inline-entry { align-items: start; }
 }

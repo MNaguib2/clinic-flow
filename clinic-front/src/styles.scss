@@ -23,6 +23,15 @@ html {
   --clinic-coral: #dd795a;
   --clinic-danger: #c62828;
   color-scheme: light;
+
+  // fonts sizes
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-xxl: 24px;
+  --font-size-xxxl: 30px;
 }
 
 html.app-dark {
@@ -49,6 +58,7 @@ body {
   color: var(--clinic-ink);
   background: var(--clinic-paper);
   font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
+  font-size: var(--font-size-md);
   -webkit-font-smoothing: antialiased;
   transition: background-color 180ms ease, color 180ms ease;
 }

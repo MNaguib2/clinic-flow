@@ -38,7 +38,7 @@
 }
 
 .user-chevron {
-  font-size: 0.8rem;
+  font-size: calc(var(--font-size-md) * 0.8);
   opacity: 0.8;
 }
 

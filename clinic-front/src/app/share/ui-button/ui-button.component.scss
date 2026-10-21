@@ -18,7 +18,7 @@
   color: var(--clinic-primary-contrast);
   background: var(--clinic-primary);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;
   transition: background-color 160ms ease, color 160ms ease;
@@ -44,7 +44,7 @@
   border-radius: 5px;
   color: var(--clinic-ink);
   background: transparent;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 400;
 }
 
@@ -58,7 +58,7 @@
 }
 
 :host(.language-button) .ui-button {
-  font-size: 13px;
+  font-size: calc(var(--font-size-sm) * 0.9286);
 }
 
 @media (max-width: 640px) {
@@ -66,6 +66,6 @@
   :host(.theme-button) .ui-button {
     min-height: 34px;
     padding: 6px 7px;
-    font-size: 10px;
+    font-size: calc(var(--font-size-xs) * 0.8333);
   }
 }

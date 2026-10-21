@@ -70,6 +70,8 @@ export class Startup implements OnInit {
   protected readonly permissions = signal<StartupPermission[]>([]);
   protected readonly profile_preview_url = signal<string | null>(null);
   protected readonly organization_logo_preview_url = signal<string | null>(null);
+  protected readonly organization_logo_file_name = signal<string | null>(null);
+  protected readonly organization_logo_error = signal<string | null>(null);
   private profile_image: File | null = null;
   private organization_logo: File | null = null;
   private readonly certification_files = new Map<number, File>();
@@ -104,7 +106,7 @@ export class Startup implements OnInit {
 
   protected set_step(step: number): void {
     this.error_message.set(null);
-    this.step.set(Math.max(0, Math.min(3, step)));
+    this.step.set(Math.max(0, Math.min(4, step)));
   }
 
   protected add_experience(target: 'previous' | 'current'): void {
@@ -147,9 +149,35 @@ export class Startup implements OnInit {
     const file = input.files?.[0];
     if (!file) return;
 
+    const accepted_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!accepted_types.includes(file.type)) {
+      this.organization_logo_error.set('startup.organizationLogoInvalid');
+      input.value = '';
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      this.organization_logo_error.set('startup.organizationLogoTooLarge');
+      input.value = '';
+      return;
+    }
+
     this.error_message.set(null);
+    this.organization_logo_error.set(null);
+    const previous_url = this.organization_logo_preview_url();
+    if (previous_url) URL.revokeObjectURL(previous_url);
     this.organization_logo = file;
+    this.organization_logo_file_name.set(file.name);
     this.organization_logo_preview_url.set(URL.createObjectURL(file));
+  }
+
+  protected clear_organization_logo(input: HTMLInputElement): void {
+    const preview_url = this.organization_logo_preview_url();
+    if (preview_url) URL.revokeObjectURL(preview_url);
+    this.organization_logo = null;
+    this.organization_logo_file_name.set(null);
+    this.organization_logo_preview_url.set(null);
+    this.organization_logo_error.set(null);
+    input.value = '';
   }
 
   protected upload_certification_file(index: number, event: Event): void {

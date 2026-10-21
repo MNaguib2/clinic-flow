@@ -21,7 +21,7 @@
 
 .dashboard-brand {
   color: var(--clinic-ink);
-  font-size: 1.2rem;
+  font-size: calc(var(--font-size-xl) * 0.96);
   font-weight: 700;
   text-decoration: none;
 }
