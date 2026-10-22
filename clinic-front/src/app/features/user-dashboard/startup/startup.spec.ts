@@ -81,7 +81,7 @@ describe('Startup', () => {
 
   it('shows organization setup separately before the profile step', () => {
     expect(fixture.nativeElement.querySelector('#organization-step-title')).toBeTruthy();
-    expect(fixture.nativeElement.querySelectorAll('.startup-steps button')).toHaveLength(5);
+    expect(fixture.nativeElement.querySelectorAll('.startup-steps button')).toHaveLength(6);
 
     fixture.nativeElement.querySelectorAll('.startup-steps button')[1].click();
     fixture.detectChanges();
@@ -93,7 +93,7 @@ describe('Startup', () => {
   it('shows permission descriptions and selects all permissions within a page', () => {
     fixture.nativeElement.querySelectorAll('.startup-steps button')[2].click();
     fixture.detectChanges();
-    fixture.nativeElement.querySelector('.startup-section .text-action').click();
+    fixture.nativeElement.querySelector('#add-role-button').click();
     fixture.detectChanges();
 
     const groups = fixture.nativeElement.querySelectorAll(
@@ -115,5 +115,14 @@ describe('Startup', () => {
 
     expect(groups[0].querySelector('.permission-page-count')?.textContent.trim()).toBe('1 / 1');
     expect(groups[0].querySelector('.permission-option input:checked')).toBeTruthy();
+  });
+
+  it('shows a final setup summary before submission', () => {
+    fixture.nativeElement.querySelectorAll('.startup-steps button')[5].click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#review-step-title')).toBeTruthy();
+    expect(fixture.nativeElement.querySelectorAll('.review-card')).toHaveLength(5);
+    expect(fixture.nativeElement.querySelector('.startup-actions button[type="submit"]')).toBeTruthy();
   });
 });

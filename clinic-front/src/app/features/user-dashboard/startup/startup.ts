@@ -1,12 +1,13 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Router } from '@angular/router';
+  applyEach,
+  FieldTree,
+  form,
+  FormField,
+  maxLength,
+  required,
+} from '@angular/forms/signals';
 import { AuthStore, getErrorMessage } from '@core/auth/auth.store';
 import { StartupService } from './service/startup.service';
 import type {
@@ -21,7 +22,14 @@ import type {
 } from '@core/interfaces/startup.interfaces';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CertificationForm, ClinicForm, ExperienceForm, RoleForm } from './service/types';
+import type {
+  CertificationModel,
+  ClinicModel,
+  ExperienceModel,
+  ExperienceTarget,
+  RoleModel,
+  StartupModel,
+} from './service/types';
 
 type LocalizedPage = StartupPage & { name: string; description: string };
 type LocalizedPermission = Omit<StartupPermission, 'page'> & {
@@ -36,14 +44,13 @@ type LocalizedGlobalSpecialty = StartupGlobalSpecialty & {
 };
 
 @Component({
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [FormField, NgTemplateOutlet, TranslatePipe],
   providers: [StartupService],
   selector: 'app-startup',
   styleUrl: './startup.scss',
   templateUrl: './startup.html',
 })
 export class Startup implements OnInit {
-  private readonly form_builder = inject(FormBuilder).nonNullable;
   private readonly auth_store = inject(AuthStore);
   private readonly startup_service = inject(StartupService);
   private readonly language_service = inject(LanguageService);
@@ -56,6 +63,7 @@ export class Startup implements OnInit {
     'rolesStep',
     'specialtiesStep',
     'clinicsStep',
+    'reviewStep',
   ] as const;
   protected readonly is_loading = signal(false);
   protected readonly is_saving = signal(false);
@@ -116,21 +124,47 @@ export class Startup implements OnInit {
   protected readonly specialty_image_previews = signal(new Map<number, string>());
   protected readonly clinic_image_previews = signal(new Map<number, string>());
 
-  protected readonly profile_form = this.form_builder.group({
-    briefDescription: ['', Validators.maxLength(1000)],
-    profileImageUrl: ['', Validators.maxLength(2000)],
-    jobTitle: ['', Validators.maxLength(100)],
+  protected readonly model = signal<StartupModel>({
+    briefDescription: '',
+    profileImageUrl: '',
+    jobTitle: '',
+    previousExperiences: [this.create_experience()],
+    currentExperiences: [this.create_experience()],
+    certifications: [],
+    roles: [],
+    specialtyNames: [],
+    clinics: [this.create_clinic()],
   });
-  protected readonly previous_experiences = new FormArray<ExperienceForm>([
-    this.create_experience(),
-  ]);
-  protected readonly current_experiences = new FormArray<ExperienceForm>([
-    this.create_experience(),
-  ]);
-  protected readonly certifications = new FormArray<CertificationForm>([]);
-  protected readonly roles = new FormArray<RoleForm>([]);
-  protected readonly specialty_names = new FormArray<FormControl<string>>([]);
-  protected readonly clinics = new FormArray<ClinicForm>([this.create_clinic()]);
+  protected readonly startup_form = form(this.model, (path) => {
+    maxLength(path.briefDescription, 1000);
+    maxLength(path.profileImageUrl, 2000);
+    maxLength(path.jobTitle, 100);
+    for (const experiences of [path.previousExperiences, path.currentExperiences]) {
+      applyEach(experiences, (item) => {
+        maxLength(item.workplace, 150);
+        maxLength(item.title, 150);
+        maxLength(item.description, 2000);
+      });
+    }
+    applyEach(path.certifications, (item) => {
+      maxLength(item.name, 150);
+      maxLength(item.issuer, 150);
+      maxLength(item.certificateUrl, 2000);
+    });
+    applyEach(path.roles, (item) => {
+      required(item.name);
+      maxLength(item.name, 100);
+    });
+    applyEach(path.specialtyNames, (item) => {
+      maxLength(item, 150);
+    });
+    applyEach(path.clinics, (item) => {
+      required(item.name);
+      maxLength(item.name, 150);
+      maxLength(item.phone, 30);
+      maxLength(item.address, 2000);
+    });
+  });
 
   ngOnInit(): void {
     this.is_loading.set(true);
@@ -149,23 +183,55 @@ export class Startup implements OnInit {
 
   protected set_step(step: number): void {
     this.error_message.set(null);
-    this.step.set(Math.max(0, Math.min(4, step)));
+    this.step.set(Math.max(0, Math.min(5, step)));
   }
 
-  protected add_experience(target: 'previous' | 'current'): void {
-    this.experience_array(target).push(this.create_experience());
+  protected summary_specialties(): string[] {
+    return this.unique_names(this.model().specialtyNames);
   }
 
-  protected remove_experience(target: 'previous' | 'current', index: number): void {
-    this.experience_array(target).removeAt(index);
+  protected summary_roles(): StartupRole[] {
+    return this.role_values();
+  }
+
+  protected summary_clinics(): ClinicModel[] {
+    return this.model().clinics;
+  }
+
+  protected summary_experience_count(target: ExperienceTarget): number {
+    return this.work_experiences(this.model()[target]).length;
+  }
+
+  protected summary_certification_count(): number {
+    return this.certification_values().length;
+  }
+
+  protected add_experience(target: ExperienceTarget): void {
+    this.model.update((model) => ({
+      ...model,
+      [target]: [...model[target], this.create_experience()],
+    }));
+  }
+
+  protected remove_experience(target: ExperienceTarget, index: number): void {
+    this.model.update((model) => ({
+      ...model,
+      [target]: model[target].filter((_, item_index) => item_index !== index),
+    }));
   }
 
   protected add_certification(): void {
-    this.certifications.push(this.create_certification());
+    this.model.update((model) => ({
+      ...model,
+      certifications: [...model.certifications, this.create_certification()],
+    }));
   }
 
   protected remove_certification(index: number): void {
-    this.certifications.removeAt(index);
+    this.model.update((model) => ({
+      ...model,
+      certifications: model.certifications.filter((_, item_index) => item_index !== index),
+    }));
     const remaining_files = new Map<number, File>();
     for (const [file_index, file] of this.certification_files) {
       if (file_index < index) remaining_files.set(file_index, file);
@@ -237,16 +303,17 @@ export class Startup implements OnInit {
   }
 
   protected add_role(): void {
-    this.roles.push(
-      this.form_builder.group({
-        name: ['', [Validators.required, Validators.maxLength(100)]],
-        permissionIds: this.form_builder.control<string[]>([]),
-      }),
-    );
+    this.model.update((model) => ({
+      ...model,
+      roles: [...model.roles, { name: '', permissionIds: [] }],
+    }));
   }
 
   protected remove_role(index: number): void {
-    this.roles.removeAt(index);
+    this.model.update((model) => ({
+      ...model,
+      roles: model.roles.filter((_, item_index) => item_index !== index),
+    }));
   }
 
   protected specialty_catalog_entry(
@@ -265,14 +332,22 @@ export class Startup implements OnInit {
       : null;
   }
 
+  protected specialty_image_file_name(index: number): string | null {
+    return this.specialty_images.get(index)?.name ?? null;
+  }
+
   protected add_specialty(): void {
-    this.specialty_names.push(
-      this.form_builder.control('', Validators.maxLength(150)),
-    );
+    this.model.update((model) => ({
+      ...model,
+      specialtyNames: [...model.specialtyNames, ''],
+    }));
   }
 
   protected remove_specialty(index: number): void {
-    this.specialty_names.removeAt(index);
+    this.model.update((model) => ({
+      ...model,
+      specialtyNames: model.specialtyNames.filter((_, item_index) => item_index !== index),
+    }));
 
     const removed_url = this.specialty_image_previews().get(index);
     if (removed_url) URL.revokeObjectURL(removed_url);
@@ -317,7 +392,10 @@ export class Startup implements OnInit {
   }
 
   protected add_clinic(): void {
-    this.clinics.push(this.create_clinic());
+    this.model.update((model) => ({
+      ...model,
+      clinics: [...model.clinics, this.create_clinic()],
+    }));
   }
 
   protected upload_clinic_image(index: number, event: Event): void {
@@ -347,8 +425,11 @@ export class Startup implements OnInit {
   }
 
   protected remove_clinic(index: number): void {
-    if (this.clinics.length <= 1) return;
-    this.clinics.removeAt(index);
+    if (this.model().clinics.length <= 1) return;
+    this.model.update((model) => ({
+      ...model,
+      clinics: model.clinics.filter((_, item_index) => item_index !== index),
+    }));
 
     const removed_url = this.clinic_image_previews().get(index);
     if (removed_url) URL.revokeObjectURL(removed_url);
@@ -370,16 +451,17 @@ export class Startup implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     this.error_message.set(null);
-    const clinic_values = this.clinics.getRawValue();
+    const model = this.model();
+    const clinic_values = model.clinics;
     if (clinic_values.some((clinic) => !clinic.name.trim())) {
       this.error_message.set('startup.clinicNameRequired');
       return;
     }
 
-    const specialties = this.unique_names(this.specialty_names.getRawValue());
+    const specialties = this.unique_names(model.specialtyNames);
     const specialty_images = new Map<number, File>();
     for (const [source_index, file] of this.specialty_images) {
-      const name = this.specialty_names.at(source_index)?.value.trim();
+      const name = model.specialtyNames[source_index]?.trim();
       const data_index = name ? specialties.indexOf(name) : -1;
       if (data_index >= 0 && !specialty_images.has(data_index)) {
         specialty_images.set(data_index, file);
@@ -392,15 +474,11 @@ export class Startup implements OnInit {
       if (file) certification_files.set(data_index, file);
     });
     const payload: StartupPayload = {
-      briefDescription:
-        this.profile_form.controls.briefDescription.value.trim() || undefined,
-      profileImageUrl:
-        this.profile_form.controls.profileImageUrl.value.trim() || undefined,
-      jobTitle: this.profile_form.controls.jobTitle.value.trim() || undefined,
-      previousWorkingExperiences: this.work_experiences(
-        this.previous_experiences,
-      ),
-      currentWorkingExperiences: this.work_experiences(this.current_experiences),
+      briefDescription: model.briefDescription.trim() || undefined,
+      profileImageUrl: model.profileImageUrl.trim() || undefined,
+      jobTitle: model.jobTitle.trim() || undefined,
+      previousWorkingExperiences: this.work_experiences(model.previousExperiences),
+      currentWorkingExperiences: this.work_experiences(model.currentExperiences),
       certifications: certification_rows.map((row) => row.value),
       roles: this.role_values(),
       specialties,
@@ -437,41 +515,43 @@ export class Startup implements OnInit {
       });
   }
 
-  protected permission_is_selected(role: RoleForm, permission_id: string): boolean {
-    return role.controls.permissionIds.value.includes(permission_id);
+  protected permission_is_selected(
+    role: FieldTree<RoleModel>,
+    permission_id: string,
+  ): boolean {
+    return role.permissionIds().value().includes(permission_id);
   }
 
   protected selected_permission_count(
-    role: RoleForm,
+    role: FieldTree<RoleModel>,
     page_group: PermissionPageGroup,
   ): number {
-    const selected_ids = new Set(role.controls.permissionIds.value);
+    const selected_ids = new Set(role.permissionIds().value());
     return page_group.permissions.filter((permission) =>
       selected_ids.has(permission.id),
     ).length;
   }
 
   protected toggle_permission(
-    role: RoleForm,
+    role: FieldTree<RoleModel>,
     permission_id: string,
     event: Event,
   ): void {
-    const selected_ids = new Set(role.controls.permissionIds.value);
+    const selected_ids = new Set(role.permissionIds().value());
     if ((event.target as HTMLInputElement).checked) {
       selected_ids.add(permission_id);
     } else {
       selected_ids.delete(permission_id);
     }
-    role.controls.permissionIds.setValue([...selected_ids]);
-    role.controls.permissionIds.markAsDirty();
+    role.permissionIds().value.set([...selected_ids]);
   }
 
   protected toggle_page_permissions(
-    role: RoleForm,
+    role: FieldTree<RoleModel>,
     page_group: PermissionPageGroup,
     event: Event,
   ): void {
-    const selected_ids = new Set(role.controls.permissionIds.value);
+    const selected_ids = new Set(role.permissionIds().value());
     for (const permission of page_group.permissions) {
       if ((event.target as HTMLInputElement).checked) {
         selected_ids.add(permission.id);
@@ -479,49 +559,41 @@ export class Startup implements OnInit {
         selected_ids.delete(permission.id);
       }
     }
-    role.controls.permissionIds.setValue([...selected_ids]);
-    role.controls.permissionIds.markAsDirty();
+    role.permissionIds().value.set([...selected_ids]);
   }
 
-  private experience_array(target: 'previous' | 'current'): FormArray<ExperienceForm> {
-    return target === 'previous'
-      ? this.previous_experiences
-      : this.current_experiences;
+  protected clinic_has_specialty(clinic: FieldTree<ClinicModel>, name: string): boolean {
+    return clinic.specialties().value().includes(name);
   }
 
-  private create_experience(): ExperienceForm {
-    return this.form_builder.group({
-      workplace: ['', Validators.maxLength(150)],
-      title: ['', Validators.maxLength(150)],
-      startDate: [''],
-      endDate: [''],
-      description: ['', Validators.maxLength(2000)],
-    });
+  protected toggle_clinic_specialty(
+    clinic: FieldTree<ClinicModel>,
+    name: string,
+    event: Event,
+  ): void {
+    const selected_names = new Set(clinic.specialties().value());
+    if ((event.target as HTMLInputElement).checked) {
+      selected_names.add(name);
+    } else {
+      selected_names.delete(name);
+    }
+    clinic.specialties().value.set([...selected_names]);
   }
 
-  private create_certification(): CertificationForm {
-    return this.form_builder.group({
-      name: ['', Validators.maxLength(150)],
-      issuer: ['', Validators.maxLength(150)],
-      issuedAt: [''],
-      certificateUrl: ['', Validators.maxLength(2000)],
-    });
+  private create_experience(): ExperienceModel {
+    return { workplace: '', title: '', startDate: '', endDate: '', description: '' };
   }
 
-  private create_clinic(): ClinicForm {
-    return this.form_builder.group({
-      name: ['', [Validators.required, Validators.maxLength(150)]],
-      phone: ['', Validators.maxLength(30)],
-      address: ['', Validators.maxLength(2000)],
-      specialties: this.form_builder.control<string[]>([]),
-    });
+  private create_certification(): CertificationModel {
+    return { name: '', issuer: '', issuedAt: '', certificateUrl: '' };
   }
 
-  private work_experiences(
-    rows: FormArray<ExperienceForm>,
-  ): StartupWorkExperience[] {
+  private create_clinic(): ClinicModel {
+    return { name: '', phone: '', address: '', specialties: [] };
+  }
+
+  private work_experiences(rows: ExperienceModel[]): StartupWorkExperience[] {
     return rows
-      .getRawValue()
       .filter((row) => row.workplace.trim() && row.title.trim())
       .map((row) => ({
         workplace: row.workplace.trim(),
@@ -536,27 +608,23 @@ export class Startup implements OnInit {
     value: StartupCertification;
     source_index: number;
   }[] {
-    return this.certifications
-      .controls
-      .flatMap((form, source_index) => {
-        const row = form.getRawValue();
-        if (!row.name.trim()) return [];
-        return [{
-          source_index,
-          value: {
-            name: row.name.trim(),
-            issuer: row.issuer.trim() || undefined,
-            issuedAt: row.issuedAt || undefined,
-            certificateUrl: row.certificateUrl.trim() || undefined,
-          },
-        }];
-      });
+    return this.model().certifications.flatMap((row, source_index) => {
+      if (!row.name.trim()) return [];
+      return [{
+        source_index,
+        value: {
+          name: row.name.trim(),
+          issuer: row.issuer.trim() || undefined,
+          issuedAt: row.issuedAt || undefined,
+          certificateUrl: row.certificateUrl.trim() || undefined,
+        },
+      }];
+    });
   }
 
   private role_values(): StartupRole[] {
-    return this.roles
-      .getRawValue()
-      .filter((role) => role.name.trim())
+    return this.model()
+      .roles.filter((role) => role.name.trim())
       .map((role) => ({
         name: role.name.trim(),
         permissionIds: role.permissionIds,

@@ -1,28 +1,40 @@
-import { FormControl, FormGroup } from "@angular/forms";
+export interface ExperienceModel {
+  workplace: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
 
-export type ExperienceForm = FormGroup<{
-  workplace: FormControl<string>;
-  title: FormControl<string>;
-  startDate: FormControl<string>;
-  endDate: FormControl<string>;
-  description: FormControl<string>;
-}>;
+export interface CertificationModel {
+  name: string;
+  issuer: string;
+  issuedAt: string;
+  certificateUrl: string;
+}
 
-export type CertificationForm = FormGroup<{
-  name: FormControl<string>;
-  issuer: FormControl<string>;
-  issuedAt: FormControl<string>;
-  certificateUrl: FormControl<string>;
-}>;
+export interface RoleModel {
+  name: string;
+  permissionIds: string[];
+}
 
-export type RoleForm = FormGroup<{
-  name: FormControl<string>;
-  permissionIds: FormControl<string[]>;
-}>;
+export interface ClinicModel {
+  name: string;
+  phone: string;
+  address: string;
+  specialties: string[];
+}
 
-export type ClinicForm = FormGroup<{
-  name: FormControl<string>;
-  phone: FormControl<string>;
-  address: FormControl<string>;
-  specialties: FormControl<string[]>;
-}>;
+export interface StartupModel {
+  briefDescription: string;
+  profileImageUrl: string;
+  jobTitle: string;
+  previousExperiences: ExperienceModel[];
+  currentExperiences: ExperienceModel[];
+  certifications: CertificationModel[];
+  roles: RoleModel[];
+  specialtyNames: string[];
+  clinics: ClinicModel[];
+}
+
+export type ExperienceTarget = 'previousExperiences' | 'currentExperiences';

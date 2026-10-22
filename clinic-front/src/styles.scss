@@ -66,3 +66,30 @@ body {
 a {
   -webkit-tap-highlight-color: transparent;
 }
+
+.review-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.review-card { padding: 18px; border: 1px solid var(--clinic-line); border-radius: 8px; }
+.review-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.review-list,.review-clinics,.review-chips { display: grid; gap: 7px; margin: 12px 0 0; padding: 0; list-style: none; }
+
+.specialty-entry { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1.2fr) auto; align-items: center; gap: 14px; margin: 14px 0; padding: 16px; border: 1px solid var(--clinic-line); border-radius: 12px; background: color-mix(in srgb, var(--clinic-paper) 60%, var(--clinic-surface)); }
+.specialty-upload-control { display: grid; justify-items: start; gap: 7px; }
+.specialty-upload-action { display: inline-flex; min-height: 40px; align-items: center; padding: 8px 12px; border: 1px solid color-mix(in srgb, var(--clinic-primary) 36%, var(--clinic-line)); border-radius: 8px; color: var(--clinic-primary); background: var(--clinic-surface); font-weight: 700; cursor: pointer; }
+.specialty-upload-control:focus-within .specialty-upload-action { outline: 2px solid var(--clinic-primary); outline-offset: 3px; }
+.specialty-file-name { max-width: 100%; overflow: hidden; color: var(--clinic-muted); font-size: var(--font-size-xs); text-overflow: ellipsis; white-space: nowrap; }
+.specialty-preview { display: flex; min-width: 0; align-items: center; gap: 11px; color: var(--clinic-muted); font-size: var(--font-size-xs); }
+.specialty-preview img,.specialty-image-placeholder { display: grid; width: 56px; height: 56px; flex: 0 0 56px; place-items: center; border: 1px solid var(--clinic-line); border-radius: 11px; background: var(--clinic-surface); object-fit: cover; }
+.specialty-image-placeholder { color: var(--clinic-primary); font-size: var(--font-size-xl); }
+.specialty-preview-copy { display: grid; min-width: 0; gap: 3px; }
+.specialty-preview-copy strong { overflow: hidden; color: var(--clinic-ink); text-overflow: ellipsis; white-space: nowrap; }
+.specialty-preview-copy small { overflow: hidden; color: var(--clinic-muted); font-size: var(--font-size-xs); text-overflow: ellipsis; white-space: nowrap; }
+.specialty-remove { white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .specialty-entry { grid-template-columns: 1fr; align-items: stretch; }
+}
+
+@media (max-width: 480px) {
+  .review-grid { grid-template-columns: 1fr; }
+  .review-card { padding: 15px; }
+}

@@ -28,6 +28,11 @@
               {
                 "glob": "**/*",
                 "input": "src/public"
+              },
+              {
+                "glob": "bootstrap{,.rtl}.min.css",
+                "input": "node_modules/bootstrap/dist/css",
+                "output": "bootstrap"
               }
             ],
             "styles": [

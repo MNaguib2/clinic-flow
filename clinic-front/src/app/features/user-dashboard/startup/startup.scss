@@ -1,79 +1,30 @@
-.startup-page { --rule: 1px solid var(--clinic-line); max-width: 1080px; margin: 0 auto; padding: 36px 28px 56px; }
-.startup-heading { margin: 0 0 24px; }
-.startup-heading h1 { margin: 4px 0 8px; font-size: calc(var(--font-size-xxxl) * 1.0667); }
-.startup-heading p:last-child { color: var(--clinic-muted); }
-.startup-eyebrow, .section-kicker { margin: 0 0 6px; color: var(--clinic-primary); font-size: var(--font-size-xs); font-weight: 700; }
-.startup-steps { display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; counter-reset: step; }
-.startup-steps button { display: flex; flex: 1 0 auto; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 8px 14px; border: var(--rule); border-radius: 6px; color: var(--clinic-muted); background: var(--clinic-surface); font: inherit; font-weight: 600; cursor: pointer; counter-increment: step; }
-.startup-steps button::before { content: counter(step); display: grid; width: 26px; height: 26px; place-items: center; border-radius: 50%; color: var(--clinic-primary); background: var(--clinic-soft); font-size: var(--font-size-xs); font-weight: 700; }
-.startup-steps .done::before { content: "\2713"; }
-.startup-steps .active { border-color: var(--clinic-primary); color: var(--clinic-primary); }
-.startup-steps .active::before { color: var(--clinic-primary-contrast); background: var(--clinic-primary); }
-.startup-section { padding: 28px; border: var(--rule); border-radius: 8px; background: var(--clinic-surface); box-shadow: 0 12px 32px rgb(20 45 35 / 6%); }
-.startup-section h2 { margin: 0 0 8px; font-size: calc(var(--font-size-xxl) * 0.9167); }
-.startup-grid, .entry-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; }
-.startup-field { display: grid; gap: 6px; min-width: 0; color: var(--clinic-ink); font-size: var(--font-size-sm); font-weight: 600; }
-.startup-field :is(input:not([type='checkbox']), textarea, select) { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: var(--rule); border-radius: 4px; color: var(--clinic-ink); background: var(--clinic-paper); font: inherit; font-weight: 400; transition: border-color .16s, box-shadow .16s; }
-.startup-field :is(input:not([type='checkbox']), textarea, select):focus-visible { border-color: var(--clinic-primary); outline: 0; box-shadow: 0 0 0 3px color-mix(in srgb, var(--clinic-primary) 18%, transparent); }
-.startup-field input::file-selector-button { margin-inline-end: 10px; padding: 6px 12px; border: 1px solid var(--clinic-primary); border-radius: 4px; color: var(--clinic-primary); background: var(--clinic-surface); font: inherit; font-weight: 600; cursor: pointer; }
-.profile-preview { display: block; width: 88px; height: 88px; margin-top: 16px; border-radius: 50%; object-fit: cover; }
-.global-specialty-preview { display: flex; max-width: 300px; align-items: center; gap: 10px; color: var(--clinic-muted); font-size: var(--font-size-xs); }
-.global-specialty-preview img { width: 56px; height: 56px; flex: 0 0 56px; border-radius: 8px; }
-.section-intro { margin-bottom: 24px; }
-.section-intro h2 { margin: 0; }
-.organization-layout { display: grid; grid-template-columns: minmax(230px, 0.8fr) minmax(0, 1.5fr); gap: 24px; align-items: stretch; }
-.logo-panel { display: flex; min-width: 0; align-items: center; gap: 18px; padding: 18px; border: var(--rule); border-radius: 6px; background: var(--clinic-paper); }
-.logo-preview-frame, .organization-logo-placeholder { display: grid; width: 112px; height: 112px; flex: 0 0 112px; place-items: center; overflow: hidden; border: var(--rule); border-radius: 6px; background: var(--clinic-surface); }
-.organization-logo-preview { width: 100%; height: 100%; object-fit: contain; }
-.organization-logo-placeholder { color: var(--clinic-primary); font-size: var(--font-size-lg); font-weight: 700; }
-.logo-controls { display: grid; justify-items: start; gap: 8px; min-width: 0; }
-.logo-select-button { display: inline-flex; min-height: 40px; align-items: center; padding: 8px 12px; border: 1px solid var(--clinic-primary); border-radius: 4px; color: var(--clinic-primary); background: var(--clinic-surface); font-size: var(--font-size-sm); font-weight: 700; cursor: pointer; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
-.selected-file { max-width: 100%; overflow: hidden; margin: 0; color: var(--clinic-ink); font-size: var(--font-size-xs); text-overflow: ellipsis; white-space: nowrap; }
-.logo-controls .text-action { padding: 0; font-size: var(--font-size-xs); }
-.field-error { margin: 0; color: var(--clinic-danger); font-size: var(--font-size-xs); }
-.organization-description textarea { height: 100%; min-height: 150px; }
-.startup-subsection { margin-top: 28px; }
-.subsection-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
-.entry-fields { margin: 12px 0; padding: 16px; border: var(--rule); border-inline-start: 3px solid var(--clinic-primary); border-radius: 6px; }
-.entry-fields legend { padding: 0 6px; color: var(--clinic-primary); font-size: var(--font-size-xs); font-weight: 700; }
-.field-wide { grid-column: 1 / -1; }
-.inline-entry { display: flex; align-items: end; gap: 14px; margin: 12px 0; }
-.inline-entry .startup-field { flex: 1; }
-.text-action { padding: 8px 4px; border: 0; color: var(--clinic-primary); background: transparent; font: inherit; font-weight: 700; cursor: pointer; }
-.danger-action { justify-self: start; color: var(--clinic-danger); }
-.permission-pages { display: grid; gap: 8px; }
-.permission-page { border: var(--rule); border-radius: 5px; background: var(--clinic-surface); }
-.permission-page-summary { display: flex; min-height: 56px; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 12px; color: var(--clinic-ink); cursor: pointer; list-style-position: inside; }
-.permission-page-name, .permission-option-copy { display: grid; min-width: 0; gap: 3px; }
-.startup-field small, .logo-controls small, .permission-page-name small, .permission-option-copy small { color: var(--clinic-muted); font-size: var(--font-size-xs); font-weight: 400; line-height: 1.45; }
-.permission-page-name strong { font-size: var(--font-size-sm); }
-.permission-page[open] > .permission-page-summary { background: var(--clinic-soft); }
-.permission-page-count { flex: 0 0 auto; padding: 2px 10px; border: var(--rule); border-radius: 999px; color: var(--clinic-primary); background: var(--clinic-surface); font-size: var(--font-size-xs); font-weight: 700; }
-.permission-page-options { padding: 4px 12px 10px; border-top: var(--rule); }
-.permission-select-all, .permission-option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 4px; cursor: pointer; }
-.permission-select-all { border-bottom: var(--rule); color: var(--clinic-primary); font-size: var(--font-size-xs); }
-.permission-select-all input, .permission-option input { flex: 0 0 auto; margin: 2px 0 0; accent-color: var(--clinic-primary); }
-.permission-option + .permission-option { border-top: var(--rule); }
-.permission-option-copy strong { color: var(--clinic-ink); font-size: var(--font-size-xs); font-weight: 600; }
-.empty-state, .startup-status { padding: 18px 0; color: var(--clinic-muted); }
-.startup-error { margin: 16px 0 0; color: var(--clinic-danger); }
-.startup-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: var(--rule); }
-.primary-button, .secondary-button { min-height: 46px; padding: 10px 20px; border: 1px solid var(--clinic-primary); border-radius: 4px; font: inherit; font-weight: 700; cursor: pointer; }
-.primary-button { margin-inline-start: auto; color: var(--clinic-primary-contrast); background: var(--clinic-primary); }
-.primary-button:hover:not(:disabled) { background: var(--clinic-primary-hover); }
-.primary-button:disabled { opacity: .65; cursor: wait; }
-.secondary-button { color: var(--clinic-primary); background: transparent; }
-.secondary-button:hover, .logo-select-button:hover { background: var(--clinic-soft); }
-button:focus-visible, .logo-select-button:focus-within { outline: 2px solid var(--clinic-primary); outline-offset: 2px; }
-@media (max-width: 640px) {
-	.startup-page { padding: 28px 16px 40px; }
-	.startup-steps button { padding: 8px 12px; }
-	.startup-grid, .entry-fields { grid-template-columns: 1fr; }
-	.field-wide { grid-column: auto; }
-	.startup-section { padding: 20px 14px; }
-	.organization-layout { grid-template-columns: 1fr; gap: 16px; }
-	.logo-panel { gap: 14px; padding: 14px; }
-	.logo-preview-frame, .organization-logo-placeholder { width: 88px; height: 88px; flex-basis: 88px; }
-	.inline-entry { align-items: start; }
+:host {
+  display: block;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--clinic-primary);
+  --bs-btn-border-color: var(--clinic-primary);
+  --bs-btn-color: var(--clinic-primary-contrast);
+  --bs-btn-hover-bg: var(--clinic-primary-hover);
+  --bs-btn-hover-border-color: var(--clinic-primary-hover);
+  --bs-btn-hover-color: var(--clinic-primary-contrast);
+}
+
+.btn-outline-primary,
+.btn-link,
+.text-primary {
+  --bs-btn-color: var(--clinic-primary);
+  --bs-btn-border-color: var(--clinic-primary);
+  --bs-btn-hover-bg: var(--clinic-primary);
+  --bs-btn-hover-border-color: var(--clinic-primary);
+  --bs-btn-hover-color: var(--clinic-primary-contrast);
+  --bs-link-color: var(--clinic-primary);
+}
+
+.text-primary { color: var(--clinic-primary) !important; }
+
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--clinic-primary);
+  --bs-nav-pills-link-active-color: var(--clinic-primary-contrast);
 }

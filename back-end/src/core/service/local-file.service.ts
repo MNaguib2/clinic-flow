@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
   Scope,
 } from '@nestjs/common';
 import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
@@ -11,7 +10,6 @@ import {
   extname,
   isAbsolute,
   join,
-  relative,
   resolve,
   sep,
 } from 'node:path';
@@ -90,59 +88,8 @@ export class LocalFileService {
   }
 
   async read_public(relative_path: string): Promise<Buffer> {
-    const is_global_public = relative_path.startsWith('global-public/');
-    const profile_images_path = join(
-      this.ORGANIZATION_FOLDER,
-      this.PROFILE_IMAGES_FOLDER,
-    );
-    if (
-      relative_path.startsWith(`${this.ORGANIZATION_FOLDER}${sep}`) &&
-      !relative_path.startsWith(`${profile_images_path}${sep}`)
-    ) {
-      throw new NotFoundException('File not found');
-    }
-    const upload_path =
-      is_global_public ||
-      relative_path.startsWith(`${profile_images_path}${sep}`)
-        ? relative_path
-        : join('public', relative_path);
-    const file_path = is_global_public
-      ? resolve(process.cwd(), upload_path)
-      : resolve(this.upload_root, upload_path);
-    const allowed_roots = [
-      resolve(this.upload_root, 'public'),
-      resolve(
-        this.upload_root,
-        this.ORGANIZATION_FOLDER,
-        this.PROFILE_IMAGES_FOLDER,
-      ),
-      resolve(process.cwd(), 'global-public'),
-    ];
-    if (
-      isAbsolute(relative_path) ||
-      !allowed_roots.some((allowed_root) =>
-        file_path.startsWith(`${allowed_root}${sep}`),
-      )
-    ) {
-      throw new NotFoundException('File not found');
-    }
-
-    try {
-      return await readFile(
-        is_global_public
-          ? file_path
-          : this.resolve_path(relative(this.upload_root, file_path)),
-      );
-    } catch (error) {
-      const is_missing_file =
-        error instanceof Error &&
-        'code' in error &&
-        (error as NodeJS.ErrnoException).code === 'ENOENT';
-      if (is_missing_file) {
-        throw new NotFoundException('File not found');
-      }
-      throw error;
-    }
+    await readFile(this.resolve_path(relative_path));
+    throw new Error('Not implemented');
   }
 
   prepareDirectory(paths: Array<string>): string {

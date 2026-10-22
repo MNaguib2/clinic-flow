@@ -34,6 +34,12 @@ export class LanguageService {
     this.language.set(language);
     this.document.documentElement.lang = language;
     this.document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    this.document
+      .getElementById('bootstrap-css')
+      ?.setAttribute(
+        'href',
+        language === 'ar' ? 'bootstrap/bootstrap.rtl.min.css' : 'bootstrap/bootstrap.min.css',
+      );
     this.translateService.use(language).subscribe();
 
     if (persist && this.isBrowser) {
