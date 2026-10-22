@@ -3,7 +3,6 @@ import {
   FormArray,
   FormBuilder,
   FormControl,
-  FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -21,33 +20,7 @@ import type {
 } from '@core/interfaces/startup.interfaces';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
-
-type ExperienceForm = FormGroup<{
-  workplace: FormControl<string>;
-  title: FormControl<string>;
-  startDate: FormControl<string>;
-  endDate: FormControl<string>;
-  description: FormControl<string>;
-}>;
-
-type CertificationForm = FormGroup<{
-  name: FormControl<string>;
-  issuer: FormControl<string>;
-  issuedAt: FormControl<string>;
-  certificateUrl: FormControl<string>;
-}>;
-
-type RoleForm = FormGroup<{
-  name: FormControl<string>;
-  permissionIds: FormControl<string[]>;
-}>;
-
-type ClinicForm = FormGroup<{
-  name: FormControl<string>;
-  phone: FormControl<string>;
-  address: FormControl<string>;
-  specialties: FormControl<string[]>;
-}>;
+import { CertificationForm, ClinicForm, ExperienceForm, RoleForm } from './service/types';
 
 @Component({
   imports: [ReactiveFormsModule, TranslatePipe],
