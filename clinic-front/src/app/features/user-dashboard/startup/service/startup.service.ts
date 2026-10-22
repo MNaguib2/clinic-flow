@@ -18,6 +18,14 @@ export class StartupService {
     );
   }
 
+  publicFileUrl(relative_path: string): string {
+    const encoded_path = relative_path
+      .split('/')
+      .map((segment) => encodeURIComponent(segment))
+      .join('/');
+    return `${this.api_url}/public/${encoded_path}`;
+  }
+
   complete(
     payload: StartupPayload,
     profile_image: File | null,

@@ -86,31 +86,50 @@ export class OrganizationService {
   }
 
   async getStartupOptions() {
-    const permissions = await this.prisma.permission.findMany({
-      orderBy: { code: 'asc' },
-      select: {
-        id: true,
-        code: true,
-        name_en: true,
-        name_ar: true,
-        description_en: true,
-        description_ar: true,
-        page: {
-          select: {
-            key: true,
-            name_en: true,
-            name_ar: true,
-            description_en: true,
-            description_ar: true,
+    const [permissions, global_specialties] = await Promise.all([
+      this.prisma.permission.findMany({
+        orderBy: { code: 'asc' },
+        select: {
+          id: true,
+          code: true,
+          name_en: true,
+          name_ar: true,
+          description_en: true,
+          description_ar: true,
+          page: {
+            select: {
+              key: true,
+              name_en: true,
+              name_ar: true,
+              description_en: true,
+              description_ar: true,
+            },
           },
         },
-      },
-    });
+      }),
+      this.prisma.globalSpecialty.findMany({
+        where: { isActive: true },
+        orderBy: { sortOrder: 'asc' },
+        select: {
+          id: true,
+          code: true,
+          name_en: true,
+          name_ar: true,
+          description_en: true,
+          description_ar: true,
+          imageUrl: true,
+        },
+      }),
+    ]);
 
     return {
       permissions: permissions.map((permission) => ({
         ...permission,
         id: permission.id.toString(),
+      })),
+      globalSpecialties: global_specialties.map((specialty) => ({
+        ...specialty,
+        id: specialty.id.toString(),
       })),
     };
   }
@@ -234,13 +253,20 @@ export class OrganizationService {
           if (!name) continue;
           const existing = await tx.specialty.findUnique({
             where: { name },
-            select: { id: true, organizationId: true },
+            select: { id: true, organizationId: true, imageUrl: true },
           });
           if (existing && existing.organizationId !== user.organizationId) {
             throw new ConflictException('Specialty name already exists');
           }
+          const global_specialty = await tx.globalSpecialty.findFirst({
+            where: {
+              isActive: true,
+              OR: [{ name_en: name }, { name_ar: name }],
+            },
+            select: { imageUrl: true },
+          });
           const specialty_image = dto.specialtyImages?.[specialty_index];
-          const image_url = specialty_image
+          const uploaded_image_url = specialty_image
             ? await save_file(
                 this.localFileService.prepareDirectory([
                   this.localFileService.ORGANIZATION_FOLDER,
@@ -250,6 +276,8 @@ export class OrganizationService {
                 specialty_image.buffer,
               )
             : undefined;
+          const image_url =
+            uploaded_image_url ?? existing?.imageUrl ?? global_specialty?.imageUrl;
           const specialty = existing
             ? image_url
               ? await tx.specialty.update({

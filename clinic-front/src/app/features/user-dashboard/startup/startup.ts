@@ -11,6 +11,7 @@ import { AuthStore, getErrorMessage } from '@core/auth/auth.store';
 import { StartupService } from './service/startup.service';
 import type {
   StartupCertification,
+  StartupGlobalSpecialty,
   StartupOptions,
   StartupPage,
   StartupPayload,
@@ -29,6 +30,10 @@ type LocalizedPermission = Omit<StartupPermission, 'page'> & {
   page: LocalizedPage;
 };
 type PermissionPageGroup = { page: LocalizedPage; permissions: LocalizedPermission[] };
+type LocalizedGlobalSpecialty = StartupGlobalSpecialty & {
+  name: string;
+  description: string;
+};
 
 @Component({
   imports: [ReactiveFormsModule, TranslatePipe],
@@ -39,11 +44,9 @@ type PermissionPageGroup = { page: LocalizedPage; permissions: LocalizedPermissi
 })
 export class Startup implements OnInit {
   private readonly form_builder = inject(FormBuilder).nonNullable;
-  private readonly router = inject(Router);
   private readonly auth_store = inject(AuthStore);
   private readonly startup_service = inject(StartupService);
   private readonly language_service = inject(LanguageService);
-  private readonly destroy_ref = inject(DestroyRef);
 
   protected readonly language = this.language_service.language;
   protected readonly step = signal(0);
@@ -58,6 +61,20 @@ export class Startup implements OnInit {
   protected readonly is_saving = signal(false);
   protected readonly error_message = signal<string | null>(null);
   private readonly raw_permissions = signal<StartupPermission[]>([]);
+  private readonly raw_global_specialties = signal<StartupGlobalSpecialty[]>([]);
+
+  protected readonly global_specialties = computed<LocalizedGlobalSpecialty[]>(() => {
+    const is_ar = this.language_service.language() === 'ar';
+    return this.raw_global_specialties().map((specialty) => ({
+      ...specialty,
+      name: is_ar ? specialty.name_ar : specialty.name_en,
+      description: is_ar
+        ? specialty.description_ar
+        : specialty.description_en,
+    }));
+  });
+
+
   protected readonly permissions = computed<LocalizedPermission[]>(() => {
     const is_ar = this.language_service.language() === 'ar';
     const localize_page = (page: StartupPage): LocalizedPage => ({
@@ -73,6 +90,8 @@ export class Startup implements OnInit {
       page: localize_page(permission.page),
     }));
   });
+
+
   protected readonly permission_pages = computed(() => {
     const page_map = new Map<string, PermissionPageGroup>();
     for (const permission of this.permissions()) {
@@ -116,7 +135,10 @@ export class Startup implements OnInit {
   ngOnInit(): void {
     this.is_loading.set(true);
     this.startup_service.getOptions().subscribe({
-      next: (options: StartupOptions) => this.raw_permissions.set(options.permissions),
+      next: (options: StartupOptions) => {
+        this.raw_permissions.set(options.permissions);
+        this.raw_global_specialties.set(options.globalSpecialties ?? []);
+      },
       error: (error: unknown) => {
         this.error_message.set(getErrorMessage(error));
         this.is_loading.set(false);
@@ -225,6 +247,22 @@ export class Startup implements OnInit {
 
   protected remove_role(index: number): void {
     this.roles.removeAt(index);
+  }
+
+  protected specialty_catalog_entry(
+    name: string,
+  ): LocalizedGlobalSpecialty | undefined {
+    const normalized_name = name.trim().toLocaleLowerCase();
+    return this.global_specialties().find(
+      (specialty) => specialty.name.toLocaleLowerCase() === normalized_name,
+    );
+  }
+
+  protected specialty_catalog_image_url(name: string): string | null {
+    const specialty = this.specialty_catalog_entry(name);
+    return specialty
+      ? this.startup_service.publicFileUrl(specialty.imageUrl)
+      : null;
   }
 
   protected add_specialty(): void {

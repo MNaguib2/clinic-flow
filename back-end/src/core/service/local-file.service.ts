@@ -90,6 +90,7 @@ export class LocalFileService {
   }
 
   async read_public(relative_path: string): Promise<Buffer> {
+    const is_global_public = relative_path.startsWith('global-public/');
     const profile_images_path = join(
       this.ORGANIZATION_FOLDER,
       this.PROFILE_IMAGES_FOLDER,
@@ -100,10 +101,14 @@ export class LocalFileService {
     ) {
       throw new NotFoundException('File not found');
     }
-    const upload_path = relative_path.startsWith(`${profile_images_path}${sep}`)
-      ? relative_path
-      : join('public', relative_path);
-    const file_path = resolve(this.upload_root, upload_path);
+    const upload_path =
+      is_global_public ||
+      relative_path.startsWith(`${profile_images_path}${sep}`)
+        ? relative_path
+        : join('public', relative_path);
+    const file_path = is_global_public
+      ? resolve(process.cwd(), upload_path)
+      : resolve(this.upload_root, upload_path);
     const allowed_roots = [
       resolve(this.upload_root, 'public'),
       resolve(
@@ -111,6 +116,7 @@ export class LocalFileService {
         this.ORGANIZATION_FOLDER,
         this.PROFILE_IMAGES_FOLDER,
       ),
+      resolve(process.cwd(), 'global-public'),
     ];
     if (
       isAbsolute(relative_path) ||
@@ -123,7 +129,9 @@ export class LocalFileService {
 
     try {
       return await readFile(
-        this.resolve_path(relative(this.upload_root, file_path)),
+        is_global_public
+          ? file_path
+          : this.resolve_path(relative(this.upload_root, file_path)),
       );
     } catch (error) {
       const is_missing_file =

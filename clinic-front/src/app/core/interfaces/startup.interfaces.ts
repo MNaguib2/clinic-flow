@@ -57,6 +57,17 @@ export interface StartupPage {
 
 export interface StartupOptions {
   permissions: StartupPermission[];
+  globalSpecialties?: StartupGlobalSpecialty[];
+}
+
+export interface StartupGlobalSpecialty {
+  id: string;
+  code: string;
+  name_en: string;
+  name_ar: string;
+  description_en: string;
+  description_ar: string;
+  imageUrl: string;
 }
 
 export interface StartupResult {

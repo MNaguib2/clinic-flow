@@ -38,8 +38,12 @@ export class AppController {
     const file = await this.local_file_service.read_public(relative_path);
 
     return new StreamableFile(file, {
-      type: 'application/octet-stream',
-      disposition: 'attachment',
+      type: relative_path.endsWith('.svg')
+        ? 'image/svg+xml'
+        : 'application/octet-stream',
+      disposition: relative_path.startsWith('global-public/')
+        ? 'inline'
+        : 'attachment',
     });
   }
 }
