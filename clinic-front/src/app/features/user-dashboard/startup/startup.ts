@@ -29,7 +29,7 @@ import type {
   ExperienceTarget,
   RoleModel,
   StartupModel,
-} from './service/types';
+} from './service/interfaces';
 
 type LocalizedPage = StartupPage & { name: string; description: string };
 type LocalizedPermission = Omit<StartupPermission, 'page'> & {
