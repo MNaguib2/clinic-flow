@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -22,6 +22,14 @@ import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CertificationForm, ClinicForm, ExperienceForm, RoleForm } from './service/types';
 
+type LocalizedPage = StartupPage & { name: string; description: string };
+type LocalizedPermission = Omit<StartupPermission, 'page'> & {
+  name: string;
+  description: string;
+  page: LocalizedPage;
+};
+type PermissionPageGroup = { page: LocalizedPage; permissions: LocalizedPermission[] };
+
 @Component({
   imports: [ReactiveFormsModule, TranslatePipe],
   providers: [StartupService],
@@ -35,6 +43,7 @@ export class Startup implements OnInit {
   private readonly auth_store = inject(AuthStore);
   private readonly startup_service = inject(StartupService);
   private readonly language_service = inject(LanguageService);
+  private readonly destroy_ref = inject(DestroyRef);
 
   protected readonly language = this.language_service.language;
   protected readonly step = signal(0);
@@ -48,9 +57,24 @@ export class Startup implements OnInit {
   protected readonly is_loading = signal(false);
   protected readonly is_saving = signal(false);
   protected readonly error_message = signal<string | null>(null);
-  protected readonly permissions = signal<StartupPermission[]>([]);
+  private readonly raw_permissions = signal<StartupPermission[]>([]);
+  protected readonly permissions = computed<LocalizedPermission[]>(() => {
+    const is_ar = this.language_service.language() === 'ar';
+    const localize_page = (page: StartupPage): LocalizedPage => ({
+      ...page,
+      name: (is_ar ? page.name_ar : page.name_en) || page.key,
+      description: (is_ar ? page.description_ar : page.description_en) || page.key,
+    });
+    return this.raw_permissions().map((permission) => ({
+      ...permission,
+      name: (is_ar ? permission.name_ar : permission.name_en) || permission.code,
+      description:
+        (is_ar ? permission.description_ar : permission.description_en) ?? permission.code,
+      page: localize_page(permission.page),
+    }));
+  });
   protected readonly permission_pages = computed(() => {
-    const page_map = new Map<string, { page: StartupPage; permissions: StartupPermission[] }>();
+    const page_map = new Map<string, PermissionPageGroup>();
     for (const permission of this.permissions()) {
       const group = page_map.get(permission.page.key) ?? {
         page: permission.page,
@@ -88,7 +112,7 @@ export class Startup implements OnInit {
   ngOnInit(): void {
     this.is_loading.set(true);
     this.startup_service.getOptions().subscribe({
-      next: (options: StartupOptions) => this.permissions.set(options.permissions),
+      next: (options: StartupOptions) => this.raw_permissions.set(options.permissions),
       error: (error: unknown) => {
         this.error_message.set(getErrorMessage(error));
         this.is_loading.set(false);
@@ -217,7 +241,9 @@ export class Startup implements OnInit {
     if (this.clinics.length > 1) this.clinics.removeAt(index);
   }
 
-  protected save(): void {
+  protected save(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
     this.error_message.set(null);
     const clinic_values = this.clinics.getRawValue();
     if (clinic_values.some((clinic) => !clinic.name.trim())) {
@@ -266,7 +292,7 @@ export class Startup implements OnInit {
       .subscribe({
         next: () => {
           this.auth_store.markStartupComplete();
-          this.router.navigateByUrl('/dashboard');
+          // this.router.navigateByUrl('/dashboard');
         },
         error: (error: unknown) => {
           this.error_message.set(getErrorMessage(error));
@@ -276,38 +302,13 @@ export class Startup implements OnInit {
       });
   }
 
-  protected permission_name(permission: StartupPermission): string {
-    return this.language() === 'ar'
-      ? permission.name_ar || permission.code
-      : permission.name_en || permission.code;
-  }
-
-  protected permission_description(permission: StartupPermission): string {
-    return this.language() === 'ar'
-      ? permission.description_ar ?? permission.code
-      : permission.description_en ?? permission.code;
-  }
-
-  protected page_name(page: StartupPage): string {
-    console.log('page_name called with page:', page);
-    return this.language() === 'ar'
-      ? page.name_ar || page.key
-      : page.name_en || page.key;
-  }
-
-  protected page_description(page: StartupPage): string {
-    return this.language() === 'ar'
-      ? page.description_ar || page.key
-      : page.description_en || page.key;
-  }
-
   protected permission_is_selected(role: RoleForm, permission_id: string): boolean {
     return role.controls.permissionIds.value.includes(permission_id);
   }
 
   protected selected_permission_count(
     role: RoleForm,
-    page_group: { page: StartupPage; permissions: StartupPermission[] },
+    page_group: PermissionPageGroup,
   ): number {
     const selected_ids = new Set(role.controls.permissionIds.value);
     return page_group.permissions.filter((permission) =>
@@ -332,7 +333,7 @@ export class Startup implements OnInit {
 
   protected toggle_page_permissions(
     role: RoleForm,
-    page_group: { page: StartupPage; permissions: StartupPermission[] },
+    page_group: PermissionPageGroup,
     event: Event,
   ): void {
     const selected_ids = new Set(role.controls.permissionIds.value);

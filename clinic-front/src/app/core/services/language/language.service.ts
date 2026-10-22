@@ -8,10 +8,9 @@ export type ClinicLanguage = 'en' | 'ar';
 export class LanguageService {
   private readonly document = inject(DOCUMENT);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
-  private readonly currentLanguage = signal<ClinicLanguage>('en');
   private readonly translateService = inject(TranslateService);
+  readonly language = signal<ClinicLanguage>('en');
 
-  readonly language = this.currentLanguage.asReadonly();
 
   initialize(): void {
     if (!this.isBrowser) return;
@@ -32,7 +31,7 @@ export class LanguageService {
   }
 
   private applyLanguage(language: ClinicLanguage, persist: boolean): void {
-    this.currentLanguage.set(language);
+    this.language.set(language);
     this.document.documentElement.lang = language;
     this.document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
     this.translateService.use(language).subscribe();

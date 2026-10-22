@@ -28,6 +28,7 @@ export const dashboardEntryGuard: CanActivateFn = () => {
   const router = inject(Router);
 
   if (!isPlatformBrowser(inject(PLATFORM_ID))) return true;
+  console.log("🚀 ~ dashboardEntryGuard ~ store.startup():", store.startup())
   return store.startup() ? router.createUrlTree(['/dashboard/startup']) : true;
 };
 
