@@ -11,7 +11,6 @@ import { PrismaService } from '../../core/service/prisma.service';
 import { CompleteStartupDto } from './dto/complete-startup.dto';
 import { RegisterOrganizationDto } from './dto/register-organization.dto';
 import { LocalFileService } from '../../core/service/local-file.service';
-import { unlinkSync, existsSync } from 'node:fs';
 
 @Injectable()
 export class OrganizationService {
@@ -117,9 +116,16 @@ export class OrganizationService {
   }
 
   async completeStartup(user: IUserRequest, dto: CompleteStartupDto) {
+    const saved_files: string[] = [];
+    const save_file = async (relative_path: string, data: Buffer) => {
+      const saved_path = await this.localFileService.save(relative_path, data);
+      saved_files.push(saved_path);
+      return saved_path;
+    };
+
     try {
       if (dto.organizationLogo) {
-        dto.organizationLogoUrl = await this.localFileService.save(
+        dto.organizationLogoUrl = await save_file(
           this.localFileService.prepareDirectory([
             this.localFileService.ORGANIZATION_FOLDER,
             this.localFileService.PROFILE_IMAGES_FOLDER,
@@ -129,7 +135,7 @@ export class OrganizationService {
         );
       }
       if (dto.profileImage) {
-        dto.profileImageUrl = await this.localFileService.save(
+        dto.profileImageUrl = await save_file(
           this.localFileService.prepareDirectory([
             this.localFileService.ORGANIZATION_FOLDER,
             this.localFileService.PROFILE_IMAGES_FOLDER,
@@ -140,7 +146,7 @@ export class OrganizationService {
       }
       for (const certification of dto.certifications ?? []) {
         if (certification.certificateFile) {
-          certification.certificateUrl = await this.localFileService.save(
+          certification.certificateUrl = await save_file(
             this.localFileService.prepareDirectory([
               this.localFileService.ORGANIZATION_FOLDER,
               this.localFileService.CERTIFICATIONS_FOLDER,
@@ -221,7 +227,9 @@ export class OrganizationService {
         }
 
         const specialtiesByName = new Map<string, bigint>();
-        for (const rawName of dto.specialties ?? []) {
+        for (const [specialty_index, rawName] of (
+          dto.specialties ?? []
+        ).entries()) {
           const name = rawName.trim();
           if (!name) continue;
           const existing = await tx.specialty.findUnique({
@@ -231,12 +239,33 @@ export class OrganizationService {
           if (existing && existing.organizationId !== user.organizationId) {
             throw new ConflictException('Specialty name already exists');
           }
-          const specialty =
-            existing ??
-            (await tx.specialty.create({
-              data: { name, organizationId: user.organizationId },
-              select: { id: true },
-            }));
+          const specialty_image = dto.specialtyImages?.[specialty_index];
+          const image_url = specialty_image
+            ? await save_file(
+                this.localFileService.prepareDirectory([
+                  this.localFileService.ORGANIZATION_FOLDER,
+                  this.localFileService.SPECIALTY_IMAGES_FOLDER,
+                  `${this.localFileService.SPECIALTY_IMAGES_PREFIX}${user.organizationId}_${specialty_index}`,
+                ]),
+                specialty_image.buffer,
+              )
+            : undefined;
+          const specialty = existing
+            ? image_url
+              ? await tx.specialty.update({
+                  where: { id: existing.id },
+                  data: { imageUrl: image_url },
+                  select: { id: true },
+                })
+              : existing
+            : await tx.specialty.create({
+                data: {
+                  name,
+                  organizationId: user.organizationId,
+                  imageUrl: image_url,
+                },
+                select: { id: true },
+              });
           specialtiesByName.set(name, specialty.id);
         }
 
@@ -254,7 +283,7 @@ export class OrganizationService {
         const clinics: { id: string; name: string }[] = [];
         for (const [clinic_index, clinic_dto] of dto.clinics.entries()) {
           const image_url = clinic_dto.clinicImage
-            ? await this.localFileService.save(
+            ? await save_file(
                 this.localFileService.prepareDirectory([
                   this.localFileService.ORGANIZATION_FOLDER,
                   this.localFileService.CLINIC_IMAGES_FOLDER,
@@ -294,22 +323,11 @@ export class OrganizationService {
         return { completed: true, clinics };
       });
     } catch (error) {
-      if (dto.profileImageUrl && existsSync(dto.profileImageUrl)) {
-        unlinkSync(dto.profileImageUrl);
-      }
-      for (const certification of dto.certifications ?? []) {
-        if (
-          certification.certificateUrl &&
-          existsSync(certification.certificateUrl)
-        ) {
-          unlinkSync(certification.certificateUrl);
-        }
-      }
-      for (const clinic of dto.clinics ?? []) {
-        if (clinic.clinicImage && existsSync(clinic.clinicImage.buffer)) {
-          unlinkSync(clinic.clinicImage.buffer);
-        }
-      }
+      await Promise.allSettled(
+        saved_files.map((relative_path) =>
+          this.localFileService.remove(relative_path),
+        ),
+      );
       throw error;
     }
   }

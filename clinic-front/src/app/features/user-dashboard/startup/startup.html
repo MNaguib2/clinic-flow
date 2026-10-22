@@ -185,6 +185,10 @@
 					@for (specialty of specialty_names.controls; track $index) {
 						<div class="inline-entry">
 							<label class="startup-field"><span>{{ copy.specialtyName }}</span><input [formControl]="specialty" maxlength="150" /></label>
+							<label class="startup-field"><span>{{ copy.specialtyImage }}</span><input type="file" accept="image/jpeg,image/png,image/gif,image/webp" (change)="upload_specialty_image($index, $event)" /><small>{{ copy.clinicImageHint }}</small></label>
+							@if (specialty_image_previews().get($index); as specialty_preview) {
+								<img class="profile-preview" [src]="specialty_preview" [alt]="copy.specialtyImagePreview" />
+							}
 							<button type="button" class="text-action danger-action" (click)="remove_specialty($index)">{{ copy.remove }}</button>
 						</div>
 					}

@@ -152,6 +152,8 @@ export class CompleteStartupDto {
   @IsString({ each: true })
   specialties?: string[];
 
+  specialtyImages?: Record<number, ValidatedMultipartFile>;
+
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })

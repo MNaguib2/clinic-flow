@@ -24,6 +24,7 @@ export class StartupService {
     organization_logo: File | null,
     certification_files: ReadonlyMap<number, File>,
     clinic_images: ReadonlyMap<number, File> = new Map(),
+    specialty_images: ReadonlyMap<number, File> = new Map(),
   ) {
     const form_data = new FormData();
     form_data.append('data', JSON.stringify(payload));
@@ -34,6 +35,9 @@ export class StartupService {
     }
     for (const [index, file] of clinic_images) {
       form_data.append(`clinicImage_${index}`, file);
+    }
+    for (const [index, file] of specialty_images) {
+      form_data.append(`specialtyImage_${index}`, file);
     }
     return this.http.post<StartupResult>(
       `${this.api_url}/organizations/startup`,

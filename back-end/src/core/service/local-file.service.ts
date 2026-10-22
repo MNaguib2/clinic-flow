@@ -4,7 +4,7 @@ import {
   NotFoundException,
   Scope,
 } from '@nestjs/common';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import {
   basename,
   dirname,
@@ -26,11 +26,13 @@ export class LocalFileService {
   readonly CERTIFICATIONS_FOLDER = 'certifications';
   readonly PROFILE_IMAGES_FOLDER = 'profile_images';
   readonly CLINIC_IMAGES_FOLDER = 'clinic_images';
+  readonly SPECIALTY_IMAGES_FOLDER = 'specialty_images';
 
   readonly ORGANIZATION_PREFIX = 'org_';
   readonly CERTIFICATIONS_PREFIX = 'cert_';
   readonly PROFILE_IMAGES_PREFIX = 'profile_';
   readonly CLINIC_IMAGES_PREFIX = 'clinic_';
+  readonly SPECIALTY_IMAGES_PREFIX = 'specialty_';
 
   readonly PATIENTS_FOLDER = 'patients';
   readonly PATIENTS_PREFIX = 'patient_';
@@ -69,6 +71,21 @@ export class LocalFileService {
         );
         suffix += 1;
       }
+    }
+  }
+
+  async remove(relative_path: string): Promise<void> {
+    try {
+      await unlink(this.resolve_path(relative_path));
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        return;
+      }
+      throw error;
     }
   }
 

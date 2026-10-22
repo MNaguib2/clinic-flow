@@ -162,6 +162,8 @@
     "specialtiesTitle": "Medical specialties",
     "noSpecialties": "No specialties added.",
     "specialtyName": "Specialty name",
+    "specialtyImage": "Specialty image",
+    "specialtyImagePreview": "Specialty image preview",
     "addSpecialty": "Add specialty",
     "clinicsTitle": "Clinic locations",
     "clinicRequired": "Add at least one clinic to finish setup.",

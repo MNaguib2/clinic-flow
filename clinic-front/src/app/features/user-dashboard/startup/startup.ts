@@ -93,6 +93,8 @@ export class Startup implements OnInit {
   private organization_logo: File | null = null;
   private readonly certification_files = new Map<number, File>();
   private clinic_images = new Map<number, File>();
+  private specialty_images = new Map<number, File>();
+  protected readonly specialty_image_previews = signal(new Map<number, string>());
   protected readonly clinic_image_previews = signal(new Map<number, string>());
 
   protected readonly profile_form = this.form_builder.group({
@@ -233,6 +235,47 @@ export class Startup implements OnInit {
 
   protected remove_specialty(index: number): void {
     this.specialty_names.removeAt(index);
+
+    const removed_url = this.specialty_image_previews().get(index);
+    if (removed_url) URL.revokeObjectURL(removed_url);
+    const shifted_files = new Map<number, File>();
+    for (const [file_index, file] of this.specialty_images) {
+      if (file_index < index) shifted_files.set(file_index, file);
+      if (file_index > index) shifted_files.set(file_index - 1, file);
+    }
+    this.specialty_images = shifted_files;
+    const shifted_previews = new Map<number, string>();
+    for (const [preview_index, url] of this.specialty_image_previews()) {
+      if (preview_index < index) shifted_previews.set(preview_index, url);
+      if (preview_index > index) shifted_previews.set(preview_index - 1, url);
+    }
+    this.specialty_image_previews.set(shifted_previews);
+  }
+
+  protected upload_specialty_image(index: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const accepted_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!accepted_types.includes(file.type)) {
+      this.error_message.set('startup.organizationLogoInvalid');
+      input.value = '';
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      this.error_message.set('startup.organizationLogoTooLarge');
+      input.value = '';
+      return;
+    }
+
+    this.error_message.set(null);
+    const previous_url = this.specialty_image_previews().get(index);
+    if (previous_url) URL.revokeObjectURL(previous_url);
+    this.specialty_images.set(index, file);
+    this.specialty_image_previews.update((previews) =>
+      new Map(previews).set(index, URL.createObjectURL(file)),
+    );
   }
 
   protected add_clinic(): void {
@@ -296,6 +339,14 @@ export class Startup implements OnInit {
     }
 
     const specialties = this.unique_names(this.specialty_names.getRawValue());
+    const specialty_images = new Map<number, File>();
+    for (const [source_index, file] of this.specialty_images) {
+      const name = this.specialty_names.at(source_index)?.value.trim();
+      const data_index = name ? specialties.indexOf(name) : -1;
+      if (data_index >= 0 && !specialty_images.has(data_index)) {
+        specialty_images.set(data_index, file);
+      }
+    }
     const certification_rows = this.certification_values();
     const certification_files = new Map<number, File>();
     certification_rows.forEach((row, data_index) => {
@@ -333,6 +384,7 @@ export class Startup implements OnInit {
         this.organization_logo,
         certification_files,
         this.clinic_images,
+        specialty_images,
       )
       .subscribe({
         next: () => {

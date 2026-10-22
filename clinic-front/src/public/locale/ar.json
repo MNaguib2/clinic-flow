@@ -162,6 +162,8 @@
     "specialtiesTitle": "التخصصات الطبية",
     "noSpecialties": "لم تتم إضافة تخصصات.",
     "specialtyName": "اسم التخصص",
+    "specialtyImage": "صورة التخصص",
+    "specialtyImagePreview": "معاينة صورة التخصص",
     "addSpecialty": "إضافة تخصص",
     "clinicsTitle": "مواقع العيادات",
     "clinicRequired": "أضف عيادة واحدة على الأقل لإكمال الإعداد.",
