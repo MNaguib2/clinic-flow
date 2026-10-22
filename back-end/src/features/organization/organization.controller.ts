@@ -63,6 +63,22 @@ export class OrganizationController {
               },
             },
             {
+              field_name: /^clinicImage_\d+$/,
+              file_type: 'image',
+              max_size: 5 * 1024 * 1024,
+              assign_to: (startup_dto, file, field_name) => {
+                const match = /^clinicImage_(\d+)$/.exec(field_name);
+                const index = match ? Number(match[1]) : -1;
+                const clinic = startup_dto.clinics?.[index];
+                if (!clinic) {
+                  throw new BadRequestException(
+                    'Clinic image has no matching clinic',
+                  );
+                }
+                clinic.clinicImage = file;
+              },
+            },
+            {
               field_name: /^certificationFile_\d+$/,
               file_type: 'any',
               max_size: 10 * 1024 * 1024,

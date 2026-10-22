@@ -252,13 +252,24 @@ export class OrganizationService {
         }
 
         const clinics: { id: string; name: string }[] = [];
-        for (const clinic_dto of dto.clinics) {
+        for (const [clinic_index, clinic_dto] of dto.clinics.entries()) {
+          const image_url = clinic_dto.clinicImage
+            ? await this.localFileService.save(
+                this.localFileService.prepareDirectory([
+                  this.localFileService.ORGANIZATION_FOLDER,
+                  this.localFileService.CLINIC_IMAGES_FOLDER,
+                  `${this.localFileService.CLINIC_IMAGES_PREFIX}${user.organizationId}_${clinic_index}`,
+                ]),
+                clinic_dto.clinicImage.buffer,
+              )
+            : undefined;
           const clinic = await tx.clinic.create({
             data: {
               organizationId: user.organizationId,
               name: clinic_dto.name,
               phone: clinic_dto.phone,
               address: clinic_dto.address,
+              imageUrl: image_url,
             },
             select: { id: true, name: true },
           });
@@ -292,6 +303,11 @@ export class OrganizationService {
           existsSync(certification.certificateUrl)
         ) {
           unlinkSync(certification.certificateUrl);
+        }
+      }
+      for (const clinic of dto.clinics ?? []) {
+        if (clinic.clinicImage && existsSync(clinic.clinicImage.buffer)) {
+          unlinkSync(clinic.clinicImage.buffer);
         }
       }
       throw error;

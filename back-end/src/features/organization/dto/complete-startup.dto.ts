@@ -94,6 +94,8 @@ export class StartupClinicDto {
   @IsArray()
   @IsString({ each: true })
   specialties?: string[];
+
+  clinicImage?: ValidatedMultipartFile;
 }
 
 export class CompleteStartupDto {

@@ -25,10 +25,12 @@ export class LocalFileService {
   readonly ORGANIZATION_FOLDER = 'organizations';
   readonly CERTIFICATIONS_FOLDER = 'certifications';
   readonly PROFILE_IMAGES_FOLDER = 'profile_images';
+  readonly CLINIC_IMAGES_FOLDER = 'clinic_images';
 
   readonly ORGANIZATION_PREFIX = 'org_';
   readonly CERTIFICATIONS_PREFIX = 'cert_';
   readonly PROFILE_IMAGES_PREFIX = 'profile_';
+  readonly CLINIC_IMAGES_PREFIX = 'clinic_';
 
   readonly PATIENTS_FOLDER = 'patients';
   readonly PATIENTS_PREFIX = 'patient_';

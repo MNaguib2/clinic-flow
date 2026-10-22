@@ -92,6 +92,8 @@ export class Startup implements OnInit {
   private profile_image: File | null = null;
   private organization_logo: File | null = null;
   private readonly certification_files = new Map<number, File>();
+  private clinic_images = new Map<number, File>();
+  protected readonly clinic_image_previews = signal(new Map<number, string>());
 
   protected readonly profile_form = this.form_builder.group({
     briefDescription: ['', Validators.maxLength(1000)],
@@ -237,8 +239,50 @@ export class Startup implements OnInit {
     this.clinics.push(this.create_clinic());
   }
 
+  protected upload_clinic_image(index: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const accepted_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!accepted_types.includes(file.type)) {
+      this.error_message.set('startup.organizationLogoInvalid');
+      input.value = '';
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      this.error_message.set('startup.organizationLogoTooLarge');
+      input.value = '';
+      return;
+    }
+
+    this.error_message.set(null);
+    const previous_url = this.clinic_image_previews().get(index);
+    if (previous_url) URL.revokeObjectURL(previous_url);
+    this.clinic_images.set(index, file);
+    this.clinic_image_previews.update((previews) =>
+      new Map(previews).set(index, URL.createObjectURL(file)),
+    );
+  }
+
   protected remove_clinic(index: number): void {
-    if (this.clinics.length > 1) this.clinics.removeAt(index);
+    if (this.clinics.length <= 1) return;
+    this.clinics.removeAt(index);
+
+    const removed_url = this.clinic_image_previews().get(index);
+    if (removed_url) URL.revokeObjectURL(removed_url);
+    const shifted_files = new Map<number, File>();
+    for (const [file_index, file] of this.clinic_images) {
+      if (file_index < index) shifted_files.set(file_index, file);
+      if (file_index > index) shifted_files.set(file_index - 1, file);
+    }
+    this.clinic_images = shifted_files;
+    const shifted_previews = new Map<number, string>();
+    for (const [preview_index, url] of this.clinic_image_previews()) {
+      if (preview_index < index) shifted_previews.set(preview_index, url);
+      if (preview_index > index) shifted_previews.set(preview_index - 1, url);
+    }
+    this.clinic_image_previews.set(shifted_previews);
   }
 
   protected save(event: Event): void {
@@ -288,6 +332,7 @@ export class Startup implements OnInit {
         this.profile_image,
         this.organization_logo,
         certification_files,
+        this.clinic_images,
       )
       .subscribe({
         next: () => {
