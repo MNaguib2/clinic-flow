@@ -31,6 +31,12 @@ import type {
   StartupModel,
 } from './service/interfaces';
 import { ThemeService } from '@core/services/theme/theme.service';
+import { FieldFile } from '@share/fields/field-file';
+import { FieldImage } from '@share/fields/field-image';
+import { FieldInput } from '@share/fields/field-input';
+import { FieldPhone } from '@share/fields/field-phone';
+import { FieldTextarea } from '@share/fields/field-textarea';
+import { Icon } from '@share/icon/icon';
 
 type LocalizedPage = StartupPage & { name: string; description: string };
 type LocalizedPermission = Omit<StartupPermission, 'page'> & {
@@ -45,7 +51,17 @@ type LocalizedGlobalSpecialty = StartupGlobalSpecialty & {
 };
 
 @Component({
-  imports: [FormField, NgTemplateOutlet, TranslatePipe],
+  imports: [
+    FieldFile,
+    FieldImage,
+    FieldInput,
+    FieldPhone,
+    FieldTextarea,
+    FormField,
+    Icon,
+    NgTemplateOutlet,
+    TranslatePipe,
+  ],
   providers: [StartupService],
   selector: 'app-startup',
   styleUrl: './startup.scss',
@@ -75,6 +91,16 @@ export class Startup implements OnInit {
     'clinicsStepHint',
     'reviewStepHint',
   ] as const;
+  protected readonly step_icons = [
+    'building-2',
+    'file-text',
+    'users',
+    'stethoscope',
+    'hospital',
+    'clipboard-check',
+  ] as const;
+  protected readonly image_hint = 'startup.organizationLogoHint';
+  protected readonly max_certificate_size = 10 * 1024 * 1024;
   protected readonly is_loading = signal(false);
   protected readonly is_saving = signal(false);
   protected readonly error_message = signal<string | null>(null);
@@ -122,17 +148,12 @@ export class Startup implements OnInit {
     }
     return [...page_map.values()];
   });
-  protected readonly profile_preview_url = signal<string | null>(null);
-  protected readonly organization_logo_preview_url = signal<string | null>(null);
-  protected readonly organization_logo_file_name = signal<string | null>(null);
-  protected readonly organization_logo_error = signal<string | null>(null);
-  private profile_image: File | null = null;
-  private organization_logo: File | null = null;
-  private readonly certification_files = new Map<number, File>();
-  private clinic_images = new Map<number, File>();
-  private specialty_images = new Map<number, File>();
-  protected readonly specialty_image_previews = signal(new Map<number, string>());
-  protected readonly clinic_image_previews = signal(new Map<number, string>());
+  protected profile_image: File | null = null;
+  protected organization_logo: File | null = null;
+  protected readonly certification_files = new Map<number, File>();
+  protected clinic_images = new Map<number, File>();
+  protected specialty_images = new Map<number, File>();
+  protected readonly failed_catalog_images = signal(new Set<string>());
 
   protected readonly model = signal<StartupModel>({
     briefDescription: '',
@@ -253,75 +274,27 @@ export class Startup implements OnInit {
     }
   }
 
-  protected upload_profile_image(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
+  protected set_profile_image(file: File | null): void {
     this.error_message.set(null);
     this.profile_image = file;
-    this.profile_preview_url.set(URL.createObjectURL(file));
   }
 
-  protected upload_organization_logo(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-    if (!this.set_organization_logo(file)) input.value = '';
-  }
-
-  protected drop_organization_logo(event: DragEvent): void {
-    event.preventDefault();
-    const file = event.dataTransfer?.files?.[0];
-    if (file) this.set_organization_logo(file);
-  }
-
-  protected allow_logo_drop(event: DragEvent): void {
-    event.preventDefault();
-  }
-
-  private set_organization_logo(file: File): boolean {
-    const accepted_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!accepted_types.includes(file.type)) {
-      this.organization_logo_error.set('startup.organizationLogoInvalid');
-      return false;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      this.organization_logo_error.set('startup.organizationLogoTooLarge');
-      return false;
-    }
-
+  protected set_organization_logo(file: File | null): void {
     this.error_message.set(null);
-    this.organization_logo_error.set(null);
-    const previous_url = this.organization_logo_preview_url();
-    if (previous_url) URL.revokeObjectURL(previous_url);
     this.organization_logo = file;
-    this.organization_logo_file_name.set(file.name);
-    this.organization_logo_preview_url.set(URL.createObjectURL(file));
-    return true;
   }
 
-  protected clear_organization_logo(input: HTMLInputElement): void {
-    const preview_url = this.organization_logo_preview_url();
-    if (preview_url) URL.revokeObjectURL(preview_url);
-    this.organization_logo = null;
-    this.organization_logo_file_name.set(null);
-    this.organization_logo_preview_url.set(null);
-    this.organization_logo_error.set(null);
-    input.value = '';
-  }
-
-  protected upload_certification_file(index: number, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
+  protected set_certification_file(index: number, value: File | File[] | null): void {
+    const file = value instanceof File ? value : null;
     this.error_message.set(null);
-    this.certification_files.set(index, file);
+    if (file) this.certification_files.set(index, file);
+    else this.certification_files.delete(index);
   }
 
-  protected has_certification_file(index: number): boolean {
-    return this.certification_files.has(index);
+  protected set_clinic_image(index: number, file: File | null): void {
+    this.error_message.set(null);
+    if (file) this.clinic_images.set(index, file);
+    else this.clinic_images.delete(index);
   }
 
   protected add_role(): void {
@@ -354,8 +327,14 @@ export class Startup implements OnInit {
       : null;
   }
 
-  protected specialty_image_file_name(index: number): string | null {
-    return this.specialty_images.get(index)?.name ?? null;
+  protected set_specialty_image(index: number, file: File | null): void {
+    this.error_message.set(null);
+    if (file) this.specialty_images.set(index, file);
+    else this.specialty_images.delete(index);
+  }
+
+  protected catalog_image_failed(url: string): void {
+    this.failed_catalog_images.update((urls) => new Set(urls).add(url));
   }
 
   protected add_specialty(): void {
@@ -371,46 +350,12 @@ export class Startup implements OnInit {
       specialtyNames: model.specialtyNames.filter((_, item_index) => item_index !== index),
     }));
 
-    const removed_url = this.specialty_image_previews().get(index);
-    if (removed_url) URL.revokeObjectURL(removed_url);
     const shifted_files = new Map<number, File>();
     for (const [file_index, file] of this.specialty_images) {
       if (file_index < index) shifted_files.set(file_index, file);
       if (file_index > index) shifted_files.set(file_index - 1, file);
     }
     this.specialty_images = shifted_files;
-    const shifted_previews = new Map<number, string>();
-    for (const [preview_index, url] of this.specialty_image_previews()) {
-      if (preview_index < index) shifted_previews.set(preview_index, url);
-      if (preview_index > index) shifted_previews.set(preview_index - 1, url);
-    }
-    this.specialty_image_previews.set(shifted_previews);
-  }
-
-  protected upload_specialty_image(index: number, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
-    const accepted_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!accepted_types.includes(file.type)) {
-      this.error_message.set('startup.organizationLogoInvalid');
-      input.value = '';
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      this.error_message.set('startup.organizationLogoTooLarge');
-      input.value = '';
-      return;
-    }
-
-    this.error_message.set(null);
-    const previous_url = this.specialty_image_previews().get(index);
-    if (previous_url) URL.revokeObjectURL(previous_url);
-    this.specialty_images.set(index, file);
-    this.specialty_image_previews.update((previews) =>
-      new Map(previews).set(index, URL.createObjectURL(file)),
-    );
   }
 
   protected add_clinic(): void {
@@ -420,32 +365,6 @@ export class Startup implements OnInit {
     }));
   }
 
-  protected upload_clinic_image(index: number, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
-    const accepted_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!accepted_types.includes(file.type)) {
-      this.error_message.set('startup.organizationLogoInvalid');
-      input.value = '';
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      this.error_message.set('startup.organizationLogoTooLarge');
-      input.value = '';
-      return;
-    }
-
-    this.error_message.set(null);
-    const previous_url = this.clinic_image_previews().get(index);
-    if (previous_url) URL.revokeObjectURL(previous_url);
-    this.clinic_images.set(index, file);
-    this.clinic_image_previews.update((previews) =>
-      new Map(previews).set(index, URL.createObjectURL(file)),
-    );
-  }
-
   protected remove_clinic(index: number): void {
     if (this.model().clinics.length <= 1) return;
     this.model.update((model) => ({
@@ -453,20 +372,12 @@ export class Startup implements OnInit {
       clinics: model.clinics.filter((_, item_index) => item_index !== index),
     }));
 
-    const removed_url = this.clinic_image_previews().get(index);
-    if (removed_url) URL.revokeObjectURL(removed_url);
     const shifted_files = new Map<number, File>();
     for (const [file_index, file] of this.clinic_images) {
       if (file_index < index) shifted_files.set(file_index, file);
       if (file_index > index) shifted_files.set(file_index - 1, file);
     }
     this.clinic_images = shifted_files;
-    const shifted_previews = new Map<number, string>();
-    for (const [preview_index, url] of this.clinic_image_previews()) {
-      if (preview_index < index) shifted_previews.set(preview_index, url);
-      if (preview_index > index) shifted_previews.set(preview_index - 1, url);
-    }
-    this.clinic_image_previews.set(shifted_previews);
   }
 
   protected save(event: Event): void {

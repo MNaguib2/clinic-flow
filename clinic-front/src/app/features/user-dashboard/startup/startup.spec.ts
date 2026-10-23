@@ -125,4 +125,64 @@ describe('Startup', () => {
     expect(fixture.nativeElement.querySelectorAll('.review-card')).toHaveLength(5);
     expect(fixture.nativeElement.querySelector('.startup-actions button[type="submit"]')).toBeTruthy();
   });
+
+  it('binds field components to the signal form', async () => {
+    fixture.nativeElement.querySelectorAll('.startup-steps button')[1].click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const job_title = fixture.nativeElement.querySelector('app-field-input input') as HTMLInputElement;
+    job_title.value = 'Cardiologist';
+    job_title.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect((component as unknown as { model: () => { jobTitle: string } }).model().jobTitle).toBe(
+      'Cardiologist',
+    );
+  });
+
+  it('renders the clinic step with phone and image fields', async () => {
+    fixture.nativeElement.querySelectorAll('.startup-steps button')[4].click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('app-field-phone input[type="tel"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('app-field-image input[type="file"]')).toBeTruthy();
+  });
+
+  it('adds, validates and removes specialties with image uploads', async () => {
+    fixture.nativeElement.querySelectorAll('.startup-steps button')[3].click();
+    fixture.detectChanges();
+    const add = fixture.nativeElement.querySelector('#specialties-step-title').closest('section')
+      .querySelector('button.btn-outline-primary') as HTMLButtonElement;
+    add.click();
+    add.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const uploads = fixture.nativeElement.querySelectorAll('app-field-image');
+    expect(uploads).toHaveLength(2);
+
+    const input = uploads[0].querySelector('input[type="file"]') as HTMLInputElement;
+    const bad = new File(['x'], 'a.txt', { type: 'text/plain' });
+    Object.defineProperty(input, 'files', { value: [bad], configurable: true });
+    input.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(uploads[0].textContent).toContain('field.errors.type');
+    expect(uploads[0].querySelector('img')).toBeNull();
+
+    const good = new File(['x'], 'a.png', { type: 'image/png' });
+    URL.createObjectURL = () => 'blob:test';
+    URL.revokeObjectURL = () => undefined;
+    Object.defineProperty(input, 'files', { value: [good], configurable: true });
+    input.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(uploads[0].querySelector('img.field-preview')).toBeTruthy();
+
+    (fixture.nativeElement.querySelector('.border-top button.text-danger') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelectorAll('app-field-image')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelector('app-field-image img.field-preview')).toBeNull();
+  });
 });

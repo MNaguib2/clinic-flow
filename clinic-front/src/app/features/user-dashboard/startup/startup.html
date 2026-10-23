@@ -4,8 +4,8 @@
   <div class="border-top pt-4 mt-4">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
       <h3 class="h5 mb-0">{{ title }}</h3>
-      <button type="button" class="btn btn-outline-primary btn-sm" (click)="add_experience(target)">
-        + {{ copy.addExperience }}
+      <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" (click)="add_experience(target)">
+        <app-icon name="plus" /> {{ copy.addExperience }}
       </button>
     </div>
     @for (experience of rows; track $index) {
@@ -13,29 +13,19 @@
       <legend class="h6 text-primary-emphasis">{{ copy.experience }} {{ $index + 1 }}</legend>
       <div class="row g-3">
         <div class="col-12 col-md-6">
-          <label class="form-label">{{ copy.workplace }}
-            <input class="form-control" [formField]="experience.workplace" />
-          </label>
+          <app-field-input label="startup.workplace" icon="building" [maxLength]="150" [formField]="experience.workplace" />
         </div>
         <div class="col-12 col-md-6">
-          <label class="form-label">{{ copy.position }}
-            <input class="form-control" [formField]="experience.title" />
-          </label>
+          <app-field-input label="startup.position" [maxLength]="150" [formField]="experience.title" />
         </div>
         <div class="col-12 col-md-6">
-          <label class="form-label">{{ copy.startDate }}
-            <input class="form-control" type="date" [formField]="experience.startDate" />
-          </label>
+          <app-field-input label="startup.startDate" type="date" icon="calendar" [formField]="experience.startDate" />
         </div>
         <div class="col-12 col-md-6">
-          <label class="form-label">{{ copy.endDate }}
-            <input class="form-control" type="date" [formField]="experience.endDate" />
-          </label>
+          <app-field-input label="startup.endDate" type="date" icon="calendar" [formField]="experience.endDate" />
         </div>
         <div class="col-12">
-          <label class="form-label">{{ copy.descriptionField }}
-            <textarea class="form-control" rows="2" [formField]="experience.description"></textarea>
-          </label>
+          <app-field-textarea label="startup.descriptionField" [rows]="2" [maxLength]="2000" [formField]="experience.description" />
         </div>
         <div class="col-12">
           <button type="button" class="btn btn-link text-danger p-0" (click)="remove_experience(target, $index)">
@@ -69,7 +59,9 @@
             <button type="button" class="startup-step d-flex align-items-start gap-3 w-100 border-0 rounded-3 p-2 p-lg-3 text-start"
               [class.is-active]="step() === index" [class.is-done]="step() > index"
               [attr.aria-current]="step() === index ? 'step' : null" (click)="set_step(index)">
-              <span class="startup-step-badge rounded-circle d-inline-flex align-items-center justify-content-center fw-bold flex-shrink-0">{{ step() > index ? '✓' : index + 1 }}</span>
+              <span class="startup-step-badge rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0">
+                <app-icon [name]="step() > index ? 'check' : step_icons[index]" class="fs-5" />
+              </span>
               <span class="d-flex flex-column text-lg-wrap">
                 <span class="fw-semibold">{{ copy[key] }}</span>
                 <small class="startup-step-hint d-none d-lg-block">{{ copy[step_hint_keys[index]] }}</small>
@@ -97,49 +89,16 @@
   <form (submit)="save($event)" novalidate>
     @if (step() === 0) {
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="organization-step-title">
-      <h2 id="organization-step-title" class="h4 text-primary-emphasis fw-bold mb-1">{{ step() + 1 }}. {{ copy.organizationTitle }}</h2>
+      <h2 id="organization-step-title" class="h4 text-primary-emphasis fw-bold mb-1 d-flex align-items-center gap-2"><app-icon [name]="step_icons[0]" /> {{ step() + 1 }}. {{ copy.organizationTitle }}</h2>
       <p class="text-secondary small mb-4">{{ copy.organizationDetails }}</p>
       <div class="row g-4">
         <div class="col-12">
-          <label class="form-label w-100">{{ copy.organizationBrief }}
-            <textarea class="form-control" [formField]="startup_form.briefDescription"
-              [placeholder]="copy.organizationBriefPlaceholder" rows="4"></textarea>
-            <small class="d-block text-end text-secondary fw-normal mt-1">{{ model().briefDescription.length }}/1000</small>
-          </label>
+          <app-field-textarea label="startup.organizationBrief" placeholder="startup.organizationBriefPlaceholder"
+            [rows]="4" [maxLength]="1000" [formField]="startup_form.briefDescription" />
         </div>
         <div class="col-12">
-          <p class="form-label">{{ copy.organizationLogo }}</p>
-          <div class="row g-3">
-            <div class="col-12 col-md-6">
-              <label class="startup-upload d-flex flex-column align-items-center justify-content-center gap-2 h-100 p-4 border border-dashed rounded-3 text-center"
-                (dragover)="allow_logo_drop($event)" (drop)="drop_organization_logo($event)">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round" class="text-primary-emphasis" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="9" cy="9" r="1.500" /><path d="m21 15-5-5L5 21" />
-                </svg>
-                <span class="small fw-semibold">{{ copy.logoUploadPrompt }}</span>
-                <small class="text-secondary">{{ copy.organizationLogoHint }}</small>
-                <input #organizationLogoInput id="organizationLogo" class="visually-hidden" type="file"
-                  accept="image/jpeg,image/png,image/gif,image/webp" (change)="upload_organization_logo($event)" />
-              </label>
-            </div>
-            <div class="col-12 col-md-6">
-              <div class="startup-logo-preview d-flex flex-column align-items-center justify-content-center gap-2 h-100 p-3 border rounded-3 bg-body-tertiary text-center">
-                @if (organization_logo_preview_url(); as logo_url) {
-                <img class="object-fit-contain" height="96" [src]="logo_url" [alt]="copy.organizationLogoPreview" />
-                } @else {
-                <span class="h3 text-primary-emphasis mb-0" aria-hidden="true">{{ copy.logoPlaceholder }}</span>
-                }
-                @if (organization_logo_file_name(); as file_name) {
-                <small class="text-truncate mw-100" [title]="file_name">{{ file_name }}</small>
-                <button type="button" class="btn btn-link btn-sm text-danger p-0"
-                  (click)="clear_organization_logo(organizationLogoInput)">{{ copy.removeLogo }}</button>
-                }
-              </div>
-            </div>
-          </div>
-          @if (organization_logo_error(); as logo_error) {
-          <p class="text-danger small mt-2 mb-0" role="alert">{{ logo_error | translate }}</p>
-          }
+          <app-field-image label="startup.organizationLogo" [hint]="image_hint" previewAlt="startup.organizationLogoPreview"
+            [initialValue]="organization_logo" (changed)="set_organization_logo($event)" />
         </div>
       </div>
     </section>
@@ -147,27 +106,17 @@
 
     @if (step() === 1) {
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="profile-step-title">
-      <h2 id="profile-step-title" class="h4 text-primary-emphasis fw-bold mb-4">{{ step() + 1 }}. {{ copy.profileTitle }}</h2>
+      <h2 id="profile-step-title" class="h4 text-primary-emphasis fw-bold mb-4 d-flex align-items-center gap-2"><app-icon [name]="step_icons[1]" /> {{ step() + 1 }}. {{ copy.profileTitle }}</h2>
       <div class="row g-3">
         <div class="col-12 col-md-6">
-          <label class="form-label w-100">{{ copy.profileImage }}
-            <input class="form-control" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
-              (change)="upload_profile_image($event)" />
-            <small class="form-text">{{ copy.profileImageFileHint }}</small>
-          </label>
+          <app-field-image label="startup.profileImage" [hint]="image_hint" previewAlt="startup.profileImagePreview"
+            [initialValue]="profile_image" (changed)="set_profile_image($event)" />
         </div>
         <div class="col-12 col-md-6">
-          <label class="form-label w-100">{{ copy.jobTitle }}
-            <input class="form-control" type="text" [formField]="startup_form.jobTitle"
-              [placeholder]="copy.jobTitlePlaceholder" />
-          </label>
+          <app-field-input label="startup.jobTitle" placeholder="startup.jobTitlePlaceholder" [maxLength]="100"
+            [formField]="startup_form.jobTitle" />
         </div>
       </div>
-
-      @if (profile_preview_url(); as image_url) {
-      <img class="rounded border mt-3 object-fit-cover" style="width: 92px; height: 92px" [src]="image_url"
-        [alt]="copy.profileImagePreview" />
-      }
 
       <ng-container [ngTemplateOutlet]="experienceList"
         [ngTemplateOutletContext]="{ target: 'previousExperiences', rows: startup_form.previousExperiences, title: copy.previousExperience }" />
@@ -177,8 +126,8 @@
       <div class="border-top pt-4 mt-4">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
           <h3 class="h5 mb-0">{{ copy.certifications }}</h3>
-          <button type="button" class="btn btn-outline-primary btn-sm" (click)="add_certification()">
-            + {{ copy.addCertification }}
+          <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" (click)="add_certification()">
+            <app-icon name="plus" /> {{ copy.addCertification }}
           </button>
         </div>
         @for (certification of startup_form.certifications; track $index) {
@@ -186,30 +135,18 @@
           <legend class="h6 text-primary-emphasis">{{ copy.certification }} {{ $index + 1 }}</legend>
           <div class="row g-3">
             <div class="col-12 col-md-6">
-              <label class="form-label w-100">{{ copy.certificationName }}
-                <input class="form-control" [formField]="certification.name" />
-              </label>
+              <app-field-input label="startup.certificationName" icon="file-text" [maxLength]="150" [formField]="certification.name" />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label w-100">{{ copy.issuer }}
-                <input class="form-control" [formField]="certification.issuer" />
-              </label>
+              <app-field-input label="startup.issuer" [maxLength]="150" [formField]="certification.issuer" />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label w-100">{{ copy.issuedAt }}
-                <input class="form-control" type="date" [formField]="certification.issuedAt" />
-              </label>
+              <app-field-input label="startup.issuedAt" type="date" icon="calendar" [formField]="certification.issuedAt" />
             </div>
             <div class="col-12 col-md-6">
-              <label class="form-label w-100">{{ copy.certificateFile }}
-                <input class="form-control" type="file"
-                  accept="application/pdf,image/jpeg,image/png,image/gif,image/webp"
-                  (change)="upload_certification_file($index, $event)" />
-                <small class="form-text">{{ copy.certificateFileHint }}</small>
-              </label>
-              @if (has_certification_file($index) || certification.certificateUrl().value()) {
-              <span class="badge text-bg-success">{{ copy.fileUploaded }}</span>
-              }
+              <app-field-file label="startup.certificateFile" hint="startup.certificateFileHint"
+                accept="application/pdf,image/jpeg,image/png,image/gif,image/webp" [maxFileSize]="max_certificate_size"
+                [initialValue]="certification_files.get($index) ?? null" (changed)="set_certification_file($index, $event)" />
             </div>
             <div class="col-12">
               <button type="button" class="btn btn-link text-danger p-0" (click)="remove_certification($index)">
@@ -227,11 +164,11 @@
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="roles-step-title">
       <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
         <div>
-          <h2 id="roles-step-title" class="h4 text-primary-emphasis fw-bold">{{ step() + 1 }}. {{ copy.rolesTitle }}</h2>
+          <h2 id="roles-step-title" class="h4 text-primary-emphasis fw-bold d-flex align-items-center gap-2"><app-icon [name]="step_icons[2]" /> {{ step() + 1 }}. {{ copy.rolesTitle }}</h2>
           <p class="text-body-secondary mb-0">{{ copy.optionalStep }}</p>
         </div>
-        <button id="add-role-button" type="button" class="btn btn-outline-primary btn-sm" (click)="add_role()">
-          + {{ copy.addRole }}
+        <button id="add-role-button" type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" (click)="add_role()">
+          <app-icon name="plus" /> {{ copy.addRole }}
         </button>
       </div>
       @if (model().roles.length === 0) { <p class="text-body-secondary">{{ copy.noRoles }}</p> }
@@ -239,9 +176,7 @@
       <fieldset class="card card-body bg-body-tertiary mb-3">
         <legend class="h6 text-primary-emphasis">{{ copy.role }} {{ $index + 1 }}</legend>
         <div class="mb-3">
-          <label class="form-label w-100">{{ copy.roleName }}
-            <input class="form-control" [formField]="role.name" />
-          </label>
+          <app-field-input label="startup.roleName" [maxLength]="100" [formField]="role.name" />
         </div>
         <span class="form-label">{{ copy.permissions }}</span>
         <div class="d-grid gap-2 mb-3">
@@ -272,7 +207,9 @@
                   (change)="toggle_permission(role, permission.id, $event)" />
                 <label class="form-check-label" [attr.for]="'permission-' + role_index + '-' + permission.id">
                   <span class="permission-option-copy d-grid">
-                    <strong class="small">{{ permission.name }}</strong>
+                    <strong class="small">{{ permission.name }}
+                      @if (permission_is_selected(role, permission.id)) { <app-icon name="check" class="text-success ms-1" /> }
+                    </strong>
                     <small class="text-body-secondary">{{ permission.description }}</small>
                   </span>
                 </label>
@@ -296,11 +233,11 @@
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="specialties-step-title">
       <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
         <div>
-          <h2 id="specialties-step-title" class="h4 text-primary-emphasis fw-bold">{{ step() + 1 }}. {{ copy.specialtiesTitle }}</h2>
+          <h2 id="specialties-step-title" class="h4 text-primary-emphasis fw-bold d-flex align-items-center gap-2"><app-icon [name]="step_icons[3]" /> {{ step() + 1 }}. {{ copy.specialtiesTitle }}</h2>
           <p class="text-body-secondary mb-0">{{ copy.optionalStep }}</p>
         </div>
-        <button type="button" class="btn btn-outline-primary btn-sm" (click)="add_specialty()">
-          + {{ copy.addSpecialty }}
+        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" (click)="add_specialty()">
+          <app-icon name="plus" /> {{ copy.addSpecialty }}
         </button>
       </div>
       <datalist id="global-specialty-options">
@@ -310,39 +247,35 @@
       </datalist>
       @if (model().specialtyNames.length === 0) { <p class="text-body-secondary">{{ copy.noSpecialties }}</p> }
       @for (specialty of startup_form.specialtyNames; track $index) {
-      <div class="row g-3 align-items-center border rounded bg-body-tertiary p-3 mb-3">
-        <div class="col-12 col-md-4">
-          <label class="form-label w-100">{{ copy.specialtyName }}
-            <input class="form-control" [formField]="specialty" list="global-specialty-options" />
-          </label>
+      <div class="border rounded-3 bg-body-tertiary shadow-sm p-3 p-md-4 mb-3">
+        <div class="row g-3 g-lg-4">
+          <div class="col-12 col-lg-5 d-flex flex-column gap-3">
+            <app-field-input label="startup.specialtyName" icon="stethoscope" list="global-specialty-options"
+              [maxLength]="150" [formField]="specialty" />
+            @if (specialty_catalog_entry(specialty().value()); as global_specialty) {
+            @let catalog_image = specialty_catalog_image_url(specialty().value());
+            <div class="d-flex align-items-center gap-3 p-2 border rounded bg-body">
+              @if (catalog_image && !failed_catalog_images().has(catalog_image)) {
+              <img class="rounded border object-fit-cover flex-shrink-0" width="56" height="56" [src]="catalog_image"
+                alt="" (error)="catalog_image_failed(catalog_image)" />
+              } @else {
+              <span class="d-flex align-items-center justify-content-center flex-shrink-0 border rounded bg-body-secondary text-body-secondary"
+                style="width: 56px; height: 56px" aria-hidden="true"><app-icon name="stethoscope" class="fs-4" /></span>
+              }
+              <span class="d-grid" style="min-width: 0">
+                <strong class="text-truncate">{{ specialty().value().trim() }}</strong>
+                <small class="text-body-secondary">{{ global_specialty.description }}</small>
+              </span>
+            </div>
+            }
+          </div>
+          <div class="col-12 col-lg-7">
+            <app-field-image label="startup.specialtyImage" hint="startup.clinicImageHint"
+              previewAlt="startup.specialtyImagePreview" [initialValue]="specialty_images.get($index) ?? null"
+              (changed)="set_specialty_image($index, $event)" />
+          </div>
         </div>
-        <div class="col-12 col-md-4">
-          <label class="form-label w-100">{{ copy.specialtyImage }}
-            <input class="d-none" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
-              (change)="upload_specialty_image($index, $event)" />
-            <span class="btn btn-outline-primary btn-sm d-block">{{ copy.chooseImage }}</span>
-            @if (specialty_image_file_name($index); as file_name) {
-            <small class="d-block text-truncate text-body-secondary" [title]="file_name">{{ file_name }}</small>
-            } @else { <small class="d-block text-body-secondary">{{ copy.clinicImageHint }}</small> }
-          </label>
-        </div>
-        <div class="col-12 col-md-4 d-flex align-items-center gap-3">
-          @if (specialty_image_previews().get($index); as specialty_preview) {
-          <img class="rounded border object-fit-cover" style="width: 64px; height: 64px" [src]="specialty_preview"
-            [alt]="copy.specialtyImagePreview" />
-          }
-          @else if (specialty_catalog_entry(specialty().value()); as global_specialty) {
-          <img class="rounded border object-fit-cover" style="width: 64px; height: 64px"
-            [src]="specialty_catalog_image_url(specialty().value())" alt="" />
-          <span class="d-grid"><strong>{{ specialty().value().trim() }}</strong>
-            <small class="text-body-secondary">{{ global_specialty.description }}</small></span>
-          } @else {
-          <span class="d-flex align-items-center justify-content-center border rounded text-primary-emphasis fs-3"
-            style="width: 64px; height: 64px" aria-hidden="true">+</span>
-          <strong>{{ specialty().value().trim() || copy.specialtyName }}</strong>
-          }
-        </div>
-        <div class="col-12">
+        <div class="d-flex justify-content-end mt-3 pt-3 border-top">
           <button type="button" class="btn btn-link text-danger p-0" (click)="remove_specialty($index)">
             {{ copy.remove }}
           </button>
@@ -356,11 +289,11 @@
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="clinics-step-title">
       <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
         <div>
-          <h2 id="clinics-step-title" class="h4 text-primary-emphasis fw-bold">{{ step() + 1 }}. {{ copy.clinicsTitle }}</h2>
+          <h2 id="clinics-step-title" class="h4 text-primary-emphasis fw-bold d-flex align-items-center gap-2"><app-icon [name]="step_icons[4]" /> {{ step() + 1 }}. {{ copy.clinicsTitle }}</h2>
           <p class="text-body-secondary mb-0">{{ copy.clinicRequired }}</p>
         </div>
-        <button type="button" class="btn btn-outline-primary btn-sm" (click)="add_clinic()">
-          + {{ copy.addClinic }}
+        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" (click)="add_clinic()">
+          <app-icon name="plus" /> {{ copy.addClinic }}
         </button>
       </div>
       @for (clinic of startup_form.clinics; track $index; let clinic_index = $index) {
@@ -368,30 +301,17 @@
         <legend class="h6 text-primary-emphasis">{{ copy.clinic }} {{ $index + 1 }}</legend>
         <div class="row g-3">
           <div class="col-12 col-md-6">
-            <label class="form-label w-100">{{ copy.clinicName }}
-              <input class="form-control" [formField]="clinic.name" />
-            </label>
+            <app-field-input label="startup.clinicName" icon="hospital" [required]="true" [maxLength]="150" [formField]="clinic.name" />
           </div>
           <div class="col-12 col-md-6">
-            <label class="form-label w-100">{{ copy.phone }}
-              <input class="form-control" type="tel" [formField]="clinic.phone" />
-            </label>
+            <app-field-phone label="startup.phone" [formField]="clinic.phone" />
           </div>
           <div class="col-12">
-            <label class="form-label w-100">{{ copy.clinicImage }}
-              <input class="form-control" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
-                (change)="upload_clinic_image($index, $event)" />
-              <small class="form-text">{{ copy.clinicImageHint }}</small>
-            </label>
-            @if (clinic_image_previews().get($index); as clinic_preview) {
-            <img class="rounded border mt-2 object-fit-cover" style="width: 92px; height: 92px"
-              [src]="clinic_preview" [alt]="copy.clinicImagePreview" />
-            }
+            <app-field-image label="startup.clinicImage" hint="startup.clinicImageHint" previewAlt="startup.clinicImagePreview"
+              [initialValue]="clinic_images.get($index) ?? null" (changed)="set_clinic_image($index, $event)" />
           </div>
           <div class="col-12">
-            <label class="form-label w-100">{{ copy.address }}
-              <textarea class="form-control" rows="2" [formField]="clinic.address"></textarea>
-            </label>
+            <app-field-textarea label="startup.address" icon="map-pin" [rows]="2" [maxLength]="2000" [formField]="clinic.address" />
           </div>
           <div class="col-12">
             <span class="form-label">{{ copy.clinicSpecialties }}</span>
@@ -425,7 +345,7 @@
 
     @if (step() === 5) {
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="review-step-title">
-      <h2 id="review-step-title" class="h4 text-primary-emphasis fw-bold mb-1">{{ step() + 1 }}. {{ copy.reviewTitle }}</h2>
+      <h2 id="review-step-title" class="h4 text-primary-emphasis fw-bold mb-1 d-flex align-items-center gap-2"><app-icon [name]="step_icons[5]" /> {{ step() + 1 }}. {{ copy.reviewTitle }}</h2>
       <p class="text-body-secondary mb-4">{{ copy.reviewDescription }}</p>
       <div class="row g-3">
         <article class="review-card col-12 col-lg-6">
@@ -435,9 +355,10 @@
               <button type="button" class="btn btn-link btn-sm" (click)="set_step(0)">{{ copy.editSection }}</button>
             </div>
             <div class="d-flex align-items-center gap-3">
-              @if (organization_logo_preview_url(); as logo_url) {
-              <img class="rounded border object-fit-contain" style="width: 64px; height: 64px" [src]="logo_url"
-                [alt]="copy.organizationLogoPreview" />
+              @if (organization_logo; as logo) {
+              <span class="d-inline-flex align-items-center gap-1 small text-success-emphasis">
+                <app-icon name="image" /> {{ logo.name }}
+              </span>
               }
               <p class="mb-0">{{ model().briefDescription.trim() || copy.summaryNotProvided }}</p>
             </div>
@@ -472,7 +393,7 @@
             <ul class="list-group list-group-flush">
               @for (role of summary_roles(); track role.name) {
               <li class="list-group-item d-flex justify-content-between px-0">
-                <strong>{{ role.name }}</strong>
+                <strong class="d-inline-flex align-items-center gap-1"><app-icon name="check" class="text-success" /> {{ role.name }}</strong>
                 <span class="text-body-secondary">{{ role.permissionIds.length }} {{ copy.permissionsSelected }}</span>
               </li>
               }
@@ -490,7 +411,7 @@
             @if (summary_specialties().length) {
             <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
               @for (specialty of summary_specialties(); track specialty) {
-              <li class="badge rounded-pill bg-body-secondary text-body border">{{ specialty }}</li>
+              <li class="badge rounded-pill bg-body-secondary text-body border d-inline-flex align-items-center gap-1"><app-icon name="check" class="text-success" /> {{ specialty }}</li>
               }
             </ul>
             } @else { <p class="text-body-secondary mb-0">{{ copy.noSpecialties }}</p> }
@@ -507,7 +428,7 @@
               @for (clinic of summary_clinics(); track $index) {
               <li class="list-group-item d-grid px-0">
                 <strong>{{ clinic.name.trim() || copy.clinic }} {{ clinic.name.trim() ? '' : $index + 1 }}</strong>
-                @if (clinic.address.trim()) { <span>{{ clinic.address.trim() }}</span> }
+                @if (clinic.address.trim()) { <span class="d-inline-flex align-items-center gap-1"><app-icon name="map-pin" class="text-body-secondary" /> {{ clinic.address.trim() }}</span> }
                 @if (clinic.phone.trim()) { <span>{{ clinic.phone.trim() }}</span> }
                 @if (clinic.specialties.length) { <small class="text-body-secondary">{{ clinic.specialties.join(', ') }}</small> }
               </li>
@@ -524,10 +445,10 @@
     }
 
     <footer class="startup-actions d-flex justify-content-between gap-2 mt-4">
-      @if (step() > 0) { <button type="button" class="btn btn-outline-primary" (click)="set_step(step() - 1)">{{
-        copy.back }}</button> }
-      @if (step() < 5) { <button type="button" class="btn btn-primary ms-auto px-4" (click)="set_step(step() + 1)">{{
-        'startup.next' | translate: { step: copy[step_keys[step() + 1]] } }} <span aria-hidden="true">&rarr;</span></button>
+      @if (step() > 0) { <button type="button" class="btn btn-outline-primary d-inline-flex align-items-center gap-2" (click)="set_step(step() - 1)">
+        <app-icon [name]="language() === 'ar' ? 'arrow-right' : 'arrow-left'" />{{ copy.back }}</button> }
+      @if (step() < 5) { <button type="button" class="btn btn-primary ms-auto px-4 d-inline-flex align-items-center gap-2" (click)="set_step(step() + 1)">{{
+        'startup.next' | translate: { step: copy[step_keys[step() + 1]] } }} <app-icon [name]="language() === 'ar' ? 'arrow-left' : 'arrow-right'" /></button>
       } @else {
       <button type="submit" class="btn btn-primary ms-auto px-4" [disabled]="is_saving()">{{ is_saving() ? copy.saving :
         copy.finish }}</button>

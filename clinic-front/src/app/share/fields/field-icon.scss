@@ -1,0 +1,15 @@
+.field-icon {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0.85rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.field-icon-top {
+  inset-block-start: 1.1rem;
+}
+
+.has-icon {
+  padding-inline-start: 2.5rem;
+}

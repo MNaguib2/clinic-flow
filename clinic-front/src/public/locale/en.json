@@ -103,6 +103,19 @@
     "logout": "Log out",
     "languageLabel": "Change language"
   },
+  "field": {
+    "upload": {
+      "prompt": "Click to upload or drag and drop",
+      "replace": "Click or drop to replace",
+      "remove": "Remove file",
+      "removeImage": "Remove image",
+      "previewAlt": "Selected image preview"
+    },
+    "errors": {
+      "type": "This file type is not allowed.",
+      "size": "The file is larger than the allowed size."
+    }
+  },
   "startup": {
     "eyebrow": "Clinic setup",
     "title": "Set up your workspace",
