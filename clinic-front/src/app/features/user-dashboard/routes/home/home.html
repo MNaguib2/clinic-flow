@@ -1,7 +1,7 @@
 @let copy = 'dashboard' | translate;
 
-<section class="welcome" aria-labelledby="dashboard-title">
-  <p class="welcome-kicker">{{ copy.title }}</p>
-  <h1 id="dashboard-title">{{ 'dashboard.welcome' | translate: { name: authStore.user()?.fullName } }}</h1>
-  <p class="welcome-text">{{ copy.ready }}</p>
+<section class="welcome card border border-4 border-top-0 border-bottom-0 border-end-0 border-primary p-4 p-md-5" aria-labelledby="dashboard-title">
+  <p class="welcome-kicker text-primary-emphasis text-uppercase small fw-bold mb-2">{{ copy.title }}</p>
+  <h1 id="dashboard-title" class="h2 fw-semibold mb-3">{{ 'dashboard.welcome' | translate: { name: authStore.user()?.fullName } }}</h1>
+  <p class="text-body-secondary mb-0">{{ copy.ready }}</p>
 </section>

@@ -29,4 +29,7 @@ export class ThemeService {
       );
     }
   }
+  get mode(): 'dark' | 'light' {
+    return this.isDark() ? 'dark' : 'light';
+  }
 }

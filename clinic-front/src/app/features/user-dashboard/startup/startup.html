@@ -10,7 +10,7 @@
     </div>
     @for (experience of rows; track $index) {
     <fieldset class="card card-body bg-body-tertiary mb-3">
-      <legend class="h6 text-primary">{{ copy.experience }} {{ $index + 1 }}</legend>
+      <legend class="h6 text-primary-emphasis">{{ copy.experience }} {{ $index + 1 }}</legend>
       <div class="row g-3">
         <div class="col-12 col-md-6">
           <label class="form-label">{{ copy.workplace }}
@@ -48,26 +48,47 @@
   </div>
 </ng-template>
 
-<main class="container py-4 py-md-5" [attr.lang]="language()" [attr.dir]="language() === 'ar' ? 'rtl' : 'ltr'">
-  <header class="mb-4">
-    <p class="text-uppercase text-primary fw-bold small mb-2">{{ copy.eyebrow }}</p>
-    <h1 class="display-6 fw-bold">{{ copy.title }}</h1>
-    <p class="lead text-body-secondary mb-0">{{ copy.description }}</p>
-  </header>
+<main class="startup-page min-vh-100 p-0 p-lg-4" [attr.lang]="language()" [attr.dir]="language() === 'ar' ? 'rtl' : 'ltr'">
+  <div class="startup-shell d-flex flex-column flex-lg-row border overflow-hidden mx-auto">
+    <aside class="startup-sidebar d-flex flex-column gap-3 gap-lg-4 p-3 p-lg-4 border-end">
+      <div class="d-flex align-items-center gap-2">
+        <svg class="startup-logo flex-shrink-0" viewBox="0 0 48 44" aria-hidden="true">
+          <path d="M24 42C10 31 2 24 2 14 2 7.5 7 3 13 3c4.5 0 8.2 2.4 11 6.5C26.800 5.400 30.500 3 35 3c6 0 11 4.500 11 11 0 10-8 17-22 28Z" fill="currentColor" />
+          <path d="M8 22h9l3-6 5 12 3-6h12" fill="none" stroke="#fff" stroke-width="2.500" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div class="lh-sm">
+          <p class="h4 fw-bold text-dark mb-0">Clinic<span class="text-primary-emphasis">Flow</span></p>
+          <small class="startup-tagline text-secondary d-none d-sm-block">{{ copy.brandTagline }}</small>
+        </div>
+      </div>
 
-  <nav class="startup-steps nav nav-pills nav-fill flex-nowrap overflow-auto gap-2 p-2 mb-4 border rounded bg-body"
-    [attr.aria-label]="copy.stepsLabel">
-    @for (key of step_keys; track key; let index = $index) {
-    <button type="button" class="nav-link d-flex align-items-center justify-content-center gap-2 text-nowrap"
-      [class.active]="step() === index" [attr.aria-current]="step() === index ? 'step' : null"
-      (click)="set_step(index)">
-      <span class="badge rounded-pill" [class.text-bg-success]="step() > index"
-        [class.bg-body-secondary]="step() <= index" [class.text-body]="step() <= index">{{ step() > index ? '✓' : index + 1 }}</span>
-      {{ copy[key] }}
-    </button>
-    }
-  </nav>
+      <nav class="startup-steps" [attr.aria-label]="copy.stepsLabel">
+        <ol class="nav flex-nowrap flex-lg-column gap-1 list-unstyled overflow-auto mb-0">
+          @for (key of step_keys; track key; let index = $index) {
+          <li>
+            <button type="button" class="startup-step d-flex align-items-start gap-3 w-100 border-0 rounded-3 p-2 p-lg-3 text-start"
+              [class.is-active]="step() === index" [class.is-done]="step() > index"
+              [attr.aria-current]="step() === index ? 'step' : null" (click)="set_step(index)">
+              <span class="startup-step-badge rounded-circle d-inline-flex align-items-center justify-content-center fw-bold flex-shrink-0">{{ step() > index ? '✓' : index + 1 }}</span>
+              <span class="d-flex flex-column text-lg-wrap">
+                <span class="fw-semibold">{{ copy[key] }}</span>
+                <small class="startup-step-hint d-none d-lg-block">{{ copy[step_hint_keys[index]] }}</small>
+              </span>
+            </button>
+          </li>
+          }
+        </ol>
+      </nav>
 
+      <div class="startup-welcome mt-auto d-none d-lg-block">
+        <img class="startup-welcome-image startup-welcome-light w-100 mb-3" src="images/Female%20doctor/d4617970-6049-4659-afdd-26a5bc51be01.png" alt="" />
+        <img class="startup-welcome-image startup-welcome-dark w-100 mb-3" src="images/Female%20doctor/35674b9e-d033-4900-a6f7-bc27e3e71bc0.png" alt="" />
+        <p class="h5 fw-bold text-dark">{{ copy.sidebarTitle }}</p>
+        <p class="text-secondary small mb-0">{{ copy.sidebarText }}</p>
+      </div>
+    </aside>
+
+    <div class="startup-main flex-grow-1 p-3 p-lg-4">
   @if (is_loading()) {
   <div class="text-body-secondary py-4" role="status">
     <span class="spinner-border spinner-border-sm" aria-hidden="true"></span> {{ copy.loading }}
@@ -76,41 +97,49 @@
   <form (submit)="save($event)" novalidate>
     @if (step() === 0) {
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="organization-step-title">
-      <p class="text-uppercase text-primary fw-bold small mb-1">{{ copy.organizationDetails }}</p>
-      <h2 id="organization-step-title" class="h3 mb-4">{{ copy.organizationTitle }}</h2>
+      <h2 id="organization-step-title" class="h4 text-primary-emphasis fw-bold mb-1">{{ step() + 1 }}. {{ copy.organizationTitle }}</h2>
+      <p class="text-secondary small mb-4">{{ copy.organizationDetails }}</p>
       <div class="row g-4">
-        <div class="col-12 col-lg-5">
-          <div class="d-flex flex-wrap align-items-center gap-3 p-3 border rounded h-100">
-            <div class="border rounded d-flex align-items-center justify-content-center overflow-hidden bg-body"
-              style="width: 104px; height: 104px">
-              @if (organization_logo_preview_url(); as logo_url) {
-              <img class="w-100 h-100 object-fit-contain" [src]="logo_url" [alt]="copy.organizationLogoPreview" />
-              } @else {
-              <span class="h3 text-primary mb-0" aria-hidden="true">{{ copy.logoPlaceholder }}</span>
-              }
-            </div>
-            <div class="d-grid gap-2 flex-grow-1">
-              <label class="btn btn-outline-primary btn-sm">{{ copy.selectLogo }}
-                <input #organizationLogoInput id="organizationLogo" class="d-none" type="file"
-                  accept="image/jpeg,image/png,image/gif,image/webp" (change)="upload_organization_logo($event)" />
-              </label>
-              @if (organization_logo_file_name(); as file_name) {
-              <p class="small text-truncate mb-0" [title]="file_name">{{ file_name }}</p>
-              <button type="button" class="btn btn-link text-danger btn-sm p-0 text-start"
-                (click)="clear_organization_logo(organizationLogoInput)">{{ copy.removeLogo }}</button>
-              }
-              @if (organization_logo_error(); as logo_error) {
-              <p class="text-danger small mb-0" role="alert">{{ logo_error | translate }}</p>
-              }
-              <small class="text-body-secondary">{{ copy.organizationLogoHint }}</small>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-lg-7">
+        <div class="col-12">
           <label class="form-label w-100">{{ copy.organizationBrief }}
             <textarea class="form-control" [formField]="startup_form.briefDescription"
-              [placeholder]="copy.organizationBriefPlaceholder" rows="6"></textarea>
+              [placeholder]="copy.organizationBriefPlaceholder" rows="4"></textarea>
+            <small class="d-block text-end text-secondary fw-normal mt-1">{{ model().briefDescription.length }}/1000</small>
           </label>
+        </div>
+        <div class="col-12">
+          <p class="form-label">{{ copy.organizationLogo }}</p>
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="startup-upload d-flex flex-column align-items-center justify-content-center gap-2 h-100 p-4 border border-dashed rounded-3 text-center"
+                (dragover)="allow_logo_drop($event)" (drop)="drop_organization_logo($event)">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round" class="text-primary-emphasis" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="9" cy="9" r="1.500" /><path d="m21 15-5-5L5 21" />
+                </svg>
+                <span class="small fw-semibold">{{ copy.logoUploadPrompt }}</span>
+                <small class="text-secondary">{{ copy.organizationLogoHint }}</small>
+                <input #organizationLogoInput id="organizationLogo" class="visually-hidden" type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp" (change)="upload_organization_logo($event)" />
+              </label>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="startup-logo-preview d-flex flex-column align-items-center justify-content-center gap-2 h-100 p-3 border rounded-3 bg-body-tertiary text-center">
+                @if (organization_logo_preview_url(); as logo_url) {
+                <img class="object-fit-contain" height="96" [src]="logo_url" [alt]="copy.organizationLogoPreview" />
+                } @else {
+                <span class="h3 text-primary-emphasis mb-0" aria-hidden="true">{{ copy.logoPlaceholder }}</span>
+                }
+                @if (organization_logo_file_name(); as file_name) {
+                <small class="text-truncate mw-100" [title]="file_name">{{ file_name }}</small>
+                <button type="button" class="btn btn-link btn-sm text-danger p-0"
+                  (click)="clear_organization_logo(organizationLogoInput)">{{ copy.removeLogo }}</button>
+                }
+              </div>
+            </div>
+          </div>
+          @if (organization_logo_error(); as logo_error) {
+          <p class="text-danger small mt-2 mb-0" role="alert">{{ logo_error | translate }}</p>
+          }
         </div>
       </div>
     </section>
@@ -118,7 +147,7 @@
 
     @if (step() === 1) {
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="profile-step-title">
-      <h2 id="profile-step-title" class="h3 mb-4">{{ copy.profileTitle }}</h2>
+      <h2 id="profile-step-title" class="h4 text-primary-emphasis fw-bold mb-4">{{ step() + 1 }}. {{ copy.profileTitle }}</h2>
       <div class="row g-3">
         <div class="col-12 col-md-6">
           <label class="form-label w-100">{{ copy.profileImage }}
@@ -154,7 +183,7 @@
         </div>
         @for (certification of startup_form.certifications; track $index) {
         <fieldset class="card card-body bg-body-tertiary mb-3">
-          <legend class="h6 text-primary">{{ copy.certification }} {{ $index + 1 }}</legend>
+          <legend class="h6 text-primary-emphasis">{{ copy.certification }} {{ $index + 1 }}</legend>
           <div class="row g-3">
             <div class="col-12 col-md-6">
               <label class="form-label w-100">{{ copy.certificationName }}
@@ -198,7 +227,7 @@
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="roles-step-title">
       <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
         <div>
-          <h2 id="roles-step-title" class="h3">{{ copy.rolesTitle }}</h2>
+          <h2 id="roles-step-title" class="h4 text-primary-emphasis fw-bold">{{ step() + 1 }}. {{ copy.rolesTitle }}</h2>
           <p class="text-body-secondary mb-0">{{ copy.optionalStep }}</p>
         </div>
         <button id="add-role-button" type="button" class="btn btn-outline-primary btn-sm" (click)="add_role()">
@@ -208,7 +237,7 @@
       @if (model().roles.length === 0) { <p class="text-body-secondary">{{ copy.noRoles }}</p> }
       @for (role of startup_form.roles; track $index; let role_index = $index) {
       <fieldset class="card card-body bg-body-tertiary mb-3">
-        <legend class="h6 text-primary">{{ copy.role }} {{ $index + 1 }}</legend>
+        <legend class="h6 text-primary-emphasis">{{ copy.role }} {{ $index + 1 }}</legend>
         <div class="mb-3">
           <label class="form-label w-100">{{ copy.roleName }}
             <input class="form-control" [formField]="role.name" />
@@ -232,7 +261,7 @@
                   [checked]="selected_permission_count(role, page_group) === page_group.permissions.length"
                   [indeterminate]="selected_permission_count(role, page_group) > 0 && selected_permission_count(role, page_group) < page_group.permissions.length"
                   (change)="toggle_page_permissions(role, page_group, $event)" />
-                <label class="form-check-label text-primary small"
+                <label class="form-check-label text-primary-emphasis small"
                   [attr.for]="'select-all-' + role_index + '-' + page_group.page.key">{{ copy.selectAllPagePermissions
                   }}</label>
               </div>
@@ -267,7 +296,7 @@
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="specialties-step-title">
       <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
         <div>
-          <h2 id="specialties-step-title" class="h3">{{ copy.specialtiesTitle }}</h2>
+          <h2 id="specialties-step-title" class="h4 text-primary-emphasis fw-bold">{{ step() + 1 }}. {{ copy.specialtiesTitle }}</h2>
           <p class="text-body-secondary mb-0">{{ copy.optionalStep }}</p>
         </div>
         <button type="button" class="btn btn-outline-primary btn-sm" (click)="add_specialty()">
@@ -308,7 +337,7 @@
           <span class="d-grid"><strong>{{ specialty().value().trim() }}</strong>
             <small class="text-body-secondary">{{ global_specialty.description }}</small></span>
           } @else {
-          <span class="d-flex align-items-center justify-content-center border rounded text-primary fs-3"
+          <span class="d-flex align-items-center justify-content-center border rounded text-primary-emphasis fs-3"
             style="width: 64px; height: 64px" aria-hidden="true">+</span>
           <strong>{{ specialty().value().trim() || copy.specialtyName }}</strong>
           }
@@ -327,7 +356,7 @@
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="clinics-step-title">
       <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
         <div>
-          <h2 id="clinics-step-title" class="h3">{{ copy.clinicsTitle }}</h2>
+          <h2 id="clinics-step-title" class="h4 text-primary-emphasis fw-bold">{{ step() + 1 }}. {{ copy.clinicsTitle }}</h2>
           <p class="text-body-secondary mb-0">{{ copy.clinicRequired }}</p>
         </div>
         <button type="button" class="btn btn-outline-primary btn-sm" (click)="add_clinic()">
@@ -336,7 +365,7 @@
       </div>
       @for (clinic of startup_form.clinics; track $index; let clinic_index = $index) {
       <fieldset class="card card-body bg-body-tertiary mb-3">
-        <legend class="h6 text-primary">{{ copy.clinic }} {{ $index + 1 }}</legend>
+        <legend class="h6 text-primary-emphasis">{{ copy.clinic }} {{ $index + 1 }}</legend>
         <div class="row g-3">
           <div class="col-12 col-md-6">
             <label class="form-label w-100">{{ copy.clinicName }}
@@ -396,8 +425,7 @@
 
     @if (step() === 5) {
     <section class="startup-section card card-body p-3 p-md-4" aria-labelledby="review-step-title">
-      <p class="text-uppercase text-primary fw-bold small mb-1">{{ copy.reviewDetails }}</p>
-      <h2 id="review-step-title" class="h3">{{ copy.reviewTitle }}</h2>
+      <h2 id="review-step-title" class="h4 text-primary-emphasis fw-bold mb-1">{{ step() + 1 }}. {{ copy.reviewTitle }}</h2>
       <p class="text-body-secondary mb-4">{{ copy.reviewDescription }}</p>
       <div class="row g-3">
         <article class="review-card col-12 col-lg-6">
@@ -495,16 +523,26 @@
     <div class="alert alert-danger mt-3 mb-0" role="alert">{{ error_message() | translate }}</div>
     }
 
-    <footer class="startup-actions d-flex justify-content-between gap-2 border-top mt-4 pt-3">
+    <footer class="startup-actions d-flex justify-content-between gap-2 mt-4">
       @if (step() > 0) { <button type="button" class="btn btn-outline-primary" (click)="set_step(step() - 1)">{{
         copy.back }}</button> }
-      @if (step() < 5) { <button type="button" class="btn btn-primary ms-auto" (click)="set_step(step() + 1)">{{
-        copy.continue }}</button>
+      @if (step() < 5) { <button type="button" class="btn btn-primary ms-auto px-4" (click)="set_step(step() + 1)">{{
+        'startup.next' | translate: { step: copy[step_keys[step() + 1]] } }} <span aria-hidden="true">&rarr;</span></button>
       } @else {
-      <button type="submit" class="btn btn-primary ms-auto" [disabled]="is_saving()">{{ is_saving() ? copy.saving :
+      <button type="submit" class="btn btn-primary ms-auto px-4" [disabled]="is_saving()">{{ is_saving() ? copy.saving :
         copy.finish }}</button>
       }
     </footer>
   </form>
   }
+  <ol class="startup-progress d-flex list-unstyled m-0 mt-4 pt-3" [attr.aria-label]="copy.stepsLabel">
+    @for (key of step_keys; track key; let index = $index) {
+    <li class="startup-progress-item flex-fill text-center small" [class.is-active]="step() === index" [class.is-done]="step() > index">
+      <span class="startup-progress-dot d-inline-flex align-items-center justify-content-center rounded-circle fw-bold">{{ index + 1 }}</span>
+      <span class="d-block mt-1 text-truncate">{{ copy[key] }}</span>
+    </li>
+    }
+  </ol>
+    </div>
+  </div>
 </main>

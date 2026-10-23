@@ -15,21 +15,21 @@
   justify-content: center;
   border: 0;
   border-radius: 4px;
-  color: var(--clinic-primary-contrast);
-  background: var(--clinic-primary);
+  color: var(--bs-primary-contrast);
+  background: var(--bs-primary);
   font: inherit;
-  font-size: var(--font-size-sm);
+  font-size: var(--bs-font-size-sm);
   font-weight: 600;
   cursor: pointer;
   transition: background-color 160ms ease, color 160ms ease;
 }
 
 .ui-button:not(:disabled):hover {
-  background: var(--clinic-primary-hover);
+  background: var(--bs-primary-hover);
 }
 
 .ui-button:focus-visible {
-  outline: 2px solid var(--clinic-primary);
+  outline: 2px solid var(--bs-primary);
   outline-offset: 3px;
 }
 
@@ -42,15 +42,15 @@
   min-height: 38px;
   padding: 8px 11px;
   border-radius: 5px;
-  color: var(--clinic-ink);
+  color: var(--bs-body-color);
   background: transparent;
-  font-size: var(--font-size-xs);
+  font-size: var(--bs-font-size-xs);
   font-weight: 400;
 }
 
 .ui-button-text:not(:disabled):hover {
-  color: var(--clinic-primary);
-  background: var(--clinic-soft);
+  color: var(--bs-primary);
+  background: var(--bs-surface-muted);
 }
 
 :host(.submit-button) .ui-button {
@@ -58,7 +58,7 @@
 }
 
 :host(.language-button) .ui-button {
-  font-size: calc(var(--font-size-sm) * 0.9286);
+  font-size: calc(var(--bs-font-size-sm) * 0.9286);
 }
 
 @media (max-width: 640px) {
@@ -66,6 +66,6 @@
   :host(.theme-button) .ui-button {
     min-height: 34px;
     padding: 6px 7px;
-    font-size: calc(var(--font-size-xs) * 0.8333);
+    font-size: calc(var(--bs-font-size-xs) * 0.8333);
   }
 }

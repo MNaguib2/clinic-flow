@@ -1,13 +1,14 @@
 import { Component, inject, signal, WritableSignal, OnInit } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
 import { AuthUser } from '@core/interfaces/auth.interfaces';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ShareModule } from '@share/share.module';
+import { SideBar } from './share/components/side-bar/side-bar';
 
 @Component({
-  imports: [RouterLink, RouterOutlet, ShareModule, TranslatePipe],
+  imports: [RouterOutlet, ShareModule, TranslatePipe, SideBar],
   selector: 'app-dashboard-shell',
   templateUrl: './dashboard-shell.html',
   styleUrl: './dashboard-shell.scss',

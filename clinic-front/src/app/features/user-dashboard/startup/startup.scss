@@ -1,30 +1,638 @@
+
+/* =========================================================
+   ClinicFlow — Startup Setup
+   Bootstrap 5.3+
+   Light + Dark Mode
+   Uses Bootstrap theme variables.
+   Topbar remains unchanged.
+   ========================================================= */
+
 :host {
   display: block;
 }
 
-.btn-primary {
-  --bs-btn-bg: var(--clinic-primary);
-  --bs-btn-border-color: var(--clinic-primary);
-  --bs-btn-color: var(--clinic-primary-contrast);
-  --bs-btn-hover-bg: var(--clinic-primary-hover);
-  --bs-btn-hover-border-color: var(--clinic-primary-hover);
-  --bs-btn-hover-color: var(--clinic-primary-contrast);
+/* ---------------------------------------------------------
+   1. Page and main shell
+   --------------------------------------------------------- */
+
+.startup-page {
+  min-height: 100vh;
+  color: var(--bs-body-color);
+  background: linear-gradient(
+    160deg,
+    var(--bs-body-bg),
+    var(--bs-primary-bg-subtle)
+  );
+  transition:
+    background-color var(--bs-transition-duration, 160ms) ease,
+    color var(--bs-transition-duration, 160ms) ease;
 }
 
-.btn-outline-primary,
-.btn-link,
-.text-primary {
-  --bs-btn-color: var(--clinic-primary);
-  --bs-btn-border-color: var(--clinic-primary);
-  --bs-btn-hover-bg: var(--clinic-primary);
-  --bs-btn-hover-border-color: var(--clinic-primary);
-  --bs-btn-hover-color: var(--clinic-primary-contrast);
-  --bs-link-color: var(--clinic-primary);
+.startup-shell {
+  width: 100%;
+  max-width: 78rem;
+  color: var(--bs-body-color);
+  background: var(--bs-surface, var(--bs-body-bg));
+  border-color: var(--bs-border-color) !important;
+  box-shadow: var(--bs-box-shadow);
 }
 
-.text-primary { color: var(--clinic-primary) !important; }
+@media (min-width: 992px) {
+  .startup-shell {
+    min-height: calc(100vh - 3rem);
+    border-radius: var(--bs-border-radius-xl);
+  }
 
-.nav-pills {
-  --bs-nav-pills-link-active-bg: var(--clinic-primary);
-  --bs-nav-pills-link-active-color: var(--clinic-primary-contrast);
+  .startup-sidebar {
+    width: 19rem;
+    flex: 0 0 19rem;
+  }
+}
+
+/* ---------------------------------------------------------
+   2. Sidebar
+   --------------------------------------------------------- */
+
+.startup-sidebar {
+  position: relative;
+  color: var(--bs-body-color);
+  background: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color) !important;
+}
+
+.startup-sidebar .text-dark,
+.startup-welcome .text-dark {
+  color: var(--bs-body-color) !important;
+}
+
+.startup-sidebar .text-secondary,
+.startup-sidebar .text-body-secondary,
+.startup-welcome .text-secondary {
+  color: var(--bs-secondary-color) !important;
+}
+
+.startup-logo {
+  width: 2.75rem;
+  color: var(--bs-primary);
+}
+
+.startup-tagline {
+  font-size: var(--bs-font-size-xs, var(--bs-body-font-size));
+  color: var(--bs-secondary-color);
+}
+
+/* ---------------------------------------------------------
+   3. Setup steps
+   --------------------------------------------------------- */
+
+.startup-steps {
+  min-width: 0;
+}
+
+.startup-steps ol {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bs-border-color) transparent;
+}
+
+.startup-step {
+  min-width: 0;
+  color: var(--bs-body-color);
+  background: transparent;
+  border: var(--bs-border-width) solid transparent !important;
+  text-align: start;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.startup-step:hover {
+  color: var(--bs-body-color);
+  background: var(--bs-secondary-bg);
+}
+
+.startup-step:focus-visible {
+  outline: var(--bs-border-width) solid var(--bs-primary);
+  outline-offset: var(--bs-border-width);
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.startup-step.is-active {
+  color: var(--bs-primary-text-emphasis);
+  background: var(--bs-primary-bg-subtle);
+  border-color: var(--bs-primary-border-subtle) !important;
+}
+
+.startup-step.is-done {
+  color: var(--bs-body-color);
+}
+
+.startup-step-badge {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  color: var(--bs-body-color);
+  background: var(--bs-secondary-bg);
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  font-size: var(--bs-font-size-sm, var(--bs-body-font-size));
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.startup-step.is-active .startup-step-badge {
+  color: var(--bs-white);
+  background: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.startup-step.is-done .startup-step-badge {
+  color: var(--bs-white);
+  background: var(--bs-success);
+  border-color: var(--bs-success);
+}
+
+.startup-step-hint {
+  margin-top: 0.25rem;
+  color: var(--bs-secondary-color);
+  font-size: var(--bs-font-size-xs, var(--bs-body-font-size));
+  line-height: 1.5;
+}
+
+.startup-step.is-active .startup-step-hint {
+  color: var(--bs-secondary-color);
+}
+
+/* ---------------------------------------------------------
+   4. Welcome illustration
+   --------------------------------------------------------- */
+
+.startup-welcome {
+  color: var(--bs-body-color);
+}
+
+.startup-welcome-image {
+  max-width: 15rem;
+  margin-inline: auto;
+  height: auto;
+}
+
+.startup-welcome-dark {
+  display: none;
+}
+
+:host-context([data-bs-theme='dark']) {
+  .startup-welcome-light {
+    display: none;
+  }
+
+  .startup-welcome-dark {
+    display: block;
+  }
+}
+
+/* ---------------------------------------------------------
+   5. Main content and sections
+   --------------------------------------------------------- */
+
+.startup-main {
+  min-width: 0;
+  flex: 1 1 auto;
+  color: var(--bs-body-color);
+  background: var(--bs-tertiary-bg);
+}
+
+.startup-section {
+  min-width: 0;
+  color: var(--bs-body-color);
+  background: var(--bs-surface, var(--bs-body-bg));
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius-xl);
+  box-shadow: var(--bs-box-shadow-sm);
+}
+
+.startup-section > h2,
+.startup-section h2,
+.startup-section legend {
+  color: var(--bs-primary-text-emphasis);
+}
+
+.startup-section .text-secondary {
+  color: var(--bs-secondary-color) !important;
+}
+
+.startup-section .card {
+  color: var(--bs-card-color, var(--bs-body-color));
+  background: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color);
+}
+
+.startup-section .card-body,
+.startup-section fieldset {
+  min-width: 0;
+}
+
+.startup-section legend {
+  float: none;
+  width: auto;
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+/* ---------------------------------------------------------
+   6. Form controls
+   --------------------------------------------------------- */
+
+.startup-section .form-label {
+  color: var(--bs-body-color);
+  font-weight: var(--bs-form-label-font-weight, 600);
+}
+
+.startup-section .form-control,
+.startup-section .form-select {
+  color: var(--bs-body-color);
+  background-color: var(--bs-surface, var(--bs-body-bg));
+  border-color: var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+}
+
+.startup-section .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  opacity: 0.85;
+}
+
+.startup-section .form-control:focus,
+.startup-section .form-select:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.startup-section .form-control:disabled,
+.startup-section .form-select:disabled {
+  color: var(--bs-secondary-color);
+  background-color: var(--bs-tertiary-bg);
+}
+
+.startup-section .form-text {
+  color: var(--bs-secondary-color);
+}
+
+.startup-section input[type='file']::file-selector-button {
+  color: var(--bs-body-color);
+  background-color: var(--bs-tertiary-bg);
+}
+
+/* ---------------------------------------------------------
+   7. Organization logo upload and preview
+   --------------------------------------------------------- */
+
+.startup-upload {
+  min-height: 9rem;
+  color: var(--bs-body-color);
+  background: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color) !important;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.startup-upload:hover,
+.startup-upload:focus-within {
+  background-color: var(--bs-primary-bg-subtle);
+  border-color: var(--bs-primary) !important;
+}
+
+.startup-upload:focus-within {
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.startup-upload svg {
+  color: var(--bs-primary);
+}
+
+.startup-logo-preview {
+  min-width: 0;
+  min-height: 9rem;
+  color: var(--bs-body-color);
+  background-color: var(--bs-secondary-bg);
+  border-color: var(--bs-border-color) !important;
+}
+
+.startup-logo-preview img {
+  max-width: 100%;
+}
+
+.startup-logo-preview .text-primary-emphasis {
+  color: var(--bs-primary-text-emphasis) !important;
+}
+
+/* ---------------------------------------------------------
+   8. Experience and certification sections
+   --------------------------------------------------------- */
+
+.startup-section .border-top {
+  border-color: var(--bs-border-color) !important;
+}
+
+.startup-section .btn-link {
+  text-decoration: none;
+}
+
+.startup-section .btn-link:hover {
+  text-decoration: underline;
+}
+
+.startup-section .btn-link.text-danger {
+  color: var(--bs-danger) !important;
+}
+
+/* ---------------------------------------------------------
+   9. Role permissions
+   --------------------------------------------------------- */
+
+.permission-page {
+  overflow: hidden;
+  color: var(--bs-body-color);
+  background-color: var(--bs-surface, var(--bs-body-bg));
+  border-color: var(--bs-border-color) !important;
+  border-radius: var(--bs-border-radius);
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.permission-page:hover {
+  border-color: var(--bs-primary-border-subtle) !important;
+}
+
+.permission-page > summary {
+  color: var(--bs-body-color);
+  cursor: pointer;
+  list-style: none;
+}
+
+.permission-page > summary::-webkit-details-marker {
+  display: none;
+}
+
+.permission-page > summary::after {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: 0 0 0.5rem;
+  border-right: var(--bs-border-width) solid var(--bs-secondary-color);
+  border-bottom: var(--bs-border-width) solid var(--bs-secondary-color);
+  content: '';
+  transform: rotate(45deg);
+  transition: transform 160ms ease;
+}
+
+.permission-page[open] > summary::after {
+  transform: rotate(225deg);
+}
+
+.permission-page > summary:focus-visible {
+  outline: var(--bs-border-width) solid var(--bs-primary);
+  outline-offset: calc(-1 * var(--bs-border-width) * 3);
+}
+
+.permission-page-name,
+.permission-option-copy {
+  min-width: 0;
+  gap: 0.25rem;
+}
+
+.permission-page-name small,
+.permission-option-copy small {
+  overflow-wrap: anywhere;
+}
+
+.permission-page-count {
+  flex-shrink: 0;
+}
+
+.permission-page .border-top,
+.permission-page .border-bottom {
+  border-color: var(--bs-border-color) !important;
+}
+
+.permission-select-all {
+  border-color: var(--bs-border-color) !important;
+}
+
+.permission-option {
+  border-radius: var(--bs-border-radius-sm);
+  transition: background-color 160ms ease;
+}
+
+.permission-option:hover {
+  background-color: var(--bs-primary-bg-subtle);
+}
+
+/* ---------------------------------------------------------
+   10. Specialty and clinic rows
+   --------------------------------------------------------- */
+
+.startup-section .row.border,
+.startup-section .rounded.border {
+  border-color: var(--bs-border-color) !important;
+}
+
+.startup-section .object-fit-cover,
+.startup-section .object-fit-contain {
+  background-color: var(--bs-secondary-bg);
+}
+
+.startup-section img {
+  max-width: 100%;
+}
+
+.startup-section .form-check-input {
+  background-color: var(--bs-surface, var(--bs-body-bg));
+  border-color: var(--bs-border-color);
+}
+
+.startup-section .form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.startup-section .form-check-input:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.2);
+}
+
+/* ---------------------------------------------------------
+   11. Review cards and lists
+   --------------------------------------------------------- */
+
+.review-card {
+  min-width: 0;
+}
+
+.review-card .card {
+  height: 100%;
+  color: var(--bs-card-color, var(--bs-body-color));
+  background: var(--bs-surface, var(--bs-body-bg));
+  border-color: var(--bs-border-color);
+  border-radius: var(--bs-border-radius-lg);
+  box-shadow: var(--bs-box-shadow-sm);
+}
+
+.review-card .card-body {
+  min-width: 0;
+}
+
+.review-card h3 {
+  color: var(--bs-body-color);
+}
+
+.review-card .list-group-item {
+  color: var(--bs-body-color);
+  background: transparent;
+  border-color: var(--bs-border-color);
+  overflow-wrap: anywhere;
+}
+
+/* ---------------------------------------------------------
+   12. Navigation actions
+   --------------------------------------------------------- */
+
+.startup-actions {
+  flex-wrap: wrap;
+}
+
+.startup-actions .btn {
+  min-height: 2.75rem;
+}
+
+.startup-actions .btn-primary {
+  box-shadow: 0 0.25rem 0.75rem rgba(var(--bs-primary-rgb), 0.2);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.startup-actions .btn-primary:hover:not(:disabled) {
+  box-shadow: 0 0.375rem 1rem rgba(var(--bs-primary-rgb), 0.28);
+  transform: translateY(-1px);
+}
+
+.startup-actions .btn:focus-visible {
+  outline: var(--bs-border-width) solid var(--bs-primary);
+  outline-offset: 3px;
+}
+
+.startup-actions .btn:disabled {
+  box-shadow: none;
+  transform: none;
+}
+
+/* ---------------------------------------------------------
+   13. Progress indicator
+   --------------------------------------------------------- */
+
+.startup-progress {
+  gap: 0;
+  border-top: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.startup-progress-item {
+  position: relative;
+  min-width: 0;
+  padding: 0.25rem 0.125rem;
+  color: var(--bs-secondary-color);
+}
+
+.startup-progress-item:not(:first-child)::before {
+  position: absolute;
+  z-index: 0;
+  top: 0.95rem;
+  inset-inline: -50% 50%;
+  height: var(--bs-border-width);
+  background-color: var(--bs-border-color);
+  content: '';
+}
+
+.startup-progress-item.is-active,
+.startup-progress-item.is-done {
+  color: var(--bs-primary-text-emphasis);
+}
+
+.startup-progress-item.is-active::before,
+.startup-progress-item.is-done::before {
+  background-color: var(--bs-primary);
+}
+
+.startup-progress-dot {
+  position: relative;
+  z-index: 1;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--bs-secondary-color);
+  background: var(--bs-surface, var(--bs-body-bg));
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  font-size: var(--bs-font-size-xs, var(--bs-body-font-size));
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.startup-progress-item.is-active .startup-progress-dot {
+  color: var(--bs-white);
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.startup-progress-item.is-done .startup-progress-dot {
+  color: var(--bs-success-text-emphasis);
+  background-color: var(--bs-success-bg-subtle);
+  border-color: var(--bs-success-border-subtle);
+}
+
+.startup-progress-item > span:last-child {
+  font-size: var(--bs-font-size-xs, var(--bs-body-font-size));
+}
+
+/* ---------------------------------------------------------
+   14. Responsive behavior
+   --------------------------------------------------------- */
+
+@media (max-width: 575.98px) {
+  .startup-progress {
+    margin-inline: -0.25rem;
+  }
+
+  .startup-section {
+    border-radius: var(--bs-border-radius-lg);
+  }
+
+  .startup-actions .btn {
+    flex: 1 1 auto;
+  }
+}
+
+/* ---------------------------------------------------------
+   15. Accessibility
+   --------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .startup-page,
+  .startup-step,
+  .startup-step-badge,
+  .startup-upload,
+  .permission-page,
+  .permission-page > summary::after,
+  .permission-option,
+  .startup-actions .btn-primary,
+  .startup-progress-dot {
+    transition: none;
+  }
+
+  .startup-actions .btn-primary:hover:not(:disabled) {
+    transform: none;
+  }
 }

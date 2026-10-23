@@ -30,6 +30,7 @@ import type {
   RoleModel,
   StartupModel,
 } from './service/interfaces';
+import { ThemeService } from '@core/services/theme/theme.service';
 
 type LocalizedPage = StartupPage & { name: string; description: string };
 type LocalizedPermission = Omit<StartupPermission, 'page'> & {
@@ -52,6 +53,7 @@ type LocalizedGlobalSpecialty = StartupGlobalSpecialty & {
 })
 export class Startup implements OnInit {
   private readonly auth_store = inject(AuthStore);
+  private readonly theme = inject(ThemeService);
   private readonly startup_service = inject(StartupService);
   private readonly language_service = inject(LanguageService);
 
@@ -64,6 +66,14 @@ export class Startup implements OnInit {
     'specialtiesStep',
     'clinicsStep',
     'reviewStep',
+  ] as const;
+  protected readonly step_hint_keys = [
+    'organizationStepHint',
+    'profileStepHint',
+    'rolesStepHint',
+    'specialtiesStepHint',
+    'clinicsStepHint',
+    'reviewStepHint',
   ] as const;
   protected readonly is_loading = signal(false);
   protected readonly is_saving = signal(false);
@@ -257,17 +267,28 @@ export class Startup implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
+    if (!this.set_organization_logo(file)) input.value = '';
+  }
 
+  protected drop_organization_logo(event: DragEvent): void {
+    event.preventDefault();
+    const file = event.dataTransfer?.files?.[0];
+    if (file) this.set_organization_logo(file);
+  }
+
+  protected allow_logo_drop(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  private set_organization_logo(file: File): boolean {
     const accepted_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     if (!accepted_types.includes(file.type)) {
       this.organization_logo_error.set('startup.organizationLogoInvalid');
-      input.value = '';
-      return;
+      return false;
     }
     if (file.size > 5 * 1024 * 1024) {
       this.organization_logo_error.set('startup.organizationLogoTooLarge');
-      input.value = '';
-      return;
+      return false;
     }
 
     this.error_message.set(null);
@@ -277,6 +298,7 @@ export class Startup implements OnInit {
     this.organization_logo = file;
     this.organization_logo_file_name.set(file.name);
     this.organization_logo_preview_url.set(URL.createObjectURL(file));
+    return true;
   }
 
   protected clear_organization_logo(input: HTMLInputElement): void {

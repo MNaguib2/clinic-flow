@@ -13,8 +13,8 @@
   align-items: center;
   gap: 0.625rem;
   padding: 0.5rem 0.75rem;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid var(--bs-border-color);
+  background: var(--bs-surface-muted);
   border-radius: 999px;
   color: inherit;
   cursor: pointer;
@@ -38,7 +38,7 @@
 }
 
 .user-chevron {
-  font-size: calc(var(--font-size-md) * 0.8);
+  font-size: calc(var(--bs-font-size-md) * 0.8);
   opacity: 0.8;
 }
 
@@ -47,8 +47,8 @@
   top: calc(100% + 0.5rem);
   right: 0;
   min-width: 12rem;
-  background: white;
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: var(--bs-surface);
+  border: 1px solid var(--bs-border-color);
   border-radius: 0.75rem;
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15);
   padding: 0.5rem;
@@ -70,11 +70,11 @@
 }
 
 .user-menu-item:hover {
-  background: rgba(148, 163, 184, 0.12);
+  background: var(--bs-surface-muted);
 }
 
 .logout-item {
-  color: #b91c1c;
+  color: var(--bs-danger);
 }
 
 @media (max-width: 640px) {

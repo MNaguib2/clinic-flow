@@ -1,0 +1,9 @@
+  <aside class="dashboard-sidebar bg-sidebar text-white d-flex flex-lg-column align-items-center align-items-lg-stretch justify-content-between gap-3 p-3 p-lg-4">
+    <a class="dashboard-brand d-inline-flex align-items-center gap-2 text-white text-decoration-none fs-5 fw-bold" routerLink="/" aria-label="ClinicFlow">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span>Clinic<span class="text-info-emphasis brand-accent">Flow</span></span>
+    </a>
+    <nav class="nav nav-pills flex-lg-column mt-lg-4" [attr.aria-label]="'dashboard.title' | translate">
+      <a class="nav-link text-white" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'dashboard.title' | translate }}</a>
+    </nav>
+  </aside>

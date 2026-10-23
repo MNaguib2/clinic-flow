@@ -1,0 +1,356 @@
+/* =========================================================
+   ClinicFlow — Bootstrap Theme
+   Single source of truth.
+   Compiled by: npm run build:bootstrap
+   Bootstrap 5.3+
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. Brand colors
+   --------------------------------------------------------- */
+
+$blue: #1769f5;
+$indigo: #4f46e5;
+$purple: #8b45f6;
+$orange: #ff8a32;
+$green: #18b96a;
+$red: #c62828;
+
+$navy: #092d59;
+$sidebar: #082b55;
+$navy-950: #0b1a2d;
+$navy-900: #0d2038;
+
+$white: #fff;
+$gray-100: #f7faff;
+$gray-200: #eaf2fd;
+$gray-300: #dce9fa;
+$gray-500: #6482ac;
+$gray-700: #102f5e;
+
+/* ---------------------------------------------------------
+   2. Bootstrap semantic colors — Light Mode
+   These Sass variables configure Bootstrap's generated CSS.
+   --------------------------------------------------------- */
+
+$primary: $blue;
+$secondary: $gray-500;
+$success: $green;
+$warning: $orange;
+$info: $purple;
+$danger: $red;
+
+$dark: $navy;
+$light: #f3f8ff;
+
+$body-color: $gray-700;
+$body-bg: #f3f8ff;
+
+$body-secondary-color: $gray-500;
+$body-secondary-bg: $gray-200;
+$body-tertiary-bg: $gray-100;
+
+$border-color: $gray-300;
+$border-color-translucent: rgba($navy, 0.12);
+
+$link-color: $primary;
+$link-hover-color: #1257cc;
+
+$primary-text-emphasis: #1257cc;
+$secondary-text-emphasis: #4d678b;
+$success-text-emphasis: #12864c;
+$info-text-emphasis: #6840cf;
+$warning-text-emphasis: #a95313;
+$danger-text-emphasis: #b02a37;
+
+/* ---------------------------------------------------------
+   3. Typography
+   --------------------------------------------------------- */
+
+$font-family-sans-serif:
+  'DM Sans',
+  'Noto Sans Arabic',
+  system-ui,
+  -apple-system,
+  sans-serif;
+
+$font-size-base: 1rem;
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-xxl: 1.5rem;
+$font-size-xxxl: 1.875rem;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+/* ---------------------------------------------------------
+   4. Shape and shadows
+   --------------------------------------------------------- */
+
+$border-radius: 0.5rem;
+$border-radius-sm: 0.375rem;
+$border-radius-lg: 0.75rem;
+$border-radius-xl: 1rem;
+
+$border-width: 1px;
+
+$box-shadow: 0 0.5rem 1.5rem rgba($navy, 0.06);
+$box-shadow-sm: 0 0.125rem 0.5rem rgba($navy, 0.05);
+$box-shadow-lg: 0 1rem 3rem rgba($navy, 0.1);
+
+/* ---------------------------------------------------------
+   5. Forms
+   CSS custom properties allow controls to follow the theme.
+   --------------------------------------------------------- */
+
+$input-bg: var(--bs-surface);
+$input-color: var(--bs-body-color);
+$input-border-color: var(--bs-border-color);
+$input-placeholder-color: var(--bs-secondary-color);
+
+$input-padding-y: 0.65rem;
+$input-padding-x: 0.875rem;
+
+$input-border-radius: $border-radius;
+$input-focus-border-color: $primary;
+$input-focus-box-shadow: 0 0 0 0.25rem rgba($primary, 0.2);
+
+$form-label-font-weight: 600;
+
+$form-select-bg: var(--bs-surface);
+$form-select-color: var(--bs-body-color);
+$form-select-border-color: var(--bs-border-color);
+
+/* ---------------------------------------------------------
+   6. Buttons
+   --------------------------------------------------------- */
+
+$btn-font-weight: 600;
+$btn-padding-y: 0.65rem;
+$btn-padding-x: 1.25rem;
+
+$btn-border-radius: $border-radius;
+$btn-border-radius-sm: $border-radius-sm;
+$btn-border-radius-lg: $border-radius-lg;
+
+/* ---------------------------------------------------------
+   7. Cards and surfaces
+   --------------------------------------------------------- */
+
+$card-bg: var(--bs-surface);
+$card-color: var(--bs-body-color);
+$card-border-color: var(--bs-border-color);
+$card-border-radius: $border-radius-lg;
+$card-box-shadow: $box-shadow-sm;
+
+/* ---------------------------------------------------------
+   8. Navigation
+   --------------------------------------------------------- */
+
+$nav-pills-link-active-bg: $primary;
+$nav-pills-link-active-color: $white;
+
+/* ---------------------------------------------------------
+   9. Dark Mode Sass values
+   Bootstrap's variables-dark uses these when generating dark tokens.
+   --------------------------------------------------------- */
+
+$body-bg-dark: #0b1220;
+$body-color-dark: #e6eeff;
+
+$body-secondary-color-dark: #9aadc9;
+$body-secondary-bg-dark: #16243b;
+$body-tertiary-bg-dark: #0e1729;
+
+$body-emphasis-color-dark: $white;
+
+$border-color-dark: #293951;
+$border-color-translucent-dark: rgba(#9aadc9, 0.15);
+
+$link-color-dark: #7fb0ff;
+$link-hover-color-dark: #a9c9ff;
+
+$primary-text-emphasis-dark: #7fb0ff;
+$primary-bg-subtle-dark: #12284d;
+$primary-border-subtle-dark: #1d4290;
+
+$secondary-text-emphasis-dark: #9aadc9;
+$secondary-bg-subtle-dark: #16243b;
+$secondary-border-subtle-dark: #293951;
+
+$success-text-emphasis-dark: #48d597;
+$success-bg-subtle-dark: #15372f;
+$success-border-subtle-dark: #1f5a47;
+
+$info-text-emphasis-dark: #a78bfa;
+$info-bg-subtle-dark: #2a2145;
+$info-border-subtle-dark: #46347a;
+
+$warning-text-emphasis-dark: #ffaa65;
+$warning-bg-subtle-dark: #3d2b20;
+$warning-border-subtle-dark: #6a4a31;
+
+$danger-text-emphasis-dark: #ff7777;
+$danger-bg-subtle-dark: #402329;
+$danger-border-subtle-dark: #6e3a41;
+
+/* ---------------------------------------------------------
+   10. Bootstrap imports and configuration
+   --------------------------------------------------------- */
+
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+
+/* Add brand shades to Bootstrap's theme color map. */
+$custom-colors: (
+  'sidebar': $sidebar,
+  'navy-900': $navy-900,
+  'navy-950': $navy-950
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+/*
+ * Do not manually rebuild $theme-colors-rgb here.
+ * Bootstrap's generated theme maps/utilities are compiled below.
+ */
+
+/* Bootstrap utility map is available after importing utilities. */
+@import 'bootstrap/scss/utilities';
+
+$utilities: map-merge(
+  $utilities,
+  (
+    'border-style': (
+      property: border-style,
+      class: border,
+      values: (
+        dashed: dashed
+      )
+    )
+  )
+);
+
+/* Compile the remaining Bootstrap components. */
+@import 'bootstrap/scss/root';
+@import 'bootstrap/scss/reboot';
+@import 'bootstrap/scss/type';
+@import 'bootstrap/scss/images';
+@import 'bootstrap/scss/containers';
+@import 'bootstrap/scss/grid';
+@import 'bootstrap/scss/tables';
+@import 'bootstrap/scss/forms';
+@import 'bootstrap/scss/buttons';
+@import 'bootstrap/scss/transitions';
+@import 'bootstrap/scss/dropdown';
+@import 'bootstrap/scss/button-group';
+@import 'bootstrap/scss/nav';
+@import 'bootstrap/scss/navbar';
+@import 'bootstrap/scss/card';
+@import 'bootstrap/scss/accordion';
+@import 'bootstrap/scss/breadcrumb';
+@import 'bootstrap/scss/pagination';
+@import 'bootstrap/scss/badge';
+@import 'bootstrap/scss/alert';
+@import 'bootstrap/scss/progress';
+@import 'bootstrap/scss/list-group';
+@import 'bootstrap/scss/close';
+@import 'bootstrap/scss/toasts';
+@import 'bootstrap/scss/modal';
+@import 'bootstrap/scss/tooltip';
+@import 'bootstrap/scss/popover';
+@import 'bootstrap/scss/carousel';
+@import 'bootstrap/scss/spinners';
+@import 'bootstrap/scss/offcanvas';
+@import 'bootstrap/scss/placeholders';
+@import 'bootstrap/scss/helpers';
+@import 'bootstrap/scss/utilities/api';
+
+/* ---------------------------------------------------------
+   11. App CSS tokens
+   Bootstrap's standard tokens are preferred throughout components.
+   --------------------------------------------------------- */
+
+:root,
+[data-bs-theme='light'] {
+  color-scheme: light;
+
+  /* Extended typography scale */
+  --bs-font-size-xs: #{$font-size-xs};
+  --bs-font-size-sm: #{$font-size-sm};
+  --bs-font-size-md: #{$font-size-base};
+  --bs-font-size-lg: #{$font-size-lg};
+  --bs-font-size-xl: #{$font-size-xl};
+  --bs-font-size-xxl: #{$font-size-xxl};
+  --bs-font-size-xxxl: #{$font-size-xxxl};
+
+  /* App-specific tokens without a direct Bootstrap equivalent */
+  --bs-surface: #{$white};
+  --bs-surface-hover: #{$gray-100};
+  --bs-surface-muted: #e6f0ff;
+
+  --bs-primary-hover: #{$link-hover-color};
+  --bs-primary-contrast: #{$white};
+  --bs-coral: #{$orange};
+
+  --bs-sidebar-rgb: 8, 43, 85;
+  --bs-navy-900: #{$navy-900};
+  --bs-navy-950: #{$navy-950};
+
+  --bs-box-shadow: #{$box-shadow};
+  --bs-box-shadow-sm: #{$box-shadow-sm};
+  --bs-box-shadow-lg: #{$box-shadow-lg};
+}
+
+[data-bs-theme='dark'] {
+  color-scheme: dark;
+
+  /* App-specific surface and interaction tokens */
+  --bs-surface: #111c30;
+  --bs-surface-hover: #16243b;
+  --bs-surface-muted: #16243b;
+
+  --bs-primary-hover: #{$link-hover-color-dark};
+  --bs-primary-contrast: #{$white};
+  --bs-coral: #ffaa65;
+
+  --bs-sidebar-rgb: 7, 26, 50;
+  --bs-navy-900: #{$navy-900};
+  --bs-navy-950: #{$navy-950};
+
+  --bs-box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 35%);
+  --bs-box-shadow-sm: 0 0.125rem 0.5rem rgb(0 0 0 / 30%);
+  --bs-box-shadow-lg: 0 1rem 3rem rgb(0 0 0 / 40%);
+
+  /* Bootstrap-generated variables are overridden where needed for this theme. */
+  --bs-body-bg: #{$body-bg-dark};
+  --bs-body-color: #{$body-color-dark};
+  --bs-secondary-color: #{$body-secondary-color-dark};
+  --bs-secondary-bg: #{$body-secondary-bg-dark};
+  --bs-tertiary-bg: #{$body-tertiary-bg-dark};
+  --bs-border-color: #{$border-color-dark};
+  --bs-border-color-translucent: #{$border-color-translucent-dark};
+  --bs-link-color: #{$link-color-dark};
+  --bs-link-hover-color: #{$link-hover-color-dark};
+
+  /* Keep Bootstrap outline-primary readable in dark mode. */
+  .btn-outline-primary {
+    --bs-btn-color: #{$primary-text-emphasis-dark};
+    --bs-btn-border-color: #{$primary-text-emphasis-dark};
+    --bs-btn-hover-bg: #{$primary};
+    --bs-btn-hover-border-color: #{$primary};
+    --bs-btn-hover-color: #{$white};
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    --bs-border-color: #{$primary};
+  }
+}

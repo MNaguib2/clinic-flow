@@ -1,9 +1,3 @@
-.welcome { padding: 2rem; border: 1px solid var(--clinic-line); border-inline-start: 4px solid var(--clinic-primary); border-radius: 8px; background: linear-gradient(135deg, var(--clinic-soft), var(--clinic-surface) 70%); box-shadow: 0 12px 32px rgb(20 45 35 / 6%); }
-.welcome-kicker { margin: 0 0 0.5rem; color: var(--clinic-primary); font-size: var(--font-size-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-.welcome h1 { margin: 0 0 0.75rem; font-size: var(--font-size-xxxl); font-weight: 600; line-height: 1.25; }
-.welcome-text { max-width: 40rem; margin: 0; color: var(--clinic-muted); font-size: var(--font-size-md); line-height: 1.7; }
-
-@media (max-width: 640px) {
-  .welcome { padding: 1.25rem; }
-  .welcome h1 { font-size: var(--font-size-xxl); }
+.welcome-kicker {
+  letter-spacing: 0.08em;
 }
