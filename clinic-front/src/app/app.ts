@@ -3,9 +3,10 @@ import { RouterOutlet } from '@angular/router';
 import { AuthStore } from './core/auth/auth.store';
 import { LanguageService } from './core/services/language/language.service';
 import { ThemeService } from './core/services/theme/theme.service';
+import { Toast } from './share/toast/toast';
 
 @Component({
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, Toast],
   selector: 'app-root',
   templateUrl: './app.html',
 })

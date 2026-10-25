@@ -1,0 +1,115 @@
+@for (group of toastService.groups(); track group.position) {
+<section
+  [class]="'toast-region toast-region--' + group.position"
+  [attr.aria-label]="'toast.notifications' | translate"
+  aria-live="polite"
+  aria-relevant="additions"
+>
+  @for (message of group.messages; track message.id) {
+    <article
+      [class]="'toast toast--' + message.severity"
+      [class.toast--structured]="message.validationErrors?.length"
+      [attr.role]="message.severity === 'error' ? 'alert' : 'status'"
+      [style.--toast-life]="message.life + 'ms'"
+    >
+      @if (message.validationErrors?.length) {
+        <header class="toast__validation-header">
+          <span class="toast__icon" aria-hidden="true">{{ icon(message.severity) }}</span>
+          <div class="toast__heading">
+            <strong class="toast__summary">{{ 'toast.validationTitle' | translate }}</strong>
+            <span class="toast__status">{{ 'toast.errorLabel' | translate }}</span>
+          </div>
+          @if (message.closable) {
+            <button
+              class="toast__close"
+              type="button"
+              [attr.aria-label]="'toast.dismiss' | translate"
+              [attr.title]="'toast.dismiss' | translate"
+              (click)="toastService.remove(message.id)"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          }
+        </header>
+
+        <div class="toast__validation-body">
+          <p class="toast__validation-intro">{{ 'toast.validationSummary' | translate }}</p>
+          @if (message.validationSummary) {
+            <p class="toast__server-summary">{{ message.validationSummary }}</p>
+          }
+          <div class="toast__validation-list">
+            @for (validation of message.validationErrors; track $index) {
+              <section class="toast__validation-item">
+                <div class="toast__validation-item-header">
+                  @if (validation.propertyPath) {
+                    <code class="toast__property">{{ validation.propertyPath }}</code>
+                  }
+                  @if (message.showCopyIndividual) {
+                    <button
+                      class="toast__copy-one"
+                      type="button"
+                      [attr.aria-label]="'toast.copyItem' | translate"
+                      [attr.title]="'toast.copyItem' | translate"
+                      (click)="copyOne(message.id, $index)"
+                    >
+                      <app-icon name="copy" />
+                    </button>
+                  }
+                </div>
+                <ul class="toast__constraint-list">
+                  @for (constraint of validation.messages; track $index) {
+                    <li>{{ constraint }}</li>
+                  }
+                </ul>
+                @if (copyFeedback(message.id + ':' + $index); as feedback) {
+                  <span class="toast__copy-feedback" role="status">{{ feedback }}</span>
+                }
+              </section>
+            }
+          </div>
+        </div>
+
+        @if (message.showCopyAll) {
+          <footer class="toast__validation-footer">
+            <button
+              class="toast__copy-all"
+              type="button"
+              (click)="copyAll(message.id)"
+            >
+              <app-icon name="copy" />
+              {{ 'toast.copyAll' | translate }}
+            </button>
+            @if (copyFeedback(message.id + ':all'); as feedback) {
+              <span class="toast__copy-feedback" role="status">{{ feedback }}</span>
+            }
+          </footer>
+        }
+      } @else {
+        <span class="toast__icon" aria-hidden="true">{{ icon(message.severity) }}</span>
+        <div class="toast__content">
+          @if (message.summary) { <strong class="toast__summary">{{ message.summary }}</strong> }
+          <ul class="toast__details">
+            @for (detail of message.details; track $index) {
+              <li>{{ detail }}</li>
+            }
+          </ul>
+        </div>
+        @if (message.closable) {
+          <button
+            class="toast__close"
+            type="button"
+            [attr.aria-label]="'toast.dismiss' | translate"
+            [attr.title]="'toast.dismiss' | translate"
+            (click)="toastService.remove(message.id)"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        }
+      }
+      @if (message.showProgress && message.life > 0) {
+        <span class="toast__progress" aria-hidden="true"></span>
+      }
+    </article>
+  }
+</section>
+}

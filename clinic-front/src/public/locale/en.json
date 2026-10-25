@@ -103,6 +103,17 @@
     "logout": "Log out",
     "languageLabel": "Change language"
   },
+  "toast": {
+    "notifications": "Notifications",
+    "validationTitle": "Validation Error",
+    "errorLabel": "Request could not be completed",
+    "validationSummary": "Please review the following validation errors.",
+    "copyAll": "Copy all messages",
+    "copyItem": "Copy this error",
+    "copied": "Copied",
+    "copyFailed": "Could not copy. Please try again.",
+    "dismiss": "Dismiss notification"
+  },
   "field": {
     "upload": {
       "prompt": "Click to upload or drag and drop",

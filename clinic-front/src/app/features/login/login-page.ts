@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthStore, getErrorMessage } from '@core/auth/auth.store';
+import { AuthStore } from '@core/auth/auth.store';
+import { ErrorService } from '@core/services/error/error.service';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PhoneInputDirective } from '@share/phone-input/phone-input.directive';
@@ -42,7 +43,14 @@ export class LoginPage {
         this.router.navigateByUrl(
           this.authStore.startup() ? '/dashboard/startup' : '/dashboard',
         ),
-      error: (error: unknown) => this.error.set(getErrorMessage(error)),
+      error: (error: unknown) => {
+        const error_message = error instanceof ErrorService
+          ? error.getErrorMessage()
+          : error instanceof Error
+            ? error.message
+            : 'An unknown error occurred.';
+        this.error.set(error_message);
+      },
     });
   }
 }

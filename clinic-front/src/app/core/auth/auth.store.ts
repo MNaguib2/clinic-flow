@@ -14,23 +14,6 @@ import type {
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { catchError, defer, finalize, map, Observable, of, shareReplay, tap, throwError } from 'rxjs';
 
-export function getErrorMessage(error: unknown): string {
-  if (
-    typeof error === 'object' &&
-    error !== null &&
-    'error' in error &&
-    typeof error.error === 'object' &&
-    error.error !== null &&
-    'message' in error.error
-  ) {
-    const message = error.error.message;
-    if (typeof message === 'string') return message;
-    return 'An unknown error occurred.';
-  }
-
-  return 'An unknown error occurred.';
-}
-
 const initialState: AuthState = {
   user: null,
   client: null,

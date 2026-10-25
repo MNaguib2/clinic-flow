@@ -103,6 +103,17 @@
     "logout": "تسجيل الخروج",
     "languageLabel": "تغيير اللغة"
   },
+  "toast": {
+    "notifications": "الإشعارات",
+    "validationTitle": "خطأ في البيانات",
+    "errorLabel": "تعذر إكمال الطلب",
+    "validationSummary": "يرجى مراجعة أخطاء التحقق التالية.",
+    "copyAll": "نسخ جميع الرسائل",
+    "copyItem": "نسخ هذا الخطأ",
+    "copied": "تم النسخ",
+    "copyFailed": "تعذر النسخ. يرجى المحاولة مرة أخرى.",
+    "dismiss": "إغلاق الإشعار"
+  },
   "field": {
     "upload": {
       "prompt": "انقر للرفع أو اسحب الملف وأفلته",

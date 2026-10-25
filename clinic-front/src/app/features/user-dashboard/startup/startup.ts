@@ -8,7 +8,8 @@ import {
   maxLength,
   required,
 } from '@angular/forms/signals';
-import { AuthStore, getErrorMessage } from '@core/auth/auth.store';
+import { AuthStore } from '@core/auth/auth.store';
+import { ErrorService } from '@core/services/error/error.service';
 import { StartupService } from './service/startup.service';
 import type {
   StartupCertification,
@@ -205,7 +206,12 @@ export class Startup implements OnInit {
         this.raw_global_specialties.set(options.globalSpecialties ?? []);
       },
       error: (error: unknown) => {
-        this.error_message.set(getErrorMessage(error));
+        const error_message = error instanceof ErrorService
+          ? error.getErrorMessage()
+          : error instanceof Error
+            ? error.message
+            : 'An unknown error occurred.';
+        this.error_message.set(error_message);
         this.is_loading.set(false);
       },
       complete: () => this.is_loading.set(false),
@@ -441,7 +447,13 @@ export class Startup implements OnInit {
           // this.router.navigateByUrl('/dashboard');
         },
         error: (error: unknown) => {
-          this.error_message.set(getErrorMessage(error));
+          const error_message = error instanceof ErrorService
+            ? error.getErrorMessage()
+            : error instanceof Error
+              ? error.message
+              : 'An unknown error occurred.';
+          if (error instanceof ErrorService) error.show();
+          this.error_message.set(error_message);
           this.is_saving.set(false);
         },
         complete: () => this.is_saving.set(false),

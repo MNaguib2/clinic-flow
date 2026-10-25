@@ -8,7 +8,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AuthStore, getErrorMessage } from '@core/auth/auth.store';
+import { AuthStore } from '@core/auth/auth.store';
+import { ErrorService } from '@core/services/error/error.service';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PhoneInputDirective } from '@share/phone-input/phone-input.directive';
@@ -70,7 +71,14 @@ export class RegisterPage {
       .pipe(finalize(() => this.isRegistering.set(false)))
       .subscribe({
         next: () => this.isRegistered.set(true),
-        error: (error: unknown) => this.registrationError.set(getErrorMessage(error)),
+        error: (error: unknown) => {
+          const error_message = error instanceof ErrorService
+            ? error.getErrorMessage()
+            : error instanceof Error
+              ? error.message
+              : 'An unknown error occurred.';
+          this.registrationError.set(error_message);
+        },
       });
   }
 }
