@@ -1,5 +1,6 @@
 {
   "Bad Request": "طلب غير صالح",
+  "Validation failed": "خطأ في البيانات",
   "Conflict": "تعارض في البيانات",
   "Email is already registered": "البريد الإلكتروني مسجل بالفعل",
   "Forbidden": "غير مسموح بالوصول",
@@ -28,5 +29,10 @@
   "validation.boolean": "يجب أن تكون القيمة منطقية",
   "validation.integer": "يجب أن يكون عددًا صحيحًا",
   "validation.format": "يجب أن يكون بالتنسيق الصحيح",
-  "validation.unknownProperty": "هذه الخاصية غير مسموح بها"
+  "validation.unknownProperty": "هذه الخاصية غير مسموح بها",
+  "field.organizationLogo": "شعار المؤسسة",
+  "field.profileImage": "الصورة الشخصية",
+  "field.specialtyImages": "صور التخصصات",
+  "field.clinicImage": "صورة العيادة",
+  "field.clinics": "العيادات"
 }

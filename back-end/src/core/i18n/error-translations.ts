@@ -48,13 +48,26 @@ export function translateApiMessage(
     [/^(.+?) must be a boolean value$/, 'validation.boolean'],
     [/^(.+?) must be an integer number$/, 'validation.integer'],
     [/^(.+?) must match .+ regular expression$/, 'validation.format'],
-    [/^property .+ should not exist$/, 'validation.unknownProperty'],
+    [/^property (.+) should not exist$/, 'validation.unknownProperty'],
   ];
 
   for (const [pattern, key] of rules) {
     const match = message.match(pattern);
     const template = messages.ar[key];
     if (!match || !template) continue;
+    if (key === 'validation.unknownProperty') {
+      const propertyPath = match[1]
+        .split('.')
+        .map((segment) => {
+          const arrayIndex = segment.match(/^(.*)(\[\d+\])$/);
+          const propertyName = arrayIndex?.[1] ?? segment;
+          const translatedName =
+            messages.ar[`field.${propertyName}`] ?? propertyName;
+          return `${translatedName}${arrayIndex?.[2] ?? ''}`;
+        })
+        .join('.');
+      return `${propertyPath}: ${template}`;
+    }
     return `${match[1]} ${template.replace('{constraint}', match[2] ?? '')}`;
   }
 

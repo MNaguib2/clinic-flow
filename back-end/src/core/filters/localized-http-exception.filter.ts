@@ -76,11 +76,8 @@ export class LocalizedHttpExceptionFilter implements ExceptionFilter {
     if (typeof body.message === 'string') {
       body.message = translateApiMessage(body.message, language);
     } else if (Array.isArray(body.message)) {
-      body.message = body.message.map((message: any) =>
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        typeof message === 'string'
-          ? translateApiMessage(message, language)
-          : message,
+      body.message = body.message.map((message) =>
+        translateValidationMessage(message, language),
       );
     }
     if (typeof body.error === 'string') {
@@ -93,6 +90,43 @@ export class LocalizedHttpExceptionFilter implements ExceptionFilter {
       statusCode,
     );
   }
+}
+
+function translateValidationMessage(
+  value: unknown,
+  language: ReturnType<typeof getApiLanguage>,
+): unknown {
+  if (typeof value === 'string') {
+    return translateApiMessage(value, language);
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => translateValidationMessage(item, language));
+  }
+  if (!value || typeof value !== 'object') return value;
+
+  const translated = { ...value } as Record<string, unknown>;
+  const constraints = translated['constraints'];
+  if (
+    constraints &&
+    typeof constraints === 'object' &&
+    !Array.isArray(constraints)
+  ) {
+    translated['constraints'] = Object.fromEntries(
+      Object.entries(constraints).map(([key, message]) => [
+        key,
+        typeof message === 'string'
+          ? translateApiMessage(message, language)
+          : message,
+      ]),
+    );
+  }
+  if (Array.isArray(translated['children'])) {
+    translated['children'] = translateValidationMessage(
+      translated['children'],
+      language,
+    );
+  }
+  return translated;
 }
 
 function redactPasswords(value: unknown): unknown {
