@@ -1,0 +1,170 @@
+.startup-mobile-progress {
+  width: 100%;
+  min-width: 0;
+}
+
+.startup-mobile-progress .progress {
+  height: 0.35rem;
+  background-color: var(--bs-secondary-bg);
+}
+
+.startup-mobile-progress .progress-bar {
+  background-color: var(--bs-primary);
+  transition: width 180ms ease;
+}
+
+.role-card {
+  min-width: 0;
+  border-color: var(--bs-border-color);
+}
+
+.role-card-header > :first-child {
+  min-width: 0;
+}
+
+#add-role-button,
+.role-remove,
+.role-edit,
+.specialty-remove {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+}
+
+.selected-permissions-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.specialty-search-wrap .form-text {
+  display: block;
+  margin-top: 0.35rem;
+}
+
+.specialty-options {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  inset-inline: 0;
+  top: calc(100% + 0.25rem);
+  max-height: min(18rem, 50dvh);
+  overflow: hidden;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  background: var(--bs-body-bg);
+}
+
+.specialty-options-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: inherit;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 0;
+}
+
+.specialty-options-header {
+  display: none;
+}
+
+.specialty-option {
+  min-height: 3rem;
+  white-space: normal;
+  text-align: start;
+}
+
+.specialty-option > span {
+  min-width: 0;
+}
+
+.specialty-option-image,
+.specialty-card-image {
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: cover;
+}
+
+.specialty-card {
+  min-width: 0;
+  background: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color);
+}
+
+.specialty-card .card-body {
+  min-width: 0;
+}
+
+.specialty-card app-field-image .btn {
+  min-height: 2.75rem;
+}
+
+.specialty-card-placeholder {
+  background-color: var(--bs-secondary-bg) !important;
+}
+
+@media (max-width: 575.98px) {
+  .specialty-options-backdrop {
+    position: fixed;
+    z-index: 1040;
+    inset: 0;
+    border: 0;
+    background: rgb(15 23 42 / 42%);
+  }
+
+  .specialty-options {
+    position: fixed;
+    z-index: 1041;
+    inset-inline: 0.65rem;
+    top: auto;
+    bottom: max(0.65rem, env(safe-area-inset-bottom));
+    max-height: min(60dvh, 32rem);
+    border-radius: var(--bs-border-radius-xl);
+  }
+
+  .specialty-options-header {
+    position: sticky;
+    z-index: 1;
+    top: 0;
+    display: flex;
+    min-height: 3.5rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+    background: var(--bs-body-bg);
+  }
+
+  .specialty-options-header .btn {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .specialty-options-list {
+    max-height: min(calc(60dvh - 4rem), 28rem);
+  }
+
+  .permission-page > summary {
+    min-height: 2.75rem;
+    padding: 0.65rem !important;
+  }
+
+  .permission-option {
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .permission-option .form-check-label {
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .permission-option-copy small,
+  .permission-page-name small {
+    display: none;
+  }
+
+  .specialty-option {
+    min-height: 3.5rem;
+  }
+}

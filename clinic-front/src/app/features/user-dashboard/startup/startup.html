@@ -52,7 +52,7 @@
         </div>
       </div>
 
-      <nav class="startup-steps" [attr.aria-label]="copy.stepsLabel">
+      <nav class="startup-steps d-none d-lg-block" [attr.aria-label]="copy.stepsLabel">
         <ol class="nav flex-nowrap flex-lg-column gap-1 list-unstyled overflow-auto mb-0">
           @for (key of step_keys; track key; let index = $index) {
           <li>
@@ -71,6 +71,17 @@
           }
         </ol>
       </nav>
+
+      <div class="startup-mobile-progress d-lg-none" aria-live="polite">
+        <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+          <span class="small text-body-secondary">{{ copy.stepOf }} {{ step() + 1 }} / {{ step_keys.length }}</span>
+          <strong class="small text-truncate">{{ copy[step_keys[step()]] }}</strong>
+        </div>
+        <div class="progress" role="progressbar" [attr.aria-label]="copy.stepsLabel"
+          [attr.aria-valuemin]="1" [attr.aria-valuemax]="step_keys.length" [attr.aria-valuenow]="step() + 1">
+          <div class="progress-bar" [style.width.%]="((step() + 1) / step_keys.length) * 100"></div>
+        </div>
+      </div>
 
       <div class="startup-welcome mt-auto d-none d-lg-block">
         <img class="startup-welcome-image startup-welcome-light w-100 mb-3" src="images/Female%20doctor/d4617970-6049-4659-afdd-26a5bc51be01.png" alt="" />
@@ -167,20 +178,57 @@
           <h2 id="roles-step-title" class="h4 text-primary-emphasis fw-bold d-flex align-items-center gap-2"><app-icon [name]="step_icons[2]" /> {{ step() + 1 }}. {{ copy.rolesTitle }}</h2>
           <p class="text-body-secondary mb-0">{{ copy.optionalStep }}</p>
         </div>
-        <button id="add-role-button" type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" (click)="add_role()">
+        <button id="add-role-button" type="button" class="btn btn-outline-primary d-inline-flex align-items-center gap-1" (click)="add_role()">
           <app-icon name="plus" /> {{ copy.addRole }}
         </button>
       </div>
+      <label class="form-label" for="permission-search">{{ copy.searchPermissions }}</label>
+      <div class="input-group mb-3">
+        <span class="input-group-text" aria-hidden="true">⌕</span>
+        <input id="permission-search" class="form-control" type="search" autocomplete="off"
+          [placeholder]="copy.searchPermissionsPlaceholder" [value]="permission_search()"
+          (input)="permission_search.set($any($event.target).value)" />
+      </div>
+      @if (model().roles.length > 0) {
+      <p class="selected-permissions-summary small text-body-secondary mb-3" role="status">
+        <app-icon name="check" class="text-success" />
+        {{ total_selected_permissions() }} {{ copy.permissionsSelected }} {{ copy.acrossRoles }}
+      </p>
+      }
+      @if (permission_pages().length === 0) {
+      <p class="alert alert-light border mb-3" role="status">{{ copy.noPermissionsAvailable }}</p>
+      }
       @if (model().roles.length === 0) { <p class="text-body-secondary">{{ copy.noRoles }}</p> }
       @for (role of startup_form.roles; track $index; let role_index = $index) {
-      <fieldset class="card card-body bg-body-tertiary mb-3">
-        <legend class="h6 text-primary-emphasis">{{ copy.role }} {{ $index + 1 }}</legend>
-        <div class="mb-3">
-          <app-field-input label="startup.roleName" [maxLength]="100" [formField]="role.name" />
+      <fieldset class="role-card card card-body bg-body-tertiary mb-3">
+        <legend class="visually-hidden">{{ copy.role }} {{ $index + 1 }}</legend>
+        <div class="role-card-header d-flex flex-column flex-sm-row align-items-sm-end gap-2 mb-3">
+          <div class="flex-grow-1">
+            <app-field-input label="startup.roleName" [required]="true" [maxLength]="100" [formField]="role.name" />
+            @if (role_name_is_duplicate(role)) {
+            <small class="text-danger d-block mt-1" role="alert">{{ copy.duplicateRoleName }}</small>
+            }
+          </div>
+          <span class="role-permission-total badge rounded-pill bg-primary-subtle text-primary-emphasis mb-1">
+            {{ selected_role_permission_count(role) }} {{ copy.permissionsSelected }}
+          </span>
+          <button type="button" class="btn btn-outline-secondary role-edit"
+            [attr.aria-expanded]="role_permissions_open().has(role_index)"
+            (click)="toggle_role_permissions(role_index)">
+            {{ copy.editRole }}
+          </button>
+          <button type="button" class="btn btn-outline-danger role-remove" [attr.aria-label]="copy.removeRole + ' ' + (role.name().value() || copy.role)"
+            (click)="remove_role(role_index)">
+            <app-icon name="x" /><span class="d-sm-none">{{ copy.remove }}</span>
+          </button>
         </div>
-        <span class="form-label">{{ copy.permissions }}</span>
-        <div class="d-grid gap-2 mb-3">
-          @for (page_group of permission_pages(); track page_group.page.key) {
+        @if (role_permissions_open().has(role_index)) {
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <span class="form-label mb-0">{{ copy.permissions }}</span>
+        </div>
+        <div class="d-grid gap-2">
+          @for (visible_group of filtered_permission_pages(); track visible_group.group.page.key) {
+          @let page_group = visible_group.group;
           <details class="permission-page border rounded bg-body">
             <summary class="d-flex align-items-center justify-content-between gap-2 p-3">
               <span class="permission-page-name d-grid">
@@ -201,6 +249,7 @@
                   }}</label>
               </div>
               @for (permission of page_group.permissions; track permission.id) {
+              @if (visible_group.permissions.includes(permission)) {
               <div class="permission-option form-check py-2">
                 <input class="form-check-input" type="checkbox" [id]="'permission-' + role_index + '-' + permission.id"
                   [checked]="permission_is_selected(role, permission.id)"
@@ -215,15 +264,17 @@
                 </label>
               </div>
               }
+              }
             </div>
           </details>
           }
+          @if (permission_pages().length > 0 && filtered_permission_pages().length === 0) {
+          <p class="text-body-secondary small mb-1" role="status">{{ copy.noPermissionMatches }}</p>
+          }
         </div>
-        <div>
-          <button type="button" class="btn btn-link text-danger p-0" (click)="remove_role($index)">
-            {{ copy.remove }}
-          </button>
-        </div>
+        } @else {
+        <p class="text-body-secondary small mb-0">{{ copy.permissionsHidden }}</p>
+        }
       </fieldset>
       }
     </section>
@@ -234,53 +285,84 @@
       <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
         <div>
           <h2 id="specialties-step-title" class="h4 text-primary-emphasis fw-bold d-flex align-items-center gap-2"><app-icon [name]="step_icons[3]" /> {{ step() + 1 }}. {{ copy.specialtiesTitle }}</h2>
-          <p class="text-body-secondary mb-0">{{ copy.optionalStep }}</p>
+          <p class="text-body-secondary mb-0">{{ copy.optionalStep }} · {{ copy.specialtyOptionalHint }}</p>
         </div>
-        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" (click)="add_specialty()">
-          <app-icon name="plus" /> {{ copy.addSpecialty }}
-        </button>
       </div>
-      <datalist id="global-specialty-options">
-        @for (global_specialty of global_specialties(); track global_specialty.code) {
-        <option [value]="global_specialty.name"></option>
+      <label class="form-label" for="specialty-search">{{ copy.searchSpecialties }}</label>
+      <div class="specialty-search-wrap position-relative mb-3">
+        <div class="input-group">
+          <span class="input-group-text" aria-hidden="true">⌕</span>
+          <input id="specialty-search" class="form-control" type="search" role="combobox"
+            aria-autocomplete="list" aria-controls="specialty-options-list" [attr.aria-expanded]="specialty_dropdown_open() && specialty_search().trim() ? 'true' : 'false'"
+            autocomplete="off" [disabled]="!options_loaded() || global_specialties().length === 0"
+            [placeholder]="copy.searchSpecialtiesPlaceholder" [value]="specialty_search()"
+            (focus)="specialty_dropdown_open.set(true)" (input)="update_specialty_search($any($event.target).value)"
+            (blur)="specialty_dropdown_open.set(false)"
+            (keydown.enter)="$event.preventDefault(); select_first_specialty()"
+            (keydown.escape)="specialty_dropdown_open.set(false)" />
+        </div>
+        @if (global_specialties().length > 0) {
+        <small class="form-text">{{ copy.searchSpecialtiesHint }}</small>
         }
-      </datalist>
-      @if (model().specialtyNames.length === 0) { <p class="text-body-secondary">{{ copy.noSpecialties }}</p> }
-      @for (specialty of startup_form.specialtyNames; track $index) {
-      <div class="border rounded-3 bg-body-tertiary shadow-sm p-3 p-md-4 mb-3">
-        <div class="row g-3 g-lg-4">
-          <div class="col-12 col-lg-5 d-flex flex-column gap-3">
-            <app-field-input label="startup.specialtyName" icon="stethoscope" list="global-specialty-options"
-              [maxLength]="150" [formField]="specialty" />
-            @if (specialty_catalog_entry(specialty().value()); as global_specialty) {
-            @let catalog_image = specialty_catalog_image_url(specialty().value());
-            <div class="d-flex align-items-center gap-3 p-2 border rounded bg-body">
-              @if (catalog_image && !failed_catalog_images().has(catalog_image)) {
-              <img class="rounded border object-fit-cover flex-shrink-0" width="56" height="56" [src]="catalog_image"
-                alt="" (error)="catalog_image_failed(catalog_image)" />
-              } @else {
-              <span class="d-flex align-items-center justify-content-center flex-shrink-0 border rounded bg-body-secondary text-body-secondary"
-                style="width: 56px; height: 56px" aria-hidden="true"><app-icon name="stethoscope" class="fs-4" /></span>
-              }
-              <span class="d-grid" style="min-width: 0">
-                <strong class="text-truncate">{{ specialty().value().trim() }}</strong>
-                <small class="text-body-secondary">{{ global_specialty.description }}</small>
-              </span>
-            </div>
-            }
+        @if (specialty_dropdown_open()) {
+        <button class="specialty-options-backdrop d-sm-none" type="button"
+          [attr.aria-label]="copy.closeSpecialtyOptions" (click)="close_specialty_search()"></button>
+        <div class="specialty-options shadow-sm">
+          <div class="specialty-options-header d-sm-none d-flex align-items-center justify-content-between gap-2">
+            <strong>{{ copy.selectSpecialty }}</strong>
+            <button type="button" class="btn btn-sm btn-outline-secondary" [attr.aria-label]="copy.closeSpecialtyOptions"
+              (click)="close_specialty_search()"><app-icon name="x" /></button>
           </div>
-          <div class="col-12 col-lg-7">
-            <app-field-image label="startup.specialtyImage" hint="startup.clinicImageHint"
-              previewAlt="startup.specialtyImagePreview" [initialValue]="specialty_images.get($index) ?? null"
-              (changed)="set_specialty_image($index, $event)" />
-          </div>
-        </div>
-        <div class="d-flex justify-content-end mt-3 pt-3 border-top">
-          <button type="button" class="btn btn-link text-danger p-0" (click)="remove_specialty($index)">
-            {{ copy.remove }}
+          <div id="specialty-options-list" class="specialty-options-list list-group" role="listbox" [attr.aria-label]="copy.selectSpecialty">
+          @for (specialty of filtered_specialties(); track specialty.id) {
+          <button type="button" class="specialty-option list-group-item list-group-item-action d-flex align-items-center gap-2"
+            role="option" [attr.aria-selected]="false" (mousedown)="select_specialty(specialty)">
+            @if (specialty.imageUrl && !failed_catalog_images().has(specialty.imageUrl)) {
+            <img class="specialty-option-image rounded flex-shrink-0" [src]="specialty_catalog_image_url(specialty.name)"
+              alt="" (error)="catalog_image_failed(specialty.imageUrl)" />
+            } @else { <app-icon name="stethoscope" class="text-primary" /> }
+            <span class="d-grid text-start"><strong>{{ specialty.name }}</strong><small class="text-body-secondary">{{ specialty.description || specialty.code }}</small></span>
           </button>
+          }
+          @if (filtered_specialties().length === 0) {
+          <p class="list-group-item text-body-secondary mb-0" role="status">{{ copy.noSpecialtyMatches }}</p>
+          }
+          </div>
         </div>
+        }
       </div>
+      @if (options_loaded() && global_specialties().length === 0) {
+      <p class="alert alert-light border" role="status">{{ copy.noSpecialtiesAvailable }}</p>
+      }
+      @if (model().specialtyNames.length === 0) { <p class="text-body-secondary small">{{ copy.noSpecialties }}</p> }
+      @if (model().specialtyNames.length > 0) {
+      <h3 class="h6 text-primary-emphasis mb-2">{{ copy.selectedSpecialties }}</h3>
+      }
+      @for (specialty of startup_form.specialtyNames; track $index) {
+      <article class="specialty-card card mb-2">
+        <div class="card-body d-grid gap-3">
+          <div class="d-flex align-items-center gap-3">
+            @let specialty_name = specialty().value().trim();
+            @let global_specialty = specialty_catalog_entry(specialty_name);
+            @let catalog_image = specialty_catalog_image_url(specialty_name);
+            @if (catalog_image && !failed_catalog_images().has(global_specialty?.imageUrl ?? '')) {
+            <img class="specialty-card-image rounded border object-fit-cover flex-shrink-0" [src]="catalog_image" alt=""
+              (error)="catalog_image_failed(global_specialty?.imageUrl ?? '')" />
+            } @else {
+            <span class="specialty-card-image specialty-card-placeholder d-flex align-items-center justify-content-center rounded border bg-body-secondary text-primary" aria-hidden="true"><app-icon name="stethoscope" /></span>
+            }
+            <div class="flex-grow-1 min-w-0">
+              <strong class="d-block text-break">{{ specialty_name }}</strong>
+              @if (global_specialty?.description) { <small class="text-body-secondary">{{ global_specialty?.description }}</small> }
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger specialty-remove" [attr.aria-label]="copy.removeSpecialty + ' ' + specialty_name"
+              (click)="remove_specialty($index)"><app-icon name="x" /></button>
+          </div>
+          <app-field-image label="startup.specialtyImage" hint="startup.clinicImageHint"
+            previewAlt="startup.specialtyImagePreview" [initialValue]="specialty_images.get($index) ?? null"
+            (changed)="set_specialty_image($index, $event)" />
+        </div>
+      </article>
       }
     </section>
     }
@@ -456,7 +538,7 @@
     </footer>
   </form>
   }
-  <ol class="startup-progress d-flex list-unstyled m-0 mt-4 pt-3" [attr.aria-label]="copy.stepsLabel">
+  <ol class="startup-progress d-none d-lg-flex list-unstyled m-0 mt-4 pt-3" [attr.aria-label]="copy.stepsLabel">
     @for (key of step_keys; track key; let index = $index) {
     <li class="startup-progress-item flex-fill text-center small" [class.is-active]="step() === index" [class.is-done]="step() > index">
       <span class="startup-progress-dot d-inline-flex align-items-center justify-content-center rounded-circle fw-bold">{{ index + 1 }}</span>

@@ -61,7 +61,28 @@ describe('Startup', () => {
                       },
                     },
                   ],
+                  globalSpecialties: [
+                    {
+                      id: 'specialty-cardiology',
+                      code: 'cardiology',
+                      name_en: 'Cardiology',
+                      name_ar: 'أمراض القلب',
+                      description_en: 'Heart and vascular care',
+                      description_ar: 'رعاية القلب والأوعية الدموية',
+                      imageUrl: 'specialties/cardiology.png',
+                    },
+                    {
+                      id: 'specialty-dermatology',
+                      code: 'dermatology',
+                      name_en: 'Dermatology',
+                      name_ar: 'الأمراض الجلدية',
+                      description_en: 'Skin health',
+                      description_ar: 'صحة الجلد',
+                      imageUrl: 'specialties/dermatology.png',
+                    },
+                  ],
                 }),
+              publicFileUrl: (path: string) => `/public/${path}`,
               complete: () => of({ completed: true, clinics: [] }),
             },
           },
@@ -115,6 +136,40 @@ describe('Startup', () => {
 
     expect(groups[0].querySelector('.permission-page-count')?.textContent.trim()).toBe('1 / 1');
     expect(groups[0].querySelector('.permission-option input:checked')).toBeTruthy();
+
+    const search = fixture.nativeElement.querySelector('#permission-search') as HTMLInputElement;
+    search.value = 'organization';
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('.permission-page')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelector('.permission-page-name strong')?.textContent.trim()).toBe('Organization');
+  });
+
+  it('rejects duplicate role names before completing setup', () => {
+    fixture.nativeElement.querySelectorAll('.startup-steps button')[2].click();
+    fixture.detectChanges();
+    (fixture.nativeElement.querySelector('#add-role-button') as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    let role_name_inputs = fixture.nativeElement.querySelectorAll('.role-card app-field-input input') as NodeListOf<HTMLInputElement>;
+    role_name_inputs[0].value = 'Manager';
+    role_name_inputs[0].dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    (fixture.nativeElement.querySelector('#add-role-button') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    role_name_inputs = fixture.nativeElement.querySelectorAll('.role-card app-field-input input') as NodeListOf<HTMLInputElement>;
+    role_name_inputs[1].value = 'Manager';
+    role_name_inputs[1].dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    fixture.nativeElement.querySelectorAll('.startup-steps button')[5].click();
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('form').dispatchEvent(
+      new Event('submit', { bubbles: true, cancelable: true }),
+    );
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#roles-step-title')).toBeTruthy();
   });
 
   it('shows a final setup summary before submission', () => {
@@ -153,10 +208,24 @@ describe('Startup', () => {
   it('adds, validates and removes specialties with image uploads', async () => {
     fixture.nativeElement.querySelectorAll('.startup-steps button')[3].click();
     fixture.detectChanges();
-    const add = fixture.nativeElement.querySelector('#specialties-step-title').closest('section')
-      .querySelector('button.btn-outline-primary') as HTMLButtonElement;
-    add.click();
-    add.click();
+    const search = fixture.nativeElement.querySelector('#specialty-search') as HTMLInputElement;
+    search.value = 'cardio';
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    (fixture.nativeElement.querySelector('.specialty-option') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.specialty-card img')?.getAttribute('src')).toBe(
+      '/public/specialties/cardiology.png',
+    );
+    search.value = 'cardio';
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('.specialty-card')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelector('.specialty-option')).toBeNull();
+    search.value = 'derm';
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    (fixture.nativeElement.querySelector('.specialty-option') as HTMLButtonElement).click();
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -179,7 +248,7 @@ describe('Startup', () => {
     fixture.detectChanges();
     expect(uploads[0].querySelector('img.field-preview')).toBeTruthy();
 
-    (fixture.nativeElement.querySelector('.border-top button.text-danger') as HTMLButtonElement).click();
+    (fixture.nativeElement.querySelector('.specialty-remove') as HTMLButtonElement).click();
     fixture.detectChanges();
     await fixture.whenStable();
     expect(fixture.nativeElement.querySelectorAll('app-field-image')).toHaveLength(1);

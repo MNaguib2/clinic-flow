@@ -46,6 +46,10 @@ type LocalizedPermission = Omit<StartupPermission, 'page'> & {
   page: LocalizedPage;
 };
 type PermissionPageGroup = { page: LocalizedPage; permissions: LocalizedPermission[] };
+type VisiblePermissionPageGroup = {
+  group: PermissionPageGroup;
+  permissions: LocalizedPermission[];
+};
 type LocalizedGlobalSpecialty = StartupGlobalSpecialty & {
   name: string;
   description: string;
@@ -65,7 +69,7 @@ type LocalizedGlobalSpecialty = StartupGlobalSpecialty & {
   ],
   providers: [StartupService],
   selector: 'app-startup',
-  styleUrl: './startup.scss',
+  styleUrls: ['./startup.scss', './startup-specialties-roles.scss'],
   templateUrl: './startup.html',
 })
 export class Startup implements OnInit {
@@ -104,7 +108,12 @@ export class Startup implements OnInit {
   protected readonly max_certificate_size = 10 * 1024 * 1024;
   protected readonly is_loading = signal(false);
   protected readonly is_saving = signal(false);
+  protected readonly options_loaded = signal(false);
   protected readonly error_message = signal<string | null>(null);
+  protected readonly specialty_search = signal('');
+  protected readonly permission_search = signal('');
+  protected readonly specialty_dropdown_open = signal(false);
+  protected readonly role_permissions_open = signal(new Set<number>());
   private readonly raw_permissions = signal<StartupPermission[]>([]);
   private readonly raw_global_specialties = signal<StartupGlobalSpecialty[]>([]);
 
@@ -112,10 +121,14 @@ export class Startup implements OnInit {
     const is_ar = this.language_service.language() === 'ar';
     return this.raw_global_specialties().map((specialty) => ({
       ...specialty,
-      name: is_ar ? specialty.name_ar : specialty.name_en,
-      description: is_ar
-        ? specialty.description_ar
-        : specialty.description_en,
+      name:
+        (is_ar ? specialty.name_ar : specialty.name_en) ||
+        (is_ar ? specialty.name_en : specialty.name_ar) ||
+        specialty.code,
+      description:
+        (is_ar ? specialty.description_ar : specialty.description_en) ||
+        (is_ar ? specialty.description_en : specialty.description_ar) ||
+        '',
     }));
   });
 
@@ -148,6 +161,50 @@ export class Startup implements OnInit {
       page_map.set(permission.page.key, group);
     }
     return [...page_map.values()];
+  });
+  protected readonly filtered_specialties = computed(() => {
+    const query = this.specialty_search().trim().toLocaleLowerCase();
+    const selected_names = new Set(
+      this.unique_names(this.model().specialtyNames).map((name) =>
+        name.toLocaleLowerCase(),
+      ),
+    );
+    return this.global_specialties()
+      .filter((specialty) => {
+        const aliases = [
+          specialty.name,
+          specialty.name_ar,
+          specialty.name_en,
+          specialty.code,
+        ].map((name) => name.trim().toLocaleLowerCase());
+        if (aliases.some((name) => selected_names.has(name))) {
+          return false;
+        }
+        return !query || [
+          specialty.name,
+          specialty.code,
+          specialty.description,
+        ].some((value) => value.toLocaleLowerCase().includes(query));
+      })
+      .slice(0, 8);
+  });
+  protected readonly filtered_permission_pages = computed<VisiblePermissionPageGroup[]>(() => {
+    const query = this.permission_search().trim().toLocaleLowerCase();
+    return this.permission_pages().flatMap((group) => {
+      const page_matches = !query || [
+        group.page.key,
+        group.page.name,
+        group.page.description,
+      ].some((value) => value.toLocaleLowerCase().includes(query));
+      const permissions = page_matches
+        ? group.permissions
+        : group.permissions.filter((permission) => [
+            permission.code,
+            permission.name,
+            permission.description,
+          ].some((value) => value.toLocaleLowerCase().includes(query)));
+      return permissions.length ? [{ group, permissions }] : [];
+    });
   });
   protected profile_image: File | null = null;
   protected organization_logo: File | null = null;
@@ -202,8 +259,9 @@ export class Startup implements OnInit {
     this.is_loading.set(true);
     this.startup_service.getOptions().subscribe({
       next: (options: StartupOptions) => {
-        this.raw_permissions.set(options.permissions);
+        this.raw_permissions.set(options.permissions ?? []);
         this.raw_global_specialties.set(options.globalSpecialties ?? []);
+        this.options_loaded.set(true);
       },
       error: (error: unknown) => {
         const error_message = error instanceof ErrorService
@@ -212,9 +270,14 @@ export class Startup implements OnInit {
             ? error.message
             : 'An unknown error occurred.';
         this.error_message.set(error_message);
+        if (error instanceof ErrorService) error.show();
+        this.options_loaded.set(true);
         this.is_loading.set(false);
       },
-      complete: () => this.is_loading.set(false),
+      complete: () => {
+        this.options_loaded.set(true);
+        this.is_loading.set(false);
+      },
     });
   }
 
@@ -304,10 +367,19 @@ export class Startup implements OnInit {
   }
 
   protected add_role(): void {
+    if (this.model().roles.some((role) => !role.name.trim())) {
+      this.error_message.set('startup.roleNameRequired');
+      return;
+    }
+    this.error_message.set(null);
+    const index = this.model().roles.length;
     this.model.update((model) => ({
       ...model,
       roles: [...model.roles, { name: '', permissionIds: [] }],
     }));
+    this.role_permissions_open.update((open_roles) =>
+      new Set([...open_roles, index]),
+    );
   }
 
   protected remove_role(index: number): void {
@@ -315,6 +387,77 @@ export class Startup implements OnInit {
       ...model,
       roles: model.roles.filter((_, item_index) => item_index !== index),
     }));
+    this.role_permissions_open.update((open_roles) =>
+      new Set(
+        [...open_roles]
+          .filter((role_index) => role_index !== index)
+          .map((role_index) => role_index > index ? role_index - 1 : role_index),
+      ),
+    );
+  }
+
+  protected toggle_role_permissions(index: number): void {
+    this.role_permissions_open.update((open_roles) => {
+      const next = new Set(open_roles);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }
+
+  protected total_selected_permissions(): number {
+    return this.model().roles.reduce(
+      (total, role) => total + new Set(role.permissionIds).size,
+      0,
+    );
+  }
+
+  protected role_name_is_duplicate(role: FieldTree<RoleModel>): boolean {
+    const name = role.name().value().trim().toLocaleLowerCase();
+    return Boolean(
+      name &&
+        this.model().roles.filter(
+          (item) => item.name.trim().toLocaleLowerCase() === name,
+        ).length > 1,
+    );
+  }
+
+  protected selected_role_permission_count(role: FieldTree<RoleModel>): number {
+    return new Set(role.permissionIds().value()).size;
+  }
+
+  protected update_specialty_search(value: string): void {
+    this.specialty_search.set(value);
+    this.specialty_dropdown_open.set(true);
+  }
+
+  protected close_specialty_search(): void {
+    this.specialty_dropdown_open.set(false);
+  }
+
+  protected select_specialty(specialty: LocalizedGlobalSpecialty): void {
+    const aliases = new Set(
+      [specialty.name, specialty.name_ar, specialty.name_en, specialty.code]
+        .map((name) => name.trim().toLocaleLowerCase())
+        .filter(Boolean),
+    );
+    if (!specialty.name.trim()) return;
+    this.model.update((model) => {
+      const already_selected = model.specialtyNames.some(
+        (name) => aliases.has(name.trim().toLocaleLowerCase()),
+      );
+      return already_selected
+        ? model
+        : { ...model, specialtyNames: [...model.specialtyNames, specialty.name.trim()] };
+    });
+    this.specialty_search.set('');
+    this.specialty_dropdown_open.set(false);
+    this.error_message.set(null);
+  }
+
+  protected select_first_specialty(): void {
+    const specialty = this.filtered_specialties()[0];
+    if (specialty) this.select_specialty(specialty);
   }
 
   protected specialty_catalog_entry(
@@ -322,13 +465,15 @@ export class Startup implements OnInit {
   ): LocalizedGlobalSpecialty | undefined {
     const normalized_name = name.trim().toLocaleLowerCase();
     return this.global_specialties().find(
-      (specialty) => specialty.name.toLocaleLowerCase() === normalized_name,
+      (specialty) =>
+        [specialty.name, specialty.name_ar, specialty.name_en, specialty.code]
+          .some((candidate) => candidate.trim().toLocaleLowerCase() === normalized_name),
     );
   }
 
   protected specialty_catalog_image_url(name: string): string | null {
     const specialty = this.specialty_catalog_entry(name);
-    return specialty
+    return specialty?.imageUrl
       ? this.startup_service.publicFileUrl(specialty.imageUrl)
       : null;
   }
@@ -343,13 +488,6 @@ export class Startup implements OnInit {
     this.failed_catalog_images.update((urls) => new Set(urls).add(url));
   }
 
-  protected add_specialty(): void {
-    this.model.update((model) => ({
-      ...model,
-      specialtyNames: [...model.specialtyNames, ''],
-    }));
-  }
-
   protected remove_specialty(index: number): void {
     this.model.update((model) => ({
       ...model,
@@ -362,6 +500,7 @@ export class Startup implements OnInit {
       if (file_index > index) shifted_files.set(file_index - 1, file);
     }
     this.specialty_images = shifted_files;
+    this.error_message.set(null);
   }
 
   protected add_clinic(): void {
@@ -391,6 +530,22 @@ export class Startup implements OnInit {
     event.stopPropagation();
     this.error_message.set(null);
     const model = this.model();
+    const active_roles = model.roles.filter(
+      (role) => role.name.trim() || role.permissionIds.length > 0,
+    );
+    if (active_roles.some((role) => !role.name.trim())) {
+      this.error_message.set('startup.roleNameRequired');
+      this.step.set(2);
+      return;
+    }
+    const normalized_role_names = active_roles.map((role) =>
+      role.name.trim().toLocaleLowerCase(),
+    );
+    if (new Set(normalized_role_names).size !== normalized_role_names.length) {
+      this.error_message.set(null);
+      this.step.set(2);
+      return;
+    }
     const clinic_values = model.clinics;
     if (clinic_values.some((clinic) => !clinic.name.trim())) {
       this.error_message.set('startup.clinicNameRequired');
@@ -475,6 +630,22 @@ export class Startup implements OnInit {
     return page_group.permissions.filter((permission) =>
       selected_ids.has(permission.id),
     ).length;
+  }
+
+  protected permission_page_is_selected(
+    role: FieldTree<RoleModel>,
+    page_group: PermissionPageGroup,
+  ): boolean {
+    return this.selected_permission_count(role, page_group) ===
+      page_group.permissions.length;
+  }
+
+  protected permission_page_is_indeterminate(
+    role: FieldTree<RoleModel>,
+    page_group: PermissionPageGroup,
+  ): boolean {
+    const count = this.selected_permission_count(role, page_group);
+    return count > 0 && count < page_group.permissions.length;
   }
 
   protected toggle_permission(
