@@ -13,10 +13,6 @@
   max-width: 12rem;
 }
 
-.mobile-profile-menu {
-  position: relative;
-}
-
 .mobile-profile-trigger {
   display: inline-flex;
   min-height: 2.75rem;
@@ -25,13 +21,9 @@
   padding: 0.25rem 0.65rem 0.25rem 0.25rem;
   border: 1px solid var(--bs-border-color);
   border-radius: 999px;
+  color: inherit;
   background: var(--bs-tertiary-bg);
   cursor: pointer;
-  list-style: none;
-}
-
-.mobile-profile-trigger::-webkit-details-marker {
-  display: none;
 }
 
 .mobile-profile-trigger:focus-visible {
@@ -49,24 +41,16 @@
   transition: transform 140ms ease;
 }
 
-.mobile-profile-menu[open] .profile-chevron {
+.profile-chevron--open {
   transform: rotate(225deg) translate(-1px, -1px);
 }
 
 .mobile-settings-panel {
-  position: absolute;
-  z-index: 20;
-  inset-inline-end: 0;
-  top: calc(100% + 0.5rem);
   display: grid;
   gap: 0.5rem;
   width: min(19rem, calc(100vw - 1rem));
-  max-height: calc(100vh - 5rem);
-  max-height: calc(100dvh - 5rem);
   box-sizing: border-box;
-  overflow-x: hidden;
   padding: 0.75rem;
-  overflow-y: auto;
 }
 
 .mobile-settings-title {

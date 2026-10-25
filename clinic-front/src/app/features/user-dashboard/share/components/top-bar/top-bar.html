@@ -14,12 +14,19 @@
       <span class="user-avatar rounded-circle bg-primary text-white fw-bold" aria-hidden="true">{{ user.fullName.charAt(0).toUpperCase() }}</span>
       <span class="user-name fw-semibold small text-truncate">{{ user.fullName }}</span>
     </span>
-    <details class="mobile-profile-menu d-md-none">
-      <summary class="mobile-profile-trigger" [attr.aria-label]="copy.profileSettings">
+    <app-dropdown #profile_menu="appDropdown" class="mobile-profile-menu d-md-none" placement="bottom-end" [offset]="8" [styled]="false" maxHeight="calc(100dvh - 5rem)">
+      <button
+        dropdownTrigger
+        type="button"
+        class="mobile-profile-trigger"
+        aria-haspopup="true"
+        [attr.aria-expanded]="profile_menu.open()"
+        [attr.aria-label]="copy.profileSettings"
+      >
         <span class="user-avatar rounded-circle bg-primary text-white fw-bold" aria-hidden="true">{{ user.fullName.charAt(0).toUpperCase() }}</span>
         <span class="user-name d--inline fw-semibold small text-truncate">{{ user.fullName }}</span>
-        <span class="profile-chevron" aria-hidden="true"></span>
-      </summary>
+        <span class="profile-chevron" [class.profile-chevron--open]="profile_menu.open()" aria-hidden="true"></span>
+      </button>
       <div class="mobile-settings-panel bg-body border rounded-3 shadow">
         <strong class="mobile-settings-title">{{ copy.profileSettings }}</strong>
         <div class="mobile-setting-row">
@@ -40,7 +47,7 @@
           {{ copy.logout }}
         </button>
       </div>
-    </details>
+    </app-dropdown>
   }
   <button type="button" class="logout-button desktop-logout btn btn-outline-danger btn-sm d-none d-md-inline-flex" (click)="logout()">{{ copy.logout }}</button>
 </header>
