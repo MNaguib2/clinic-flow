@@ -64,6 +64,7 @@
     "createAccount": "جديد في ClinicFlow؟ أنشئ حساباً"
   },
   "theme": {
+    "settingsLabel": "المظهر",
     "darkMode": "الوضع الداكن",
     "lightMode": "الوضع الفاتح"
   },
@@ -101,7 +102,8 @@
     "welcome": "مرحباً بعودتك، {{name}}",
     "ready": "مساحة عملك جاهزة. أدر عياداتك وفريقك ومرضاك من هنا.",
     "logout": "تسجيل الخروج",
-    "languageLabel": "تغيير اللغة"
+    "languageLabel": "تغيير اللغة",
+    "profileSettings": "إعدادات الملف الشخصي"
   },
   "toast": {
     "notifications": "الإشعارات",

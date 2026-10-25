@@ -151,6 +151,7 @@ model Clinic {
   @@unique([organizationId, id])
   @@index([organizationId])
   @@map("clinics")
+  userRoles UserRole[]
 }
 
 model User {
@@ -284,11 +285,12 @@ model UserRole {
   userId    BigInt   @map("user_id")
   roleId    BigInt   @map("role_id")
   createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  clinicId  BigInt?   @map("clinic_id")
+  clinic    Clinic?   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@id([userId, roleId])
-  @@index([roleId])
   @@map("user_roles")
 }
 

@@ -1,43 +1,23 @@
-import { Component, inject, signal, WritableSignal, OnInit } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
-import { AuthUser } from '@core/interfaces/auth.interfaces';
 import { LanguageService } from '@core/services/language/language.service';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ShareModule } from '@share/share.module';
 import { SideBar } from './share/components/side-bar/side-bar';
+import { TopBar } from './share/components/top-bar/top-bar';
 
 @Component({
-  imports: [RouterOutlet, ShareModule, TranslatePipe, SideBar],
+  imports: [RouterOutlet, SideBar, TopBar],
   selector: 'app-dashboard-shell',
   templateUrl: './dashboard-shell.html',
   styleUrl: './dashboard-shell.scss',
 })
-export class DashboardShell implements OnInit {
-  private readonly languageService = inject(LanguageService);
+export class DashboardShell {
   private readonly router = inject(Router);
+  private readonly language_service = inject(LanguageService);
   protected readonly authStore = inject(AuthStore);
-  protected readonly language = this.languageService.language;
+  protected readonly language = this.language_service.language;
 
-  readonly user!: WritableSignal<AuthUser>;
-
-  protected toggleLanguage(): void {
-    this.languageService.toggle();
-  }
-
-  protected logout(): void {
-    this.authStore.logout();
-    this.router.navigateByUrl('/');
-  }
   constructor() {
-    const userSignal = this.authStore.user();
-    if (userSignal) {
-      this.user = signal<AuthUser>(userSignal);
-    } else {
-      this.router.navigateByUrl('/');
-    }
-  }
-  ngOnInit(): void {
-
+    if (!this.authStore.user()) this.router.navigateByUrl('/');
   }
 }

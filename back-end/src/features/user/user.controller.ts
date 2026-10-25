@@ -21,6 +21,7 @@ import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { ToCrudUserInterceptor } from './interceptor/to-crud-user.interceptor';
 import { ToPublicUserInterceptor } from './interceptor/to-public-user.interceptor';
 import { UserService } from './user.service';
+import * as userRequestInterface from 'src/core/interfaces/user-request.interface';
 
 type SessionUser = { id: bigint; organizationId: bigint };
 
@@ -93,9 +94,9 @@ export class UserController {
   @Post('rbac')
   @UseGuards(AuthGuard)
   @UseInterceptors(ToPublicUserInterceptor)
-  async rbac(@CurrentUser() user: SessionUser) {
+  async rbac(@CurrentUser() user: userRequestInterface.IUserRequest) {
     const { user: confirmedUser, startup } =
-      await this.userService.confirmSession(user.id);
+      await this.userService.confirmSession(user);
     return { user: confirmedUser, startup };
   }
 

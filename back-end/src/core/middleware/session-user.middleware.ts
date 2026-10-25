@@ -5,7 +5,6 @@ import { PrismaService } from '../service/prisma.service';
 export function sessionUserMiddleware(prisma: PrismaService) {
   return async (request: FastifyRequest, _reply: FastifyReply) => {
     const userId = request.session?.userId;
-    console.log("🚀 ~ sessionUserMiddleware ~ userId:", userId)
     if (!userId || !/^\d+$/.test(userId)) return;
     const user = await prisma.user.findFirst({
       where: { id: BigInt(userId), isActive: true },
@@ -14,6 +13,10 @@ export function sessionUserMiddleware(prisma: PrismaService) {
         organizationId: true,
         fullName: true,
         phoneNumber: true,
+        roles: true,
+        clinics: {
+          select: { clinicId: true },
+        },
       },
     });
 

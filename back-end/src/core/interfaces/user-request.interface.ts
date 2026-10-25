@@ -3,4 +3,5 @@ export interface IUserRequest {
   organizationId: bigint;
   fullName: string;
   phoneNumber: string | null;
+  clinics: { clinicId: bigint }[];
 }

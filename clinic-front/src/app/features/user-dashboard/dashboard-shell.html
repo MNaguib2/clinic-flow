@@ -1,25 +1,9 @@
-@let copy = 'dashboard' | translate;
-
 <div class="dashboard-shell d-flex flex-column flex-lg-row min-vh-100" [attr.lang]="language()" [attr.dir]="language() === 'ar' ? 'rtl' : 'ltr'">
 @if (!authStore.startup()) {
   <app-side-bar></app-side-bar>
 }
   <div class="flex-grow-1 dashboard-main">
-    <header class="dashboard-header d-flex align-items-center justify-content-end gap-2 px-3 px-lg-4 py-3 bg-body border-bottom sticky-top">
-      <app-ui-button
-        type="button"
-        variant="text"
-        class="utility-button language-button"
-        (click)="toggleLanguage()"
-        [ariaLabel]="copy.languageLabel"
-      >{{ language() === 'en' ? 'العربية' : 'English' }}</app-ui-button>
-      <app-theme-toggle />
-      <span class="dashboard-user d-inline-flex align-items-center gap-2 border rounded-pill bg-body-tertiary p-1 pe-3">
-        <span class="user-avatar rounded-circle bg-primary text-white fw-bold" aria-hidden="true">{{ user()?.fullName.charAt(0).toUpperCase() }}</span>
-        <span class="user-name d-none d-sm-inline fw-semibold small text-truncate">{{ user()?.fullName }}</span>
-      </span>
-      <button type="button" class="btn btn-outline-danger btn-sm" (click)="logout()">{{ copy.logout }}</button>
-    </header>
+    <app-top-bar />
     <main class="dashboard-content mx-auto p-3 p-lg-4">
       <router-outlet />
     </main>

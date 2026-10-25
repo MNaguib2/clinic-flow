@@ -4,6 +4,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
+import { Role } from 'generated/prisma/client';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -12,6 +13,7 @@ interface UserRecord {
   organizationId: bigint;
   fullName: string;
   phoneNumber: string | null;
+  roles: Role;
 }
 
 interface UserResponse {
@@ -29,15 +31,18 @@ export class ToPublicUserInterceptor implements NestInterceptor<
     next: CallHandler<UserResponse>,
   ): Observable<Record<string, unknown>> {
     return next.handle().pipe(
-      map(({ user, ...response }) => ({
-        ...response,
-        user: {
-          id: user.id.toString(),
-          organizationId: user.organizationId.toString(),
-          fullName: user.fullName,
-          phone: user.phoneNumber,
-        },
-      })),
+      map(({ user, ...response }) => {
+        return {
+          ...response,
+          user: {
+            id: user.id.toString(),
+            organizationId: user.organizationId.toString(),
+            fullName: user.fullName,
+            phone: user.phoneNumber,
+            roles: user.roles.name,
+          },
+        };
+      }),
     );
   }
 }

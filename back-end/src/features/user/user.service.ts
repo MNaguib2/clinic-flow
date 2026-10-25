@@ -12,6 +12,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from 'generated/prisma/client';
+import { IUserRequest } from 'src/core/interfaces/user-request.interface';
 
 @Injectable()
 export class UserService {
@@ -29,14 +30,30 @@ export class UserService {
         passwordHash: true,
         jobTitle: true,
         specialties: true,
+        // كدا كدا اليوزر اللى هيلوج بيه ليه رول واحده بس حالياً
+        roles: {
+          where: {
+            clinicId: null,
+          },
+          select: {
+            role: true,
+          },
+        },
       },
     });
 
-    let matchingUser: (typeof users)[number] | undefined;
+    type LoginUser = Omit<(typeof users)[number], 'roles'> & {
+      roles: object;
+    };
+    let matchingUser: LoginUser | undefined;
     let matchingUserCount = 0;
     for (const user of users) {
       if (await bcrypt.compare(dto.password, user.passwordHash)) {
-        matchingUser = user;
+        matchingUser = {
+          ...user,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          roles: user.roles && user.roles.length > 0 ? user.roles[0].role : {},
+        };
         matchingUserCount++;
       }
     }
@@ -82,11 +99,11 @@ export class UserService {
     };
   }
 
-  async confirmSession(userId: bigint) {
+  async confirmSession(user: IUserRequest) {
     let startup = false;
-    const user = await this.prisma.user.findFirst({
+    const userFetch = await this.prisma.user.findFirst({
       where: {
-        id: userId,
+        id: user.id,
         isActive: true,
         refreshTokens: {
           some: {
@@ -101,19 +118,30 @@ export class UserService {
         fullName: true,
         phoneNumber: true,
         clinics: true,
+        roles: {
+          where: {
+            role: {
+              organizationId: user.organizationId,
+            },
+          },
+          select: {
+            role: true,
+          },
+        },
         isActive: true,
       },
     });
 
-    if (!user) {
+    if (!userFetch) {
       throw new UnauthorizedException('Session or refresh token is invalid');
     }
 
-    if (user.clinics.length === 0) {
-      startup = await this.checkUserStartup(user);
+    if (userFetch.clinics.length === 0) {
+      startup = await this.checkUserStartup(userFetch);
     }
 
-    return { user, startup };
+    const { roles, ...rest } = userFetch;
+    return { user: { ...rest, roles: roles[0]?.role ?? null }, startup };
   }
 
   async refresh(dto: RefreshDto) {

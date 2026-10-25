@@ -16,7 +16,7 @@ describe('DashboardShell', () => {
       providers: [
         provideRouter([]),
         provideTranslateService(),
-        { provide: AuthStore, useValue: { user: () => ({ fullName: 'Salma Ali' }), logout } },
+        { provide: AuthStore, useValue: { user: () => ({ fullName: 'Salma Ali' }), startup: () => false, logout } },
         { provide: LanguageService, useValue: { language: () => 'en', toggle: () => undefined } },
       ],
     }).compileComponents();
@@ -30,6 +30,21 @@ describe('DashboardShell', () => {
 
     expect(header.querySelector('.user-avatar')?.textContent?.trim()).toBe('S');
     expect(header.querySelector('.user-name')?.textContent?.trim()).toBe('Salma Ali');
+  });
+
+  it('puts language, theme, and logout settings in the mobile profile menu', () => {
+    const menu = fixture.nativeElement.querySelector(
+      '.mobile-profile-menu',
+    ) as HTMLDetailsElement;
+    (menu.querySelector('summary') as HTMLElement).click();
+
+    expect(menu.open).toBe(true);
+    expect(menu.querySelector('.language-button')).toBeTruthy();
+    expect(menu.querySelector('app-theme-toggle')).toBeTruthy();
+    expect(menu.querySelector('.mobile-logout')).toBeTruthy();
+    expect(
+      fixture.nativeElement.querySelector('.desktop-setting')?.classList.contains('d-none'),
+    ).toBe(true);
   });
 
   it('logs out and returns to the landing page', () => {

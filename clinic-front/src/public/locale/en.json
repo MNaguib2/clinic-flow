@@ -64,6 +64,7 @@
     "createAccount": "New to ClinicFlow? Create an account"
   },
   "theme": {
+    "settingsLabel": "Appearance",
     "darkMode": "Dark",
     "lightMode": "Light"
   },
@@ -101,7 +102,8 @@
     "welcome": "Welcome back, {{name}}",
     "ready": "Your workspace is ready. Manage your clinics, team, and patients from here.",
     "logout": "Log out",
-    "languageLabel": "Change language"
+    "languageLabel": "Change language",
+    "profileSettings": "Profile settings"
   },
   "toast": {
     "notifications": "Notifications",

@@ -1,0 +1,46 @@
+@let copy = 'dashboard' | translate;
+
+<header class="dashboard-header d-flex align-items-center justify-content-end gap-2 px-3 px-lg-4 py-3 bg-body border-bottom sticky-top">
+  <app-ui-button
+    type="button"
+    variant="text"
+    class="desktop-setting utility-button language-button d-none d-md-inline-block"
+    (click)="toggle_language()"
+    [ariaLabel]="copy.languageLabel"
+  >{{ language() === 'en' ? 'العربية' : 'English' }}</app-ui-button>
+  <app-theme-toggle class="desktop-setting d-none d-md-inline-block" />
+  @if (auth_store.user(); as user) {
+    <span class="dashboard-user d-none d-md-inline-flex align-items-center gap-2 border rounded-pill bg-body-tertiary p-1 pe-3">
+      <span class="user-avatar rounded-circle bg-primary text-white fw-bold" aria-hidden="true">{{ user.fullName.charAt(0).toUpperCase() }}</span>
+      <span class="user-name fw-semibold small text-truncate">{{ user.fullName }}</span>
+    </span>
+    <details class="mobile-profile-menu d-md-none">
+      <summary class="mobile-profile-trigger" [attr.aria-label]="copy.profileSettings">
+        <span class="user-avatar rounded-circle bg-primary text-white fw-bold" aria-hidden="true">{{ user.fullName.charAt(0).toUpperCase() }}</span>
+        <span class="user-name d--inline fw-semibold small text-truncate">{{ user.fullName }}</span>
+        <span class="profile-chevron" aria-hidden="true"></span>
+      </summary>
+      <div class="mobile-settings-panel bg-body border rounded-3 shadow">
+        <strong class="mobile-settings-title">{{ copy.profileSettings }}</strong>
+        <div class="mobile-setting-row">
+          <span class="mobile-setting-label">{{ copy.languageLabel }}</span>
+          <app-ui-button
+            type="button"
+            variant="text"
+            class="utility-button language-button"
+            (click)="toggle_language()"
+            [ariaLabel]="copy.languageLabel"
+          >{{ language() === 'en' ? 'العربية' : 'English' }}</app-ui-button>
+        </div>
+        <div class="mobile-setting-row">
+          <span class="mobile-setting-label">{{ 'theme.settingsLabel' | translate }}</span>
+          <app-theme-toggle />
+        </div>
+        <button type="button" class="logout-button mobile-logout btn btn-outline-danger w-100" (click)="logout()">
+          {{ copy.logout }}
+        </button>
+      </div>
+    </details>
+  }
+  <button type="button" class="logout-button desktop-logout btn btn-outline-danger btn-sm d-none d-md-inline-flex" (click)="logout()">{{ copy.logout }}</button>
+</header>

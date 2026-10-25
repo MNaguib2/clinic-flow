@@ -54,21 +54,6 @@
   background: rgb(255 255 255 / 8%);
 }
 
-.dashboard-header {
-  z-index: 5;
-}
-
-.user-avatar {
-  display: grid;
-  width: 2rem;
-  height: 2rem;
-  place-items: center;
-}
-
-.user-name {
-  max-width: 12rem;
-}
-
 .dashboard-content {
   max-width: 80rem;
 }
