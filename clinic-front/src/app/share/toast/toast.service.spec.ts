@@ -68,4 +68,11 @@ describe('ToastService', () => {
     expect(service.messages().at(-1)?.validationErrors).toBeUndefined();
     expect(service.messages().at(-1)?.details).toContain('Bad Request');
   });
+
+  it('does not treat arrays of plain strings as structured validation errors', () => {
+    const service = new ToastService();
+    service.show({ message: ['First failure', 'Second failure'] }, 'error');
+
+    expect(service.messages().at(-1)?.validationErrors).toBeUndefined();
+  });
 });

@@ -1,11 +1,19 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Component, inject, OnDestroy, PLATFORM_ID, signal } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser, NgTemplateOutlet } from '@angular/common';
+import {
+  Component,
+  computed,
+  HostListener,
+  inject,
+  OnDestroy,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Icon } from '../icon/icon';
-import { ToastService } from './toast.service';
+import { ToastGroup, ToastMessage, ToastService } from './toast.service';
 
 @Component({
-  imports: [TranslatePipe, Icon],
+  imports: [TranslatePipe, Icon, NgTemplateOutlet],
   selector: 'app-toast',
   templateUrl: './toast.html',
   styleUrl: './toast.scss',
@@ -15,8 +23,46 @@ export class Toast implements OnDestroy {
   private readonly document = inject(DOCUMENT);
   private readonly translate = inject(TranslateService);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private mediaQuery?: MediaQueryList;
+  private readonly breakpointListener = (event: MediaQueryListEvent) =>
+    this.isMobile.set(event.matches);
   protected readonly copy_feedback = signal<{ key: string; status: 'copied' | 'failed' } | null>(null);
+  protected readonly isMobile = signal(false);
+  protected readonly visibleGroups = computed<ToastGroup[]>(() =>
+    this.toastService.groups()
+      .map((group) => ({
+        ...group,
+        messages: group.messages.filter(
+          (message) =>
+            !this.isMobile() ||
+            message.severity !== 'error' ||
+            !this.isStructured(message),
+        ),
+      }))
+      .filter((group) => group.messages.length > 0),
+  );
+  protected readonly sheetMessages = computed(() =>
+    this.isMobile()
+      ? this.toastService.messages().filter(
+          (message) =>
+            message.severity === 'error' && this.isStructured(message),
+        )
+      : [],
+  );
   private feedbackTimer: ReturnType<typeof setTimeout> | undefined;
+
+  constructor() {
+    const window = this.document.defaultView;
+    if (!this.isBrowser || !window?.matchMedia) return;
+
+    this.mediaQuery = window.matchMedia('(max-width: 640px)');
+    this.isMobile.set(this.mediaQuery.matches);
+    if (this.mediaQuery.addEventListener) {
+      this.mediaQuery.addEventListener('change', this.breakpointListener);
+    } else {
+      this.mediaQuery.addListener?.(this.breakpointListener);
+    }
+  }
 
   icon(severity: string): string {
     return ({ success: '✓', info: 'i', warn: '!', error: '×' } as Record<string, string>)[severity] ?? 'i';
@@ -58,7 +104,29 @@ export class Toast implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.mediaQuery?.removeEventListener) {
+      this.mediaQuery.removeEventListener('change', this.breakpointListener);
+    } else {
+      this.mediaQuery?.removeListener?.(this.breakpointListener);
+    }
     if (this.feedbackTimer !== undefined) clearTimeout(this.feedbackTimer);
+  }
+
+  protected isStructured(message: ToastMessage): boolean {
+    return Boolean(message.validationErrors?.length);
+  }
+
+  protected dismissSheet(): void {
+    for (const message of this.sheetMessages()) {
+      if (message.closable) this.toastService.remove(message.id);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    if (this.sheetMessages().some((message) => message.closable)) {
+      this.dismissSheet();
+    }
   }
 
   private async copyText(text: string, key: string): Promise<void> {

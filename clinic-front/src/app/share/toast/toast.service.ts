@@ -171,7 +171,8 @@ export class ToastService {
       ? message
       : Array.isArray(value['validate'])
         ? value['validate']
-        : 'property' in value && ('constraints' in value || 'children' in value)
+        : 'property' in value &&
+            ('constraints' in value || 'children' in value)
           ? [value]
           : undefined;
     if (!validation_entries) return [];
@@ -179,18 +180,10 @@ export class ToastService {
     const errors: ToastValidationError[] = [];
     const seen = new Set<string>();
     const visit = (entry: unknown, parent_path = ''): void => {
-      if (!this.isRecord(entry)) {
-        if (typeof entry === 'string' && entry.trim()) {
-          const key = `${parent_path}\u0000${entry}`;
-          if (!seen.has(key)) {
-            seen.add(key);
-            errors.push({ propertyPath: parent_path, messages: [entry] });
-          }
-        }
-        return;
-      }
+      if (!this.isRecord(entry)) return;
 
-      const property = typeof entry['property'] === 'string' ? entry['property'] : '';
+      const property =
+        typeof entry['property'] === 'string' ? entry['property'] : '';
       const property_path = property
         ? /^\d+$/.test(property)
           ? `${parent_path}[${property}]`
@@ -198,11 +191,14 @@ export class ToastService {
         : parent_path;
       const constraints = entry['constraints'];
       if (this.isRecord(constraints)) {
-        const messages = [...new Set(
-          Object.values(constraints).filter(
-            (constraint): constraint is string => typeof constraint === 'string' && Boolean(constraint.trim()),
+        const messages = [
+          ...new Set(
+            Object.values(constraints).filter(
+              (constraint): constraint is string =>
+                typeof constraint === 'string' && Boolean(constraint.trim()),
+            ),
           ),
-        )];
+        ];
         if (messages.length) {
           const key = `${property_path}\u0000${messages.join('\u0000')}`;
           if (!seen.has(key)) {
