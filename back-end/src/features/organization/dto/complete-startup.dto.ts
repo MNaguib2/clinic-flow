@@ -10,8 +10,9 @@ import {
   IsString,
   MaxLength,
   ValidateNested,
+  Allow,
 } from 'class-validator';
-import { ValidatedMultipartFile } from 'src/core/interfaces/form-data.interface';
+import * as formDataInterface from 'src/core/interfaces/form-data.interface';
 
 export class StartupWorkExperienceDto {
   @IsString()
@@ -58,7 +59,7 @@ export class StartupCertificationDto {
   @MaxLength(500)
   certificateUrl?: string;
 
-  certificateFile?: ValidatedMultipartFile;
+  certificateFile?: formDataInterface.ValidatedMultipartFile;
 }
 
 export class StartupRoleDto {
@@ -95,7 +96,8 @@ export class StartupClinicDto {
   @IsString({ each: true })
   specialties?: string[];
 
-  clinicImage?: ValidatedMultipartFile;
+  @Allow()
+  clinicImage?: formDataInterface.ValidatedMultipartFile;
 }
 
 export class CompleteStartupDto {
@@ -109,14 +111,16 @@ export class CompleteStartupDto {
   @MaxLength(500)
   organizationLogoUrl?: string;
 
-  organizationLogo?: ValidatedMultipartFile;
+  @Allow()
+  organizationLogo?: formDataInterface.ValidatedMultipartFile;
 
   @IsOptional()
   @IsString()
   @MaxLength(500)
   profileImageUrl?: string;
 
-  profileImage?: ValidatedMultipartFile;
+  @Allow()
+  profileImage?: formDataInterface.ValidatedMultipartFile;
 
   @IsOptional()
   @IsString()
@@ -152,7 +156,8 @@ export class CompleteStartupDto {
   @IsString({ each: true })
   specialties?: string[];
 
-  specialtyImages?: Record<number, ValidatedMultipartFile>;
+  @Allow()
+  specialtyImages?: Record<number, formDataInterface.ValidatedMultipartFile>;
 
   @IsArray()
   @ArrayMinSize(1)

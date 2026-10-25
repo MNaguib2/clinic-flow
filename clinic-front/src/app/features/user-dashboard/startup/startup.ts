@@ -453,7 +453,7 @@ export class Startup implements OnInit {
               ? error.message
               : 'An unknown error occurred.';
           if (error instanceof ErrorService) error.show();
-          this.error_message.set(error_message);
+          else this.error_message.set(error_message);
           this.is_saving.set(false);
         },
         complete: () => this.is_saving.set(false),
