@@ -3,6 +3,7 @@ export interface AuthUser {
   organizationId: string;
   fullName: string;
   phone: string | null;
+  roles: string
 }
 
 export interface LoginRequest {

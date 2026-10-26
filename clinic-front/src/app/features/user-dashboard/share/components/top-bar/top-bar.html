@@ -1,53 +1,117 @@
-@let copy = 'dashboard' | translate;
 
-<header class="dashboard-header d-flex align-items-center justify-content-end gap-2 px-3 px-lg-4 py-3 bg-body border-bottom sticky-top">
-  <app-ui-button
-    type="button"
-    variant="text"
-    class="desktop-setting utility-button language-button d-none d-md-inline-block"
-    (click)="toggle_language()"
-    [ariaLabel]="copy.languageLabel"
-  >{{ language() === 'en' ? 'العربية' : 'English' }}</app-ui-button>
-  <app-theme-toggle class="desktop-setting d-none d-md-inline-block" />
-  @if (auth_store.user(); as user) {
-    <span class="dashboard-user d-none d-md-inline-flex align-items-center gap-2 border rounded-pill bg-body-tertiary p-1 pe-3">
-      <span class="user-avatar rounded-circle bg-primary text-white fw-bold" aria-hidden="true">{{ user.fullName.charAt(0).toUpperCase() }}</span>
-      <span class="user-name fw-semibold small text-truncate">{{ user.fullName }}</span>
-    </span>
-    <app-dropdown #profile_menu="appDropdown" class="mobile-profile-menu d-md-none" placement="bottom-end" [offset]="8" [styled]="false" maxHeight="calc(100dvh - 5rem)">
-      <button
-        dropdownTrigger
-        type="button"
-        class="mobile-profile-trigger"
-        aria-haspopup="true"
-        [attr.aria-expanded]="profile_menu.open()"
-        [attr.aria-label]="copy.profileSettings"
-      >
-        <span class="user-avatar rounded-circle bg-primary text-white fw-bold" aria-hidden="true">{{ user.fullName.charAt(0).toUpperCase() }}</span>
-        <span class="user-name d--inline fw-semibold small text-truncate">{{ user.fullName }}</span>
-        <span class="profile-chevron" [class.profile-chevron--open]="profile_menu.open()" aria-hidden="true"></span>
-      </button>
-      <div class="mobile-settings-panel bg-body border rounded-3 shadow">
-        <strong class="mobile-settings-title">{{ copy.profileSettings }}</strong>
-        <div class="mobile-setting-row">
-          <span class="mobile-setting-label">{{ copy.languageLabel }}</span>
-          <app-ui-button
-            type="button"
-            variant="text"
-            class="utility-button language-button"
-            (click)="toggle_language()"
-            [ariaLabel]="copy.languageLabel"
-          >{{ language() === 'en' ? 'العربية' : 'English' }}</app-ui-button>
+<header class="dashboard-header">
+  <!-- User profile -->
+  <div class="header-profile">
+    <button
+      type="button"
+      class="profile-dropdown-btn"
+      [attr.aria-label]="'topbar.toggle_profile_menu' | translate"
+      [attr.aria-expanded]="profile_menu_open"
+      (click)="toggle_profile_menu()"
+    >
+      <app-icon name="chevron-down" />
+    </button>
+
+    <button
+      type="button"
+      class="profile-info"
+      [attr.aria-label]="'topbar.user_profile' | translate"
+      [attr.aria-expanded]="profile_menu_open"
+      (click)="toggle_profile_menu()"
+    >
+      <span class="user-avatar">
+        {{ user_initials }}
+      </span>
+
+      <span class="user-details">
+        <span class="user-name">
+          {{ user_name }}
+        </span>
+
+        @if (user_role) {
+          <span class="user-role">
+            {{ user_role }}
+          </span>
+        }
+      </span>
+    </button>
+
+    @if (profile_menu_open) {
+      <div class="profile-dropdown">
+        <div class="dropdown-user-info">
+          <span class="dropdown-user-name">
+            {{ user_name }}
+          </span>
+
+          @if (user_role) {
+            <span class="dropdown-user-role">
+              {{ user_role }}
+            </span>
+          }
         </div>
-        <div class="mobile-setting-row">
-          <span class="mobile-setting-label">{{ 'theme.settingsLabel' | translate }}</span>
-          <app-theme-toggle />
-        </div>
-        <button type="button" class="logout-button mobile-logout btn btn-outline-danger w-100" (click)="logout()">
-          {{ copy.logout }}
+
+        <div class="dropdown-divider"></div>
+
+        <button
+          type="button"
+          class="dropdown-item"
+          (click)="logout()"
+        >
+          <app-icon name="arrow-right" />
+          <span>{{ 'dashboard.logout' | translate }}</span>
         </button>
       </div>
-    </app-dropdown>
+    }
+  </div>
+
+  <!-- Brand -->
+  <a
+    class="dashboard-brand"
+    routerLink="/"
+    aria-label="ClinicFlow"
+  >
+    <span class="brand-name">
+      Clinic<span>Flow</span>
+    </span>
+
+    <span class="brand-heart" aria-hidden="true"></span>
+  </a>
+
+  <!-- Actions -->
+  <div class="header-actions">
+    <button
+      type="button"
+      class="notification-btn"
+      [attr.aria-label]="'topbar.notifications' | translate"
+    >
+      <app-icon name="notification" style="width: 20px; height: 20px; color: var(--bs-body-color)" />
+    </button>
+
+    <span class="header-separator"></span>
+
+    <button
+      type="button"
+      class="language-btn"
+      (click)="toggle_language()"
+    >
+      {{ language() === 'ar' ? 'English' : 'العربية' }}
+    </button>
+
+    <app-theme-toggle />
+  </div>
+
+  <!-- Search -->
+  @if (!auth_store.startup()) {
+    <div class="header-search">
+      <input
+        type="search"
+        [placeholder]="'topbar.search_placeholder' | translate"
+        [attr.aria-label]="'topbar.search_label' | translate"
+      />
+
+      <span class="search-icon">
+        <app-icon name="search" />
+      </span>
+    </div>
   }
-  <button type="button" class="logout-button desktop-logout btn btn-outline-danger btn-sm d-none d-md-inline-flex" (click)="logout()">{{ copy.logout }}</button>
 </header>

@@ -105,6 +105,16 @@
     "languageLabel": "تغيير اللغة",
     "profileSettings": "إعدادات الملف الشخصي"
   },
+  "auth": {
+    "logout": "تسجيل الخروج"
+  },
+  "topbar": {
+    "toggle_profile_menu": "فتح/إغلاق قائمة الملف الشخصي",
+    "user_profile": "الملف الشخصي",
+    "notifications": "الإشعارات",
+    "search_placeholder": "بحث",
+    "search_label": "بحث"
+  },
   "toast": {
     "notifications": "الإشعارات",
     "validationTitle": "خطأ في البيانات",

@@ -105,6 +105,16 @@
     "languageLabel": "Change language",
     "profileSettings": "Profile settings"
   },
+  "auth": {
+    "logout": "Log out"
+  },
+  "topbar": {
+    "toggle_profile_menu": "Toggle profile menu",
+    "user_profile": "User profile",
+    "notifications": "Notifications",
+    "search_placeholder": "Search",
+    "search_label": "Search"
+  },
   "toast": {
     "notifications": "Notifications",
     "validationTitle": "Validation Error",

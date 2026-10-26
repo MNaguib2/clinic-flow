@@ -1,28 +1,72 @@
+
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Icon } from '@share/icon/icon';
 import { ShareModule } from '@share/share.module';
 
 @Component({
-  imports: [ShareModule, TranslatePipe],
   selector: 'app-top-bar',
-  styleUrl: './top-bar.scss',
+  standalone: true,
+  imports: [ShareModule, TranslatePipe, RouterLink, Icon],
   templateUrl: './top-bar.html',
+  styleUrl: './top-bar.scss',
 })
 export class TopBar {
   private readonly language_service = inject(LanguageService);
   private readonly router = inject(Router);
+
   protected readonly auth_store = inject(AuthStore);
   protected readonly language = this.language_service.language;
+
+  protected profile_menu_open = false;
 
   protected toggle_language(): void {
     this.language_service.toggle();
   }
 
+  protected toggle_profile_menu(): void {
+    this.profile_menu_open = !this.profile_menu_open;
+  }
+
   protected logout(): void {
+    this.profile_menu_open = false;
     this.auth_store.logout();
     this.router.navigateByUrl('/');
+  }
+
+  protected get user_name(): string {
+    return this.auth_store.user()?.fullName ?? '';
+  }
+
+  protected get user_role(): string {
+    const role = this.auth_store.user()?.roles;
+
+    if (typeof role === 'string') {
+      return role;
+    }
+
+    if (role && typeof role === 'string') {
+      return String(role ?? '');
+    }
+
+    return '';
+  }
+
+  protected get user_initials(): string {
+    const name = this.user_name.trim();
+
+    if (!name) {
+      return 'U';
+    }
+
+    return name
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part.charAt(0))
+      .join('')
+      .toUpperCase();
   }
 }
