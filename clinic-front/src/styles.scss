@@ -15,6 +15,12 @@ body {
   margin: 0;
   color: var(--bs-body-color);
   background: var(--bs-body-bg);
+    background: linear-gradient(
+    135deg,
+    #F7FAFF 0%,
+    #EDF4FF 55%,
+    #E2ECFF 100%
+  );
   font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
   font-size: var(--bs-font-size-md);
   -webkit-font-smoothing: antialiased;

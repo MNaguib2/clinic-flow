@@ -18,11 +18,11 @@
 .startup-page {
   min-height: 100vh;
   color: var(--bs-body-color);
-  background: linear-gradient(
-    160deg,
-    var(--bs-body-bg),
-    var(--bs-primary-bg-subtle)
-  );
+  // background: linear-gradient(
+  //   160deg,
+  //   var(--bs-body-bg),
+  //   var(--bs-primary-bg-subtle)
+  // );
   transition:
     background-color var(--bs-transition-duration, 160ms) ease,
     color var(--bs-transition-duration, 160ms) ease;
