@@ -8,6 +8,7 @@
   z-index: 100;
 
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 30px;
 
@@ -257,47 +258,15 @@
   flex: 1;
   min-width: 100px;
   max-width: 380px;
-  margin-inline-start: auto;
 }
 
-.header-search input {
-  display: block;
-  width: 100%;
+:host ::ng-deep .header-search-input {
   height: 34px;
   padding-inline: 12px 36px;
-
-  border: 1px solid var(--bs-border-color, #dce7f7);
   border-radius: 9px;
-  outline: none;
-
-  background: var(--bs-body-bg, #fff);
-  color: var(--bs-body-color, #243b60);
-
+  background-color: var(--bs-search-field-bg, #f8fbff);
   font: inherit;
   font-size: 11px;
-}
-
-.header-search input:focus {
-  border-color: var(--bs-primary, #6b9cf9);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bs-primary, #3478f6) 12%, transparent);
-}
-
-.header-search input::placeholder {
-  color: var(--bs-secondary-color, #91a3c1);
-}
-
-.search-icon {
-  position: absolute;
-  top: 50%;
-  inset-inline-end: 12px;
-  transform: translateY(-50%);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  color: var(--bs-secondary-color, #91a3c1);
-  pointer-events: none;
 }
 
 /* Keyboard focus */

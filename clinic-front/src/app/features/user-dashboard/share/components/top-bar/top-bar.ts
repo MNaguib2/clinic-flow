@@ -5,11 +5,12 @@ import { AuthStore } from '@core/auth/auth.store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Icon } from '@share/icon/icon';
 import { ShareModule } from '@share/share.module';
+import { FieldInput } from '@share/fields/field-input';
 
 @Component({
   selector: 'app-top-bar',
   standalone: true,
-  imports: [ShareModule, TranslatePipe, RouterLink, Icon],
+  imports: [ShareModule, TranslatePipe, RouterLink, Icon, FieldInput],
   templateUrl: './top-bar.html',
   styleUrl: './top-bar.scss',
 })

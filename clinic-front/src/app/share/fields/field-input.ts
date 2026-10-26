@@ -29,6 +29,7 @@ export type InputFieldType = 'text' | 'email' | 'password' | 'number' | 'url' | 
         }
         <input
           class="form-control"
+          [class]="inputClass()"
           [class.has-icon]="!!icon()"
           [class.is-invalid]="!!error()"
           [id]="uid"
@@ -63,6 +64,8 @@ export class FieldInput extends FieldBase<string | number | null> {
   readonly max = input<number | string>();
   readonly step = input<number | string>();
   readonly maxLength = input<number>();
+  /** Additional CSS class applied to the native input element. */
+  readonly inputClass = input('');
   /** Optional leading icon name from `public/images/icons`. */
   readonly icon = input('');
 

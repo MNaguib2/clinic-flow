@@ -2,12 +2,8 @@
   <!-- Search -->
   @if (!auth_store.startup()) {
   <div class="header-search">
-    <input type="search" [placeholder]="'topbar.search_placeholder' | translate"
-      [attr.aria-label]="'topbar.search_label' | translate" />
-
-    <span class="search-icon">
-      <app-icon name="search" />
-    </span>
+    <app-field-input type="text" placeholder="topbar.search_placeholder" inputClass="header-search-input"
+      ariaLabel="topbar.search_label" icon="search" />
   </div>
   }
   <!-- Brand -->
@@ -20,6 +16,7 @@
   </a>
 
   <!-- Actions -->
+   <div class="d-flex gap-4">
   <div class="header-actions">
 
     <app-language-toggle />
@@ -89,5 +86,5 @@
     </div>
   </div>
 </app-dropdown>
-
+</div>
 </header>

@@ -22,6 +22,7 @@ $navy-950: #0b1a2d;
 $navy-900: #0d2038;
 
 $white: #fff;
+$search-field-bg: #f8fbff;
 $gray-100: #f7faff;
 $gray-200: #eaf2fd;
 $gray-300: #dce9fa;
@@ -295,6 +296,7 @@ $utilities: map-merge(
   --bs-surface: #{$white};
   --bs-surface-hover: #{$gray-100};
   --bs-surface-muted: #e6f0ff;
+  --bs-search-field-bg: #{$search-field-bg};
 
   --bs-primary-hover: #{$link-hover-color};
   --bs-primary-contrast: #{$white};
@@ -316,6 +318,7 @@ $utilities: map-merge(
   --bs-surface: #111c30;
   --bs-surface-hover: #16243b;
   --bs-surface-muted: #16243b;
+   --bs-search-field-bg: var(--bs-surface);
 
   --bs-primary-hover: #{$link-hover-color-dark};
   --bs-primary-contrast: #{$white};
