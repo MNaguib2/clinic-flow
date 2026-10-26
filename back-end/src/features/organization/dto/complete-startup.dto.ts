@@ -4,6 +4,7 @@ import {
   ArrayUnique,
   IsArray,
   IsDateString,
+  IsEmail,
   IsNotEmpty,
   Matches,
   IsOptional,
@@ -69,6 +70,11 @@ export class StartupRoleDto {
   name!: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  description?: string;
+
+  @IsOptional()
   @IsArray()
   @ArrayUnique()
   @Matches(/^\d+$/, { each: true })
@@ -121,6 +127,11 @@ export class CompleteStartupDto {
 
   @Allow()
   profileImage?: formDataInterface.ValidatedMultipartFile;
+
+  @IsOptional()
+  @IsEmail()
+  @MaxLength(255)
+  email?: string;
 
   @IsOptional()
   @IsString()

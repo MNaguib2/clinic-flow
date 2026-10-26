@@ -15,6 +15,7 @@ export interface CertificationModel {
 
 export interface RoleModel {
   name: string;
+  description: string;
   permissionIds: string[];
 }
 
@@ -28,6 +29,7 @@ export interface ClinicModel {
 export interface StartupModel {
   briefDescription: string;
   profileImageUrl: string;
+  email: string;
   jobTitle: string;
   previousExperiences: ExperienceModel[];
   currentExperiences: ExperienceModel[];

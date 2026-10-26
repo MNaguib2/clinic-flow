@@ -186,7 +186,9 @@ describe('Startup', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const job_title = fixture.nativeElement.querySelector('app-field-input input') as HTMLInputElement;
+    const job_title = Array.from(
+      fixture.nativeElement.querySelectorAll('app-field-input input') as NodeListOf<HTMLInputElement>,
+    ).find((input) => input.getAttribute('type') !== 'email') as HTMLInputElement;
     job_title.value = 'Cardiologist';
     job_title.dispatchEvent(new Event('input'));
     fixture.detectChanges();
@@ -194,6 +196,37 @@ describe('Startup', () => {
     expect((component as unknown as { model: () => { jobTitle: string } }).model().jobTitle).toBe(
       'Cardiologist',
     );
+  });
+
+  it('stores profile email and role descriptions in the startup form', async () => {
+    fixture.nativeElement.querySelectorAll('.startup-steps button')[1].click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const email_input = fixture.nativeElement.querySelectorAll('app-field-input input')[0] as HTMLInputElement;
+    email_input.value = 'doctor@example.com';
+    email_input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect((component as unknown as { model: () => { email: string } }).model().email).toBe(
+      'doctor@example.com',
+    );
+
+    fixture.nativeElement.querySelectorAll('.startup-steps button')[2].click();
+    fixture.detectChanges();
+    (fixture.nativeElement.querySelector('#add-role-button') as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    const role_description = fixture.nativeElement.querySelector(
+      '.role-card app-field-textarea textarea',
+    ) as HTMLTextAreaElement;
+    role_description.value = 'Handles clinical leadership and daily operations.';
+    role_description.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(
+      (component as unknown as { model: () => { roles: { description: string }[] } }).model().roles[0].description,
+    ).toBe('Handles clinical leadership and daily operations.');
   });
 
   it('renders the clinic step with phone and image fields', async () => {

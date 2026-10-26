@@ -39,8 +39,8 @@
 </ng-template>
 
 <main class="startup-page min-vh-100 p-0 p-lg-4" [attr.lang]="language()" [attr.dir]="language() === 'ar' ? 'rtl' : 'ltr'">
-  <div class="startup-shell d-flex flex-column flex-lg-row border overflow-hidden mx-auto">
-    <aside class="startup-sidebar d-flex flex-column gap-3 gap-lg-4 p-3 p-lg-4 border-end">
+  <div class="startup-shell d-flex flex-column flex-lg-row border overflow-hidden mx-auto" [class.is-rtl]="language() === 'ar'">
+    <aside class="startup-sidebar d-flex flex-column gap-3 gap-lg-4 p-3 p-lg-4 border-end" [class.is-rtl]="language() === 'ar'">
       <div class="d-flex align-items-center gap-2">
         <svg class="startup-logo flex-shrink-0" viewBox="0 0 48 44" aria-hidden="true">
           <path d="M24 42C10 31 2 24 2 14 2 7.5 7 3 13 3c4.5 0 8.2 2.4 11 6.5C26.800 5.400 30.500 3 35 3c6 0 11 4.500 11 11 0 10-8 17-22 28Z" fill="currentColor" />
@@ -122,6 +122,10 @@
         <div class="col-12 col-md-6">
           <app-field-image label="startup.profileImage" [hint]="image_hint" previewAlt="startup.profileImagePreview"
             [initialValue]="profile_image" (changed)="set_profile_image($event)" />
+        </div>
+        <div class="col-12 col-md-6">
+          <app-field-input label="startup.email" type="email" placeholder="startup.emailPlaceholder" [maxLength]="255"
+            [formField]="startup_form.email" />
         </div>
         <div class="col-12 col-md-6">
           <app-field-input label="startup.jobTitle" placeholder="startup.jobTitlePlaceholder" [maxLength]="100"
@@ -208,6 +212,10 @@
             @if (role_name_is_duplicate(role)) {
             <small class="text-danger d-block mt-1" role="alert">{{ copy.duplicateRoleName }}</small>
             }
+          </div>
+          <div class="w-100"></div>
+          <div class="col-12">
+            <app-field-textarea label="startup.roleDescription" [rows]="2" [maxLength]="2000" [formField]="role.description" />
           </div>
           <span class="role-permission-total badge rounded-pill bg-primary-subtle text-primary-emphasis mb-1">
             {{ selected_role_permission_count(role) }} {{ copy.permissionsSelected }}
@@ -316,7 +324,7 @@
           <div id="specialty-options-list" class="specialty-options-list list-group" role="listbox" [attr.aria-label]="copy.selectSpecialty">
           @for (specialty of filtered_specialties(); track specialty.id) {
           <button type="button" class="specialty-option list-group-item list-group-item-action d-flex align-items-center gap-2"
-            role="option" [attr.aria-selected]="false" (mousedown)="select_specialty(specialty)">
+            role="option" [attr.aria-selected]="false" (mousedown)="select_specialty(specialty)" (click)="select_specialty(specialty)">
             @if (specialty.imageUrl && !failed_catalog_images().has(specialty.imageUrl)) {
             <img class="specialty-option-image rounded flex-shrink-0" [src]="specialty_catalog_image_url(specialty.name)"
               alt="" (error)="catalog_image_failed(specialty.imageUrl)" />

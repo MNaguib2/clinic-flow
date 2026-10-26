@@ -16,10 +16,31 @@
 .role-card {
   min-width: 0;
   border-color: var(--bs-border-color);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
+}
+
+.role-card-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 0.75rem;
+  align-items: end;
 }
 
 .role-card-header > :first-child {
   min-width: 0;
+}
+
+.role-permission-total {
+  align-self: center;
+  min-width: 6.5rem;
+  padding-inline: 0.75rem;
+}
+
+.role-edit,
+.role-remove {
+  min-width: 2.6rem;
 }
 
 #add-role-button,
@@ -104,6 +125,14 @@
 }
 
 @media (max-width: 575.98px) {
+  .role-card-header {
+    grid-template-columns: 1fr;
+  }
+
+  .role-permission-total {
+    justify-self: start;
+  }
+
   .specialty-options-backdrop {
     position: fixed;
     z-index: 1040;

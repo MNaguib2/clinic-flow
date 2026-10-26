@@ -203,6 +203,8 @@
     "noRoles": "لم تتم إضافة أدوار إضافية.",
     "role": "الدور",
     "roleName": "اسم الدور",
+    "roleDescription": "وصف الدور",
+    "roleDescriptionPlaceholder": "صف مسؤوليات هذا الدور.",
     "roleNameRequired": "أدخل اسمًا لكل دور يحتوي على صلاحيات.",
     "duplicateRoleName": "يجب أن تكون أسماء الأدوار فريدة.",
     "permissions": "الصلاحيات",

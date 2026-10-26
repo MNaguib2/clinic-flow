@@ -216,9 +216,10 @@ export class Startup implements OnInit {
   protected readonly model = signal<StartupModel>({
     briefDescription: '',
     profileImageUrl: '',
+    email: '',
     jobTitle: '',
-    previousExperiences: [this.create_experience()],
-    currentExperiences: [this.create_experience()],
+    previousExperiences: [/*this.create_experience()*/],
+    currentExperiences: [/*this.create_experience()*/],
     certifications: [],
     roles: [],
     specialtyNames: [],
@@ -227,6 +228,7 @@ export class Startup implements OnInit {
   protected readonly startup_form = form(this.model, (path) => {
     maxLength(path.briefDescription, 1000);
     maxLength(path.profileImageUrl, 2000);
+    maxLength(path.email, 255);
     maxLength(path.jobTitle, 100);
     for (const experiences of [path.previousExperiences, path.currentExperiences]) {
       applyEach(experiences, (item) => {
@@ -243,6 +245,7 @@ export class Startup implements OnInit {
     applyEach(path.roles, (item) => {
       required(item.name);
       maxLength(item.name, 100);
+      maxLength(item.description, 2000);
     });
     applyEach(path.specialtyNames, (item) => {
       maxLength(item, 150);
@@ -375,7 +378,7 @@ export class Startup implements OnInit {
     const index = this.model().roles.length;
     this.model.update((model) => ({
       ...model,
-      roles: [...model.roles, { name: '', permissionIds: [] }],
+      roles: [...model.roles, { name: '', description: '', permissionIds: [] }],
     }));
     this.role_permissions_open.update((open_roles) =>
       new Set([...open_roles, index]),
@@ -570,6 +573,7 @@ export class Startup implements OnInit {
     const payload: StartupPayload = {
       briefDescription: model.briefDescription.trim() || undefined,
       profileImageUrl: model.profileImageUrl.trim() || undefined,
+      email: model.email.trim() || undefined,
       jobTitle: model.jobTitle.trim() || undefined,
       previousWorkingExperiences: this.work_experiences(model.previousExperiences),
       currentWorkingExperiences: this.work_experiences(model.currentExperiences),
@@ -743,6 +747,7 @@ export class Startup implements OnInit {
       .roles.filter((role) => role.name.trim())
       .map((role) => ({
         name: role.name.trim(),
+        description: role.description.trim() || undefined,
         permissionIds: role.permissionIds,
       }));
   }

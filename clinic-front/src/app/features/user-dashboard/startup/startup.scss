@@ -37,10 +37,18 @@
   box-shadow: var(--bs-box-shadow);
 }
 
+.startup-shell.is-rtl {
+  flex-direction: row-reverse;
+}
+
 @media (min-width: 992px) {
   .startup-shell {
     min-height: calc(100vh - 3rem);
     border-radius: var(--bs-border-radius-xl);
+  }
+
+  .startup-shell.is-rtl {
+    flex-direction: row-reverse;
   }
 
   .startup-sidebar {
@@ -58,6 +66,11 @@
   color: var(--bs-body-color);
   background: var(--bs-tertiary-bg);
   border-color: var(--bs-border-color) !important;
+}
+
+.startup-sidebar.is-rtl {
+  border-inline-start: var(--bs-border-width) solid var(--bs-border-color) !important;
+  border-inline-end: 0 !important;
 }
 
 .startup-sidebar .text-dark,

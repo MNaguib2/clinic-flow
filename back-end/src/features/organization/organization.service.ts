@@ -190,9 +190,21 @@ export class OrganizationService {
           },
         });
 
+        if (dto.email) {
+          const normalized_email = dto.email.trim().toLowerCase();
+          const existing_email_user = await tx.user.findUnique({
+            where: { email: normalized_email },
+            select: { id: true },
+          });
+          if (existing_email_user && existing_email_user.id !== user.id) {
+            throw new ConflictException('Email is already registered');
+          }
+        }
+
         await tx.user.update({
           where: { id: user.id, organizationId: user.organizationId },
           data: {
+            email: dto.email?.trim().toLowerCase() || undefined,
             profileImageUrl: dto.profileImageUrl,
             jobTitle: dto.jobTitle,
             previousWorkingExperiences: dto.previousWorkingExperiences as
@@ -228,6 +240,7 @@ export class OrganizationService {
             data: {
               organizationId: user.organizationId,
               name: role_dto.name,
+              description: role_dto.description?.trim() || null,
               isSystemRole: false,
             },
           });

@@ -15,6 +15,7 @@ export interface StartupCertification {
 
 export interface StartupRole {
   name: string;
+  description?: string;
   permissionIds: string[];
 }
 
@@ -28,6 +29,7 @@ export interface StartupClinic {
 export interface StartupPayload {
   briefDescription?: string;
   profileImageUrl?: string;
+  email?: string;
   jobTitle?: string;
   previousWorkingExperiences: StartupWorkExperience[];
   currentWorkingExperiences: StartupWorkExperience[];
