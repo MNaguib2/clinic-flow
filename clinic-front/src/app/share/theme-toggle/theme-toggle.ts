@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ThemeService } from '../../core/services/theme/theme.service';
+import { Icon } from '../icon/icon';
 import { UiButtonComponent } from '../ui-button/ui-button.component';
 
 @Component({
-  imports: [UiButtonComponent, TranslatePipe],
+  imports: [Icon, UiButtonComponent, TranslatePipe],
   selector: 'app-theme-toggle',
   template: `
     @let copy = 'theme' | translate;
@@ -15,7 +16,10 @@ import { UiButtonComponent } from '../ui-button/ui-button.component';
       (click)="theme.toggle()"
       [ariaLabel]="theme.isDark() ? copy.lightMode : copy.darkMode"
       [ariaPressed]="theme.isDark()"
-    >{{ theme.isDark() ? copy.lightMode : copy.darkMode }}</app-ui-button>
+    >
+      <app-icon [name]="theme.isDark() ? 'sun' : 'moon'" />
+      <span>{{ theme.isDark() ? copy.lightMode : copy.darkMode }}</span>
+    </app-ui-button>
   `,
 })
 export class ThemeToggle {

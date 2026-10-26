@@ -1,4 +1,3 @@
-
 :host {
   display: block;
   position: relative;
@@ -12,7 +11,7 @@
 
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 30px;
 
   min-height: 64px;
   padding: 8px 16px;
@@ -20,8 +19,6 @@
   background: var(--bs-body-bg, #fff);
   color: var(--bs-body-color, #243b60);
   border: 1px solid var(--bs-border-color, #e2eaf7);
-
-  direction: ltr;
 }
 
 /* Profile */
@@ -129,19 +126,7 @@
 /* Profile dropdown */
 
 .profile-dropdown {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  z-index: 110;
-
   min-width: 190px;
-  padding: 8px;
-
-  border: 1px solid var(--bs-border-color, #e2eaf7);
-  border-radius: 10px;
-
-  background: var(--bs-body-bg, #fff);
-  box-shadow: 0 8px 24px rgb(25 55 100 / 10%);
 }
 
 .dropdown-user-info {
@@ -206,8 +191,12 @@
   font-weight: 700;
 }
 
-.brand-name span {
-  color: #216cf3;
+.brand-name {
+  color: var(--bs-body-color) !important;
+
+  span {
+    color: #216cf3;
+  }
 }
 
 .brand-heart {
@@ -261,19 +250,6 @@
   width: 1px;
   height: 30px;
   background: var(--bs-border-color, #e7edf7);
-}
-
-.language-btn {
-  min-height: 32px;
-  padding: 0 8px;
-
-  border: 0;
-  background: transparent;
-  color: var(--bs-body-color, #243b60);
-
-  font-size: 11px;
-  white-space: nowrap;
-  cursor: pointer;
 }
 
 /* Search */
@@ -347,11 +323,6 @@
   left: 12px;
 }
 
-:host-context([dir='rtl']) .profile-dropdown {
-  right: 0;
-  left: auto;
-}
-
 /* Mobile */
 
 @media (max-width: 767.98px) {
@@ -383,13 +354,13 @@
   }
 
   .header-actions {
-    margin-left: auto;
+    margin-inline-start: auto;
     gap: 8px;
   }
 
   .header-separator,
-  .language-btn,
-  app-theme-toggle {
+  .header-actions>app-language-toggle,
+  .header-actions>app-theme-toggle {
     display: none;
   }
 
@@ -397,15 +368,6 @@
     display: none;
   }
 
-  .profile-dropdown {
-    left: 0;
-    right: auto;
-  }
-
-  :host-context([dir='rtl']) .profile-dropdown {
-    right: 0;
-    left: auto;
-  }
 }
 
 @media (max-width: 360px) {
@@ -428,6 +390,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

@@ -1,23 +1,28 @@
 
 <header class="dashboard-header">
   <!-- User profile -->
-  <div class="header-profile">
+  <app-dropdown
+    class="header-profile"
+    placement="bottom-start"
+    autoClose="outside"
+    [(open)]="profile_menu_open"
+  >
     <button
+      dropdownTrigger
       type="button"
       class="profile-dropdown-btn"
       [attr.aria-label]="'topbar.toggle_profile_menu' | translate"
       [attr.aria-expanded]="profile_menu_open"
-      (click)="toggle_profile_menu()"
     >
       <app-icon name="chevron-down" />
     </button>
 
     <button
+      dropdownTrigger
       type="button"
       class="profile-info"
       [attr.aria-label]="'topbar.user_profile' | translate"
       [attr.aria-expanded]="profile_menu_open"
-      (click)="toggle_profile_menu()"
     >
       <span class="user-avatar">
         {{ user_initials }}
@@ -36,37 +41,43 @@
       </span>
     </button>
 
-    @if (profile_menu_open) {
-      <div class="profile-dropdown">
-        <div class="dropdown-user-info">
-          <span class="dropdown-user-name">
-            {{ user_name }}
+    <div class="profile-dropdown">
+      <div class="dropdown-user-info">
+        <span class="dropdown-user-name">
+          {{ user_name }}
+        </span>
+
+        @if (user_role) {
+          <span class="dropdown-user-role">
+            {{ user_role }}
           </span>
-
-          @if (user_role) {
-            <span class="dropdown-user-role">
-              {{ user_role }}
-            </span>
-          }
-        </div>
-
-        <div class="dropdown-divider"></div>
-
-        <button
-          type="button"
-          class="dropdown-item"
-          (click)="logout()"
-        >
-          <app-icon name="arrow-right" />
-          <span>{{ 'dashboard.logout' | translate }}</span>
-        </button>
+        }
       </div>
-    }
-  </div>
+
+      <div class="dropdown-divider"></div>
+
+      <button
+        type="button"
+        class="dropdown-item"
+        (click)="logout()"
+      >
+        <app-icon name="arrow-right" />
+        <span>{{ 'dashboard.logout' | translate }}</span>
+      </button>
+
+      <div class="d-block d-md-none">
+        <app-language-toggle />
+
+        <div class="d-block d-md-none">
+          <app-theme-toggle />
+        </div>
+      </div>
+    </div>
+  </app-dropdown>
 
   <!-- Brand -->
   <a
-    class="dashboard-brand"
+    class="dashboard-brand d-md-none"
     routerLink="/"
     aria-label="ClinicFlow"
   >
@@ -89,13 +100,7 @@
 
     <span class="header-separator"></span>
 
-    <button
-      type="button"
-      class="language-btn"
-      (click)="toggle_language()"
-    >
-      {{ language() === 'ar' ? 'English' : 'العربية' }}
-    </button>
+    <app-language-toggle />
 
     <app-theme-toggle />
   </div>

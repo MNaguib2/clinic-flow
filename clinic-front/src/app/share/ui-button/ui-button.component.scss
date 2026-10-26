@@ -61,6 +61,11 @@
   font-size: calc(var(--bs-font-size-sm) * 0.9286);
 }
 
+:host(.language-button) .ui-button,
+:host(.theme-button) .ui-button {
+  gap: 6px;
+}
+
 @media (max-width: 640px) {
   :host(.utility-button) .ui-button,
   :host(.theme-button) .ui-button {

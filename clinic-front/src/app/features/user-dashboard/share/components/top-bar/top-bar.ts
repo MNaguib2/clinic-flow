@@ -2,7 +2,6 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
-import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Icon } from '@share/icon/icon';
 import { ShareModule } from '@share/share.module';
@@ -15,21 +14,11 @@ import { ShareModule } from '@share/share.module';
   styleUrl: './top-bar.scss',
 })
 export class TopBar {
-  private readonly language_service = inject(LanguageService);
   private readonly router = inject(Router);
 
   protected readonly auth_store = inject(AuthStore);
-  protected readonly language = this.language_service.language;
 
   protected profile_menu_open = false;
-
-  protected toggle_language(): void {
-    this.language_service.toggle();
-  }
-
-  protected toggle_profile_menu(): void {
-    this.profile_menu_open = !this.profile_menu_open;
-  }
 
   protected logout(): void {
     this.profile_menu_open = false;
