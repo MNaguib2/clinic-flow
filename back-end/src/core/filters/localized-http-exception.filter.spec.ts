@@ -1,6 +1,7 @@
 import {
   ArgumentsHost,
   BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { appendFile, mkdir } from 'node:fs/promises';
@@ -52,6 +53,37 @@ describe('LocalizedHttpExceptionFilter', () => {
         error: 'طلب غير صالح',
       },
       400,
+    );
+  });
+
+  it('translates the already-completed organization startup conflict', async () => {
+    const reply = jest.fn();
+    const response = {};
+    const request = { headers: { 'accept-language': 'ar-EG' } };
+    const host = {
+      switchToHttp: () => ({
+        getRequest: () => request,
+        getResponse: () => response,
+      }),
+    } as unknown as ArgumentsHost;
+    const httpAdapterHost = {
+      httpAdapter: { reply },
+    } as unknown as HttpAdapterHost;
+    const filter = new LocalizedHttpExceptionFilter(httpAdapterHost);
+
+    await filter.catch(
+      new ConflictException('Organization startup has already been completed'),
+      host,
+    );
+
+    expect(reply).toHaveBeenCalledWith(
+      response,
+      {
+        statusCode: 409,
+        message: 'تم إكمال إعداد هذه المؤسسة بالفعل',
+        error: 'تعارض في البيانات',
+      },
+      409,
     );
   });
 

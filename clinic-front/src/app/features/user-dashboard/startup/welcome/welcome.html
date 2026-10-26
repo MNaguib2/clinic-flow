@@ -1,0 +1,70 @@
+<main
+  class="welcome-page"
+  [attr.lang]="language()"
+  [attr.dir]="language() === 'ar' ? 'rtl' : 'ltr'"
+  aria-labelledby="welcome-title"
+>
+  <div class="welcome-ambient" aria-hidden="true">
+    <span class="ambient-shape ambient-shape--left"></span>
+    <span class="ambient-shape ambient-shape--right"></span>
+    <span class="ambient-shape ambient-shape--bottom"></span>
+  </div>
+
+  <section class="welcome-content">
+    <div class="welcome-brand" aria-label="ClinicFlow">
+      <svg class="brand-mark" viewBox="0 0 48 44" aria-hidden="true">
+        <path
+          d="M24 42C10 31 2 24 2 14 2 7.5 7 3 13 3c4.5 0 8.2 2.4 11 6.5C26.8 5.4 30.5 3 35 3c6 0 11 4.5 11 11 0 10-8 17-22 28Z"
+          fill="currentColor"
+        />
+        <path
+          d="M8 22h9l3-6 5 12 3-6h12"
+          fill="none"
+          stroke="#fff"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <span>Clinic<span class="brand-flow">Flow</span></span>
+    </div>
+
+    <div class="success-scene" aria-hidden="true">
+      <span class="success-orbit success-orbit--outer"></span>
+      <span class="success-orbit success-orbit--inner"></span>
+      <span class="success-spark success-spark--one"></span>
+      <span class="success-spark success-spark--two"></span>
+      <span class="success-spark success-spark--three"></span>
+      <div class="success-badge">
+        <svg class="success-check" viewBox="0 0 64 64" fill="none">
+          <path d="M16 33.5 27 44 49 21" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="welcome-copy">
+      <h1 id="welcome-title">{{ 'startup.welcome.heading' | translate }}</h1>
+      <p class="welcome-subtitle">{{ 'startup.welcome.subtitle' | translate }}</p>
+      <p class="welcome-description">{{ 'startup.welcome.description' | translate }}</p>
+    </div>
+
+    <button class="welcome-cta" type="button" (click)="go_to_dashboard()">
+      <svg class="welcome-grid" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+      </svg>
+      <span>{{ 'startup.welcome.dashboard' | translate }}</span>
+      <svg
+        class="welcome-arrow"
+        [class.is-rtl]="language() === 'ar'"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path d="M4 12h15m-6-6 6 6-6 6" />
+      </svg>
+    </button>
+  </section>
+</main>

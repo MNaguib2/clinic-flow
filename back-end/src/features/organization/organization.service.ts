@@ -143,6 +143,20 @@ export class OrganizationService {
     };
 
     try {
+      const existing_clinic = await this.prisma.organization.findFirst({
+        where: { id: user.organizationId },
+        select: { clinics: true, specialties: true, roles: true },
+      });
+      if (
+        existing_clinic &&
+        (existing_clinic?.clinics.length > 0 ||
+          existing_clinic?.roles.length > 0 ||
+          existing_clinic?.specialties.length > 0)
+      ) {
+        throw new ConflictException(
+          'Organization startup has already been completed',
+        );
+      }
       if (dto.organizationLogo) {
         dto.organizationLogoUrl = await save_file(
           this.localFileService.prepareDirectory([
@@ -290,7 +304,9 @@ export class OrganizationService {
               )
             : undefined;
           const image_url =
-            uploaded_image_url ?? existing?.imageUrl ?? global_specialty?.imageUrl;
+            uploaded_image_url ??
+            existing?.imageUrl ??
+            global_specialty?.imageUrl;
           const specialty = existing
             ? image_url
               ? await tx.specialty.update({

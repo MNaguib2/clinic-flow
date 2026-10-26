@@ -1,5 +1,9 @@
 @let copy = 'startup' | translate;
 
+@if (is_complete()) {
+<app-startup-welcome />
+} @else {
+
 <ng-template #experienceList let-target="target" let-rows="rows" let-title="title">
   <div class="border-top pt-4 mt-4">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
@@ -557,3 +561,5 @@
     </div>
   </div>
 </main>
+
+}

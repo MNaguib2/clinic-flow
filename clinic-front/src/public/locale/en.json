@@ -261,6 +261,12 @@
     "continue": "Continue",
     "finish": "Finish setup",
     "saving": "Saving...",
-    "loading": "Loading setup options..."
+    "loading": "Loading setup options...",
+    "welcome": {
+      "heading": "Welcome!",
+      "subtitle": "Your clinic is ready to go.",
+      "description": "Setup completed successfully. You can now start managing your clinic with ClinicFlow.",
+      "dashboard": "Go to Dashboard"
+    }
   }
 }

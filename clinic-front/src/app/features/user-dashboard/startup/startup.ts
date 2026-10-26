@@ -38,6 +38,7 @@ import { FieldInput } from '@share/fields/field-input';
 import { FieldPhone } from '@share/fields/field-phone';
 import { FieldTextarea } from '@share/fields/field-textarea';
 import { Icon } from '@share/icon/icon';
+import { Welcome } from './welcome/welcome';
 
 type LocalizedPage = StartupPage & { name: string; description: string };
 type LocalizedPermission = Omit<StartupPermission, 'page'> & {
@@ -66,6 +67,7 @@ type LocalizedGlobalSpecialty = StartupGlobalSpecialty & {
     Icon,
     NgTemplateOutlet,
     TranslatePipe,
+    Welcome,
   ],
   providers: [StartupService],
   selector: 'app-startup',
@@ -108,6 +110,7 @@ export class Startup implements OnInit {
   protected readonly max_certificate_size = 10 * 1024 * 1024;
   protected readonly is_loading = signal(false);
   protected readonly is_saving = signal(false);
+  protected readonly is_complete = signal(false);
   protected readonly options_loaded = signal(false);
   protected readonly error_message = signal<string | null>(null);
   protected readonly specialty_search = signal('');
@@ -603,7 +606,7 @@ export class Startup implements OnInit {
       .subscribe({
         next: () => {
           this.auth_store.markStartupComplete();
-          // this.router.navigateByUrl('/dashboard');
+          this.is_complete.set(true);
         },
         error: (error: unknown) => {
           const error_message = error instanceof ErrorService

@@ -16,6 +16,7 @@
   "Unauthorized": "Unauthorized",
   "User not found": "User not found",
   "Clinic not found": "Clinic not found",
+  "Organization startup has already been completed": "This organization has already completed setup",
   "Specialty not found": "Specialty not found",
   "phone is invalid": "Phone number is invalid",
   "retry in": "retry in",

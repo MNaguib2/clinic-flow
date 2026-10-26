@@ -17,6 +17,7 @@
   "Unauthorized": "غير مصرح",
   "User not found": "المستخدم غير موجود",
   "Clinic not found": "العيادة غير موجودة",
+  "Organization startup has already been completed": "تم إكمال إعداد هذه المؤسسة بالفعل",
   "Specialty not found": "التخصص غير موجود",
   "phone is invalid": "رقم الهاتف غير صالح",
   "retry in": "أعد المحاولة بعد",
