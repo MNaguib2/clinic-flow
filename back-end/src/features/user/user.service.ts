@@ -120,11 +120,10 @@ export class UserService {
         clinics: true,
         roles: {
           where: {
-            role: {
-              organizationId: user.organizationId,
-            },
+            userId: user.id,
+            clinicId: null,
           },
-          select: {
+          include: {
             role: true,
           },
         },

@@ -605,7 +605,6 @@ export class Startup implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.auth_store.markStartupComplete();
           this.is_complete.set(true);
         },
         error: (error: unknown) => {

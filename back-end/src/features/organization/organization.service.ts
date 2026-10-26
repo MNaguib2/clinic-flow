@@ -150,7 +150,7 @@ export class OrganizationService {
       if (
         existing_clinic &&
         (existing_clinic?.clinics.length > 0 ||
-          existing_clinic?.roles.length > 0 ||
+          existing_clinic?.roles.length > 1 ||
           existing_clinic?.specialties.length > 0)
       ) {
         throw new ConflictException(

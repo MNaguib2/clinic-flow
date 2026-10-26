@@ -39,7 +39,7 @@ export class ToPublicUserInterceptor implements NestInterceptor<
             organizationId: user.organizationId.toString(),
             fullName: user.fullName,
             phone: user.phoneNumber,
-            roles: user.roles.name,
+            roles: user?.roles?.name,
           },
         };
       }),
