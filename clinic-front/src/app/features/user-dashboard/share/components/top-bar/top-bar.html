@@ -1,86 +1,17 @@
-
 <header class="dashboard-header">
-  <!-- User profile -->
-  <app-dropdown
-    class="header-profile"
-    placement="bottom-start"
-    autoClose="outside"
-    [(open)]="profile_menu_open"
-  >
-    <button
-      dropdownTrigger
-      type="button"
-      class="profile-dropdown-btn"
-      [attr.aria-label]="'topbar.toggle_profile_menu' | translate"
-      [attr.aria-expanded]="profile_menu_open"
-    >
-      <app-icon name="chevron-down" />
-    </button>
+  <!-- Search -->
+  @if (!auth_store.startup()) {
+  <div class="header-search">
+    <input type="search" [placeholder]="'topbar.search_placeholder' | translate"
+      [attr.aria-label]="'topbar.search_label' | translate" />
 
-    <button
-      dropdownTrigger
-      type="button"
-      class="profile-info"
-      [attr.aria-label]="'topbar.user_profile' | translate"
-      [attr.aria-expanded]="profile_menu_open"
-    >
-      <span class="user-avatar">
-        {{ user_initials }}
-      </span>
-
-      <span class="user-details">
-        <span class="user-name">
-          {{ user_name }}
-        </span>
-
-        @if (user_role) {
-          <span class="user-role">
-            {{ user_role }}
-          </span>
-        }
-      </span>
-    </button>
-
-    <div class="profile-dropdown">
-      <div class="dropdown-user-info">
-        <span class="dropdown-user-name">
-          {{ user_name }}
-        </span>
-
-        @if (user_role) {
-          <span class="dropdown-user-role">
-            {{ user_role }}
-          </span>
-        }
-      </div>
-
-      <div class="dropdown-divider"></div>
-
-      <button
-        type="button"
-        class="dropdown-item"
-        (click)="logout()"
-      >
-        <app-icon name="arrow-right" />
-        <span>{{ 'dashboard.logout' | translate }}</span>
-      </button>
-
-      <div class="d-block d-md-none">
-        <app-language-toggle />
-
-        <div class="d-block d-md-none">
-          <app-theme-toggle />
-        </div>
-      </div>
-    </div>
-  </app-dropdown>
-
+    <span class="search-icon">
+      <app-icon name="search" />
+    </span>
+  </div>
+  }
   <!-- Brand -->
-  <a
-    class="dashboard-brand d-md-none"
-    routerLink="/"
-    aria-label="ClinicFlow"
-  >
+  <a class="dashboard-brand d-md-none" routerLink="/" aria-label="ClinicFlow">
     <span class="brand-name">
       Clinic<span>Flow</span>
     </span>
@@ -90,33 +21,73 @@
 
   <!-- Actions -->
   <div class="header-actions">
-    <button
-      type="button"
-      class="notification-btn"
-      [attr.aria-label]="'topbar.notifications' | translate"
-    >
-      <app-icon name="notification" style="width: 20px; height: 20px; color: var(--bs-body-color)" />
-    </button>
-
-    <span class="header-separator"></span>
 
     <app-language-toggle />
 
     <app-theme-toggle />
+    <span class="header-separator"></span>
+    <button type="button" class="notification-btn" [attr.aria-label]="'topbar.notifications' | translate">
+      <app-icon name="notification" style="width: 20px; height: 20px; color: var(--bs-body-color)" />
+    </button>
   </div>
 
-  <!-- Search -->
-  @if (!auth_store.startup()) {
-    <div class="header-search">
-      <input
-        type="search"
-        [placeholder]="'topbar.search_placeholder' | translate"
-        [attr.aria-label]="'topbar.search_label' | translate"
-      />
+  <!-- User profile -->
 
-      <span class="search-icon">
-        <app-icon name="search" />
+<app-dropdown
+  class="header-profile"
+  placement="bottom-end"
+  autoClose="outside"
+  [(open)]="profile_menu_open"
+>
+  <div dropdownTrigger class="d-flex gap-3">
+    <button
+      type="button"
+      class="profile-info"
+      [attr.aria-label]="'topbar.user_profile' | translate"
+      [attr.aria-expanded]="profile_menu_open"
+    >
+      <span class="user-avatar">{{ user_initials }}</span>
+
+      <span class="user-details">
+        <span class="user-name">{{ user_name }}</span>
+
+        @if (user_role) {
+          <span class="user-role">{{ user_role }}</span>
+        }
       </span>
+    </button>
+
+    <button
+      type="button"
+      class="profile-dropdown-btn"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <app-icon name="chevron-down" />
+    </button>
+  </div>
+
+  <div class="profile-dropdown">
+    <div class="dropdown-user-info">
+      <span class="dropdown-user-name">{{ user_name }}</span>
+
+      @if (user_role) {
+        <span class="dropdown-user-role">{{ user_role }}</span>
+      }
     </div>
-  }
+
+    <div class="dropdown-divider"></div>
+
+    <button type="button" class="dropdown-item" (click)="logout()">
+      <app-icon name="arrow-right" />
+      <span>{{ 'dashboard.logout' | translate }}</span>
+    </button>
+
+    <div class="d-flex flex-column d-md-none">
+      <app-language-toggle />
+      <app-theme-toggle />
+    </div>
+  </div>
+</app-dropdown>
+
 </header>
