@@ -1,6 +1,6 @@
 @let copy = 'dashboard' | translate;
 
-<header class="dashboard-header d-flex align-items-center justify-content-end gap-2 px-3 px-lg-4 py-3 border-bottom sticky-top">
+<header class="dashboard-header d-flex align-items-center justify-content-end gap-2 px-3 px-lg-4 py-3 bg-body border-bottom sticky-top">
   <app-ui-button
     type="button"
     variant="text"
@@ -27,7 +27,7 @@
         <span class="user-name d--inline fw-semibold small text-truncate">{{ user.fullName }}</span>
         <span class="profile-chevron" [class.profile-chevron--open]="profile_menu.open()" aria-hidden="true"></span>
       </button>
-      <div class="mobile-settings-panel border rounded-3 shadow">
+      <div class="mobile-settings-panel bg-body border rounded-3 shadow">
         <strong class="mobile-settings-title">{{ copy.profileSettings }}</strong>
         <div class="mobile-setting-row">
           <span class="mobile-setting-label">{{ copy.languageLabel }}</span>
