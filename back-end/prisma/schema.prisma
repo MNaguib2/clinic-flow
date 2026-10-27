@@ -181,6 +181,7 @@ model User {
   appointments               Appointment[]          @relation("AppointmentDoctor")
   visits                     Visit[]
   attachments                Attachment[]
+  receivedPatientShares      PatientShare[]          @relation("PatientShareTargetDoctor")
   createdInvoices            Invoice[]              @relation("InvoiceCreatedBy")
   createdPayments            Payment[]              @relation("PaymentCreatedBy")
   inventoryTransactions      InventoryTransaction[]
@@ -348,6 +349,7 @@ model PatientAccount {
   id          BigInt          @id @default(autoincrement())
   fullName    String          @map("full_name") @db.VarChar(150)
   phone       String          @db.VarChar(30)
+  passwordHash String?         @map("password_hash") @db.Text
   dateOfBirth DateTime?       @map("date_of_birth") @db.Date
   gender      String?         @db.VarChar(20)
   nationalId  String?         @map("national_id") @db.VarChar(50)
@@ -375,6 +377,7 @@ model PatientRecord {
   appointments        Appointment[]
   invoices            Invoice[]
   attachments         Attachment[]
+  historyItems        PatientHistoryItem[]
 
   @@unique([organizationId, patientAccountId])
   @@unique([organizationId, id])
@@ -382,18 +385,46 @@ model PatientRecord {
   @@map("patient_records")
 }
 
+enum PatientHistoryCategory {
+  CONDITION
+  SURGERY
+  ALLERGY
+  MEDICATION
+  FAMILY_HISTORY
+  OTHER
+}
+
+model PatientHistoryItem {
+  id              BigInt                 @id @default(autoincrement())
+  patientRecordId BigInt                 @map("patient_record_id")
+  category        PatientHistoryCategory
+  description     String                 @db.Text
+  relative        String?                @db.VarChar(100)
+  onsetDate       DateTime?              @map("onset_date") @db.Date
+  createdAt       DateTime               @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt       DateTime               @updatedAt @map("updated_at") @db.DateTime(6)
+  patientRecord   PatientRecord          @relation(fields: [patientRecordId], references: [id], onDelete: Cascade)
+  attachments     Attachment[]
+
+  @@index([patientRecordId, category])
+  @@map("patient_history_items")
+}
+
 model PatientShare {
   id                 BigInt         @id @default(autoincrement())
   patientAccountId   BigInt         @map("patient_account_id")
   fromOrganizationId BigInt         @map("from_organization_id")
   toOrganizationId   BigInt         @map("to_organization_id")
+  targetDoctorId     BigInt?        @map("target_doctor_id")
   grantedAt          DateTime       @default(now()) @map("granted_at") @db.DateTime(6)
   revokedAt          DateTime?      @map("revoked_at") @db.DateTime(6)
   patient            PatientAccount @relation(fields: [patientAccountId], references: [id], onDelete: Cascade)
   source             Organization   @relation("SourceOrganization", fields: [fromOrganizationId], references: [id], onDelete: Cascade)
   target             Organization   @relation("TargetOrganization", fields: [toOrganizationId], references: [id], onDelete: Cascade)
+  targetDoctor       User?          @relation("PatientShareTargetDoctor", fields: [toOrganizationId, targetDoctorId], references: [organizationId, id], onDelete: Restrict)
 
   @@index([patientAccountId])
+  @@index([toOrganizationId, targetDoctorId])
   @@map("patient_shares")
 }
 
@@ -556,6 +587,7 @@ model Attachment {
   id               BigInt          @id @default(autoincrement())
   organizationId   BigInt          @map("organization_id")
   patientRecordId  BigInt?         @map("patient_record_id")
+  patientHistoryItemId BigInt?     @map("patient_history_item_id")
   visitId          BigInt?         @map("visit_id")
   medicalRequestId BigInt?         @map("medical_request_id")
   fileName         String          @map("file_name") @db.Text
@@ -566,11 +598,13 @@ model Attachment {
   createdAt        DateTime        @default(now()) @map("created_at") @db.DateTime(6)
   organization     Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   patient          PatientRecord?  @relation(fields: [patientRecordId], references: [id], onDelete: Cascade)
+  historyItem      PatientHistoryItem? @relation(fields: [patientHistoryItemId], references: [id], onDelete: Cascade)
   visit            Visit?          @relation(fields: [visitId], references: [id], onDelete: Cascade)
   medicalRequest   MedicalRequest? @relation(fields: [medicalRequestId], references: [id], onDelete: Cascade)
   uploader         User?           @relation(fields: [uploadedBy], references: [id], onDelete: SetNull)
 
   @@index([patientRecordId])
+  @@index([patientHistoryItemId])
   @@map("attachments")
 }
 
