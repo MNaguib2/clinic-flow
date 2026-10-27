@@ -155,7 +155,92 @@
       "previous": "الصفحة السابقة",
       "next": "الصفحة التالية",
       "pageLabel": "الصفحة {{page}}",
+      "pageSizeLabel": "صفوف",
       "summary": "{{from}}–{{to}} من {{total}}"
+    }
+  },
+  "patients": {
+    "title": "المرضى",
+    "breadcrumbHome": "لوحة التحكم",
+    "newPatient": "مريض جديد",
+    "demoNotice": "بيانات تجريبية مؤقتة",
+    "summary": {
+      "new": "مرضى جدد هذا الشهر",
+      "total": "إجمالي المرضى",
+      "appointments": "مواعيد هذا الشهر",
+      "files": "الملفات الطبية",
+      "trend": "{{ value }}% عن الشهر الماضي"
+    },
+    "searchLabel": "البحث عن المرضى",
+    "searchPlaceholder": "الاسم أو الهاتف أو البريد أو رقم المريض",
+    "clinic": "العيادة",
+    "allClinics": "جميع العيادات",
+    "ageGroup": "الفئة العمرية",
+    "allAges": "جميع الأعمار",
+    "ageGroups": {
+      "child": "أقل من 18",
+      "adult": "18–39",
+      "middle": "40–59",
+      "senior": "60 فأكثر"
+    },
+    "status": "الحالة",
+    "allStatuses": "جميع الحالات",
+    "statuses": {
+      "active": "نشط",
+      "followUp": "متابعة",
+      "inactive": "غير نشط",
+      "archived": "مؤرشف"
+    },
+    "clinics": {
+      "dental": "عيادة الأسنان",
+      "general": "العيادة العامة",
+      "cardiology": "عيادة القلب",
+      "dermatology": "عيادة الجلدية",
+      "pediatrics": "عيادة الأطفال",
+      "orthopedics": "عيادة العظام"
+    },
+    "columns": {
+      "number": "#",
+      "patient": "المريض",
+      "gender": "الجنس",
+      "age": "العمر",
+      "phone": "رقم الهاتف",
+      "email": "البريد الإلكتروني",
+      "lastAppointment": "آخر موعد"
+    },
+    "genders": {
+      "male": "ذكر",
+      "female": "أنثى"
+    },
+    "selectPatient": "اختيار {{name}}",
+    "selectVisible": "اختيار الصفحة الحالية",
+    "selectedCount": "تم اختيار {{count}}",
+    "resetFilters": "إعادة ضبط عوامل التصفية",
+    "noData": "لم تتم إضافة أي مرضى بعد.",
+    "noResults": "لا يوجد مرضى يطابقون عوامل التصفية.",
+    "loadError": "تعذر تحميل المرضى. حاول مرة أخرى.",
+    "retry": "إعادة المحاولة",
+    "actions": {
+      "label": "إجراءات {{name}}",
+      "view": "عرض تفاصيل المريض"
+    },
+    "details": {
+      "title": "تفاصيل المريض",
+      "patientId": "رقم المريض",
+      "clinic": "العيادة",
+      "created": "تاريخ الإضافة",
+      "close": "إغلاق التفاصيل"
+    },
+    "create": {
+      "title": "مريض جديد",
+      "name": "الاسم الكامل",
+      "phone": "رقم الهاتف",
+      "email": "البريد الإلكتروني",
+      "age": "العمر",
+      "gender": "الجنس",
+      "clinic": "العيادة",
+      "save": "إضافة المريض",
+      "cancel": "إلغاء"
     }
   },
   "field": {

@@ -155,7 +155,92 @@
       "previous": "Previous page",
       "next": "Next page",
       "pageLabel": "Page {{page}}",
+      "pageSizeLabel": "Rows",
       "summary": "{{from}}–{{to}} of {{total}}"
+    }
+  },
+  "patients": {
+    "title": "Patients",
+    "breadcrumbHome": "Dashboard",
+    "newPatient": "New patient",
+    "demoNotice": "Temporary demo data",
+    "summary": {
+      "new": "New patients this month",
+      "total": "Total patients",
+      "appointments": "Appointments this month",
+      "files": "Medical files",
+      "trend": "{{ value }}% vs last month"
+    },
+    "searchLabel": "Search patients",
+    "searchPlaceholder": "Name, phone, email, or patient ID",
+    "clinic": "Clinic",
+    "allClinics": "All clinics",
+    "ageGroup": "Age group",
+    "allAges": "All ages",
+    "ageGroups": {
+      "child": "Under 18",
+      "adult": "18–39",
+      "middle": "40–59",
+      "senior": "60 and over"
+    },
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "statuses": {
+      "active": "Active",
+      "followUp": "Follow-up",
+      "inactive": "Inactive",
+      "archived": "Archived"
+    },
+    "clinics": {
+      "dental": "Dental clinic",
+      "general": "General clinic",
+      "cardiology": "Cardiology clinic",
+      "dermatology": "Dermatology clinic",
+      "pediatrics": "Pediatrics clinic",
+      "orthopedics": "Orthopedics clinic"
+    },
+    "columns": {
+      "number": "#",
+      "patient": "Patient",
+      "gender": "Gender",
+      "age": "Age",
+      "phone": "Phone",
+      "email": "Email",
+      "lastAppointment": "Last appointment"
+    },
+    "genders": {
+      "male": "Male",
+      "female": "Female"
+    },
+    "selectPatient": "Select {{name}}",
+    "selectVisible": "Select current page",
+    "selectedCount": "{{count}} selected",
+    "resetFilters": "Reset filters",
+    "noData": "No patients have been added yet.",
+    "noResults": "No patients match these filters.",
+    "loadError": "Patients could not be loaded. Try again.",
+    "retry": "Retry",
+    "actions": {
+      "label": "Actions for {{name}}",
+      "view": "View patient details"
+    },
+    "details": {
+      "title": "Patient details",
+      "patientId": "Patient ID",
+      "clinic": "Clinic",
+      "created": "Added",
+      "close": "Close details"
+    },
+    "create": {
+      "title": "New patient",
+      "name": "Full name",
+      "phone": "Phone number",
+      "email": "Email address",
+      "age": "Age",
+      "gender": "Gender",
+      "clinic": "Clinic",
+      "save": "Add patient",
+      "cancel": "Cancel"
     }
   },
   "field": {
