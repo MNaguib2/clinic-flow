@@ -144,6 +144,20 @@
     "copyFailed": "Could not copy. Please try again.",
     "dismiss": "Dismiss notification"
   },
+  "table": {
+    "label": "Data table",
+    "actions": "Actions",
+    "loading": "Loading data",
+    "empty": "No records to display.",
+    "pagination": {
+      "label": "Table pagination",
+      "pages": "Page numbers",
+      "previous": "Previous page",
+      "next": "Next page",
+      "pageLabel": "Page {{page}}",
+      "summary": "{{from}}–{{to}} of {{total}}"
+    }
+  },
   "field": {
     "upload": {
       "prompt": "Click to upload or drag and drop",

@@ -1,0 +1,213 @@
+:host {
+  --table-surface: #ffffff;
+  --table-border: #dce7f7;
+  --table-text: #17366f;
+  --table-muted: #8192ad;
+  --table-header: #f4f8ff;
+  --table-hover: #f7faff;
+  --pagination-hover: #f2f7ff;
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  color: var(--table-text);
+}
+
+:host-context([data-bs-theme='dark']) {
+  --table-surface: #101b2d;
+  --table-border: #293951;
+  --table-text: #e6eeff;
+  --table-muted: #9aadc9;
+  --table-header: #16243b;
+  --table-hover: #182942;
+  --pagination-hover: #1b2d49;
+}
+
+.table-shell {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--table-border);
+  border-radius: 12px;
+  background: var(--table-surface);
+}
+
+.table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.clinic-table {
+  width: max-content;
+  min-width: 100%;
+  color: var(--table-text);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.clinic-table > :not(caption) > * > * {
+  padding: 11px 16px;
+  border-bottom-color: var(--table-border);
+  background-color: transparent;
+  color: inherit;
+  font-size: var(--bs-font-size-sm, 0.875rem);
+}
+
+.clinic-table thead th {
+  background: var(--table-header);
+  color: var(--table-muted);
+  font-size: var(--bs-font-size-xs, 0.75rem);
+  font-weight: 600;
+}
+
+.clinic-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.clinic-table tbody tr:not(:has(.table-state)):hover > * {
+  background: var(--table-hover);
+}
+
+.table-actions-heading,
+.table-actions-cell {
+  text-align: end;
+}
+
+.table-state {
+  height: 112px;
+  color: var(--table-muted) !important;
+  text-align: center;
+  white-space: normal;
+}
+
+.table-state--error {
+  color: #b42332 !important;
+}
+
+:host-context([data-bs-theme='dark']) .table-state--error {
+  color: #ff9a9f !important;
+}
+
+.table-skeleton {
+  display: block;
+  width: min(100%, 190px);
+  height: 12px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--table-header), var(--table-border), var(--table-header));
+  background-size: 200% 100%;
+  animation: table-shimmer 1.4s ease-in-out infinite;
+}
+
+.table-skeleton--short {
+  width: 56px;
+}
+
+.table-pagination {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 10px 12px;
+  border-top: 1px solid var(--table-border);
+  background: var(--table-surface);
+  direction: inherit;
+}
+
+.pagination__control,
+.pagination__page {
+  display: inline-flex;
+  flex: 0 0 34px;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--table-border);
+  border-radius: 7px;
+  color: #17366f;
+  background: transparent;
+  font: inherit;
+  font-size: var(--bs-font-size-sm, 0.875rem);
+  cursor: pointer;
+}
+
+:host-context([data-bs-theme='dark']) .pagination__control,
+:host-context([data-bs-theme='dark']) .pagination__page {
+  color: var(--table-text);
+}
+
+.pagination__control:not(:disabled):hover,
+.pagination__page:not(.pagination__page--active):hover {
+  background: var(--pagination-hover);
+}
+
+.pagination__control:disabled {
+  color: var(--table-muted);
+  background: var(--table-header);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.pagination__page--active {
+  border-color: #216cf3;
+  color: #ffffff;
+  background: #216cf3;
+}
+
+.pagination__control:focus-visible,
+.pagination__page:focus-visible,
+.pagination__pages:focus-visible {
+  outline: 2px solid #216cf3;
+  outline-offset: 2px;
+}
+
+.pagination__pages {
+  display: flex;
+  flex: 1 1 0;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.pagination__pages::-webkit-scrollbar {
+  display: none;
+}
+
+.pagination__summary {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--table-muted);
+  font-size: var(--bs-font-size-xs, 0.75rem);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:host-context([dir='rtl']) .pagination__previous app-icon,
+:host-context([dir='rtl']) .pagination__next app-icon {
+  transform: rotate(180deg);
+}
+
+@keyframes table-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .table-skeleton {
+    animation: none;
+  }
+}

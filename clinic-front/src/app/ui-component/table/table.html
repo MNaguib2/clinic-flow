@@ -1,0 +1,113 @@
+<div class="table-shell" [attr.aria-busy]="loading()">
+  <div class="table-scroll">
+    <table class="table clinic-table mb-0" [attr.aria-label]="ariaLabel() || ('table.label' | translate)">
+      <thead>
+        <tr>
+          @for (column of columns(); track $index) {
+            <th scope="col">{{ column.header }}</th>
+          }
+          @if (actionsTemplate()) {
+            <th scope="col" class="table-actions-heading">{{ 'table.actions' | translate }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          @for (skeleton of [0, 1, 2]; track skeleton) {
+            <tr aria-hidden="true">
+              @for (column of columns(); track $index) {
+                <td><span class="table-skeleton"></span></td>
+              }
+              @if (actionsTemplate()) {
+                <td><span class="table-skeleton table-skeleton--short"></span></td>
+              }
+            </tr>
+          }
+          <tr class="visually-hidden">
+            <td [attr.colspan]="visibleColumnCount()">{{ 'table.loading' | translate }}</td>
+          </tr>
+        } @else if (error()) {
+          <tr>
+            <td class="table-state table-state--error" [attr.colspan]="visibleColumnCount()" role="alert">
+              {{ error() }}
+            </td>
+          </tr>
+        } @else if (rows().length === 0) {
+          <tr>
+            <td class="table-state" [attr.colspan]="visibleColumnCount()" role="status">
+              {{ emptyMessage() || ('table.empty' | translate) }}
+            </td>
+          </tr>
+        } @else {
+          @for (row of rows(); track $index) {
+            <tr>
+              @for (column of columns(); track $index) {
+                <td>
+                  @if (column.cellTemplate) {
+                    <ng-container
+                      [ngTemplateOutlet]="column.cellTemplate"
+                      [ngTemplateOutletContext]="cellContext(row, column)"
+                    />
+                  } @else {
+                    {{ cellValue(row, column) }}
+                  }
+                </td>
+              }
+              @if (actionsTemplate(); as actions_template) {
+                <td class="table-actions-cell">
+                  <ng-container
+                    [ngTemplateOutlet]="actions_template"
+                    [ngTemplateOutletContext]="rowContext(row)"
+                  />
+                </td>
+              }
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (showPagination()) {
+    <nav class="table-pagination" [attr.aria-label]="'table.pagination.label' | translate">
+      <button
+        type="button"
+        class="pagination__control pagination__previous"
+        [disabled]="activePage() <= 1"
+        [attr.aria-label]="'table.pagination.previous' | translate"
+        (click)="requestPage(activePage() - 1)"
+      >
+        <app-icon name="arrow-left" />
+      </button>
+
+      <div class="pagination__pages" role="group" [attr.aria-label]="'table.pagination.pages' | translate" tabindex="0">
+        @for (page of pages(); track page) {
+          <button
+            type="button"
+            class="pagination__page"
+            [class.pagination__page--active]="page === activePage()"
+            [attr.aria-current]="page === activePage() ? 'page' : null"
+            [attr.aria-label]="'table.pagination.pageLabel' | translate: { page: page }"
+            (click)="requestPage(page)"
+          >{{ page }}</button>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="pagination__control pagination__next"
+        [disabled]="activePage() >= pageCount()"
+        [attr.aria-label]="'table.pagination.next' | translate"
+        (click)="requestPage(activePage() + 1)"
+      >
+        <app-icon name="arrow-right" />
+      </button>
+
+      @if (showPageSummary()) {
+        <span class="pagination__summary">
+          {{ 'table.pagination.summary' | translate: { from: summaryStart(), to: summaryEnd(), total: totalItems() } }}
+        </span>
+      }
+    </nav>
+  }
+</div>

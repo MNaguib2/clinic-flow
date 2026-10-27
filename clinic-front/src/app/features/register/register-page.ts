@@ -13,7 +13,8 @@ import { ErrorService } from '@core/services/error/error.service';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PhoneInputDirective } from '@components/phone-input/phone-input.directive';
-import { ShareModule } from '@components/share.module';
+import { ThemeToggle } from '@components/theme-toggle/theme-toggle';
+import { UiButtonComponent } from '@components/ui-button/ui-button.component';
 import { finalize } from 'rxjs';
 
 const matchingPasswords: ValidatorFn = (
@@ -24,7 +25,7 @@ const matchingPasswords: ValidatorFn = (
     : { passwordMismatch: true };
 
 @Component({
-  imports: [ShareModule, PhoneInputDirective, ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ThemeToggle, UiButtonComponent, PhoneInputDirective, ReactiveFormsModule, RouterLink, TranslatePipe],
   selector: 'app-register-page',
   templateUrl: './register-page.html',
   styleUrl: './register-page.scss',

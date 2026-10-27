@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '@core/services/language/language.service';
-import { ShareModule } from '@components/share.module';
+import { ThemeToggle } from '@components/theme-toggle/theme-toggle';
+import { UiButtonComponent } from '@components/ui-button/ui-button.component';
 import { AuthStore } from '@core/auth/auth.store';
 
 @Component({
-  imports: [ShareModule, RouterLink, TranslatePipe],
+  imports: [ThemeToggle, UiButtonComponent, RouterLink, TranslatePipe],
   selector: 'app-home',
   styleUrl: './home.scss',
   templateUrl: './home.html',
