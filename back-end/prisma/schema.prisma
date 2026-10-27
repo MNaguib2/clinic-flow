@@ -179,9 +179,11 @@ model User {
   doctorSchedules            DoctorSchedule[]
   openedCases                MedicalCase[]          @relation("MedicalCaseOpenedBy")
   appointments               Appointment[]          @relation("AppointmentDoctor")
+  triageRecords              TriageRecord[]          @relation("TriageRecordedBy")
   visits                     Visit[]
   attachments                Attachment[]
   receivedPatientShares      PatientShare[]         @relation("PatientShareTargetDoctor")
+  patientShareAccessLogs     PatientShareAccessLog[]
   createdInvoices            Invoice[]              @relation("InvoiceCreatedBy")
   createdPayments            Payment[]              @relation("PaymentCreatedBy")
   inventoryTransactions      InventoryTransaction[]
@@ -379,9 +381,12 @@ model PatientRecord {
   invoices            Invoice[]
   attachments         Attachment[]
   historyItems        PatientHistoryItem[]
+  outgoingShares      PatientShare[]  @relation("PatientShareSourceRecord")
+  incomingShares      PatientShare[]  @relation("PatientShareTargetRecord")
 
   @@unique([organizationId, patientAccountId])
   @@unique([organizationId, id])
+  @@unique([organizationId, id, patientAccountId])
   @@index([organizationId])
   @@map("patient_records")
 }
@@ -406,27 +411,123 @@ model PatientHistoryItem {
   updatedAt       DateTime               @updatedAt @map("updated_at") @db.DateTime(6)
   patientRecord   PatientRecord          @relation(fields: [patientRecordId], references: [id], onDelete: Cascade)
   attachments     Attachment[]
+  shareSelections PatientShareHistoryItem[]
 
   @@index([patientRecordId, category])
+  @@unique([patientRecordId, id])
   @@map("patient_history_items")
 }
 
+enum PatientShareSelectionMode {
+  NONE
+  ALL_CURRENT
+  SELECTED
+}
+
 model PatientShare {
-  id                 BigInt         @id @default(autoincrement())
-  patientAccountId   BigInt         @map("patient_account_id")
-  fromOrganizationId BigInt         @map("from_organization_id")
-  toOrganizationId   BigInt         @map("to_organization_id")
-  targetDoctorId     BigInt?        @map("target_doctor_id")
-  grantedAt          DateTime       @default(now()) @map("granted_at") @db.DateTime(6)
-  revokedAt          DateTime?      @map("revoked_at") @db.DateTime(6)
-  patient            PatientAccount @relation(fields: [patientAccountId], references: [id], onDelete: Cascade)
-  source             Organization   @relation("SourceOrganization", fields: [fromOrganizationId], references: [id], onDelete: Cascade)
-  target             Organization   @relation("TargetOrganization", fields: [toOrganizationId], references: [id], onDelete: Cascade)
-  targetDoctor       User?          @relation("PatientShareTargetDoctor", fields: [toOrganizationId, targetDoctorId], references: [organizationId, id], onDelete: Restrict)
+  id                    BigInt                     @id @default(autoincrement())
+  patientAccountId      BigInt                     @map("patient_account_id")
+  fromOrganizationId    BigInt                     @map("from_organization_id")
+  fromPatientRecordId   BigInt?                    @map("from_patient_record_id")
+  toOrganizationId      BigInt                     @map("to_organization_id")
+  toPatientRecordId     BigInt?                    @map("to_patient_record_id")
+  targetDoctorId        BigInt?                    @map("target_doctor_id")
+  reason                String?                    @db.Text
+  consentIpAddress      String?                    @map("consent_ip_address") @db.VarChar(45)
+  consentUserAgent      String?                    @map("consent_user_agent") @db.Text
+  historyMode           PatientShareSelectionMode  @default(NONE) @map("history_mode")
+  caseMode              PatientShareSelectionMode  @default(NONE) @map("case_mode")
+  visitMode             PatientShareSelectionMode  @default(NONE) @map("visit_mode")
+  grantedAt             DateTime                   @default(now()) @map("granted_at") @db.DateTime(6)
+  expiresAt             DateTime?                  @map("expires_at") @db.DateTime(6)
+  revokedAt             DateTime?                  @map("revoked_at") @db.DateTime(6)
+  patient               PatientAccount             @relation(fields: [patientAccountId], references: [id], onDelete: Cascade)
+  source                Organization               @relation("SourceOrganization", fields: [fromOrganizationId], references: [id], onDelete: Cascade)
+  sourceRecord          PatientRecord?              @relation("PatientShareSourceRecord", fields: [fromOrganizationId, fromPatientRecordId, patientAccountId], references: [organizationId, id, patientAccountId], onDelete: Restrict)
+  target                Organization               @relation("TargetOrganization", fields: [toOrganizationId], references: [id], onDelete: Cascade)
+  targetRecord          PatientRecord?              @relation("PatientShareTargetRecord", fields: [toOrganizationId, toPatientRecordId, patientAccountId], references: [organizationId, id, patientAccountId], onDelete: Restrict)
+  targetDoctor          User?                      @relation("PatientShareTargetDoctor", fields: [toOrganizationId, targetDoctorId], references: [organizationId, id], onDelete: Restrict)
+  historyItems          PatientShareHistoryItem[]
+  medicalCases          PatientShareMedicalCase[]
+  visits                PatientShareVisit[]
+  attachments           PatientShareAttachment[]
+  accessLogs            PatientShareAccessLog[]
 
   @@index([patientAccountId])
   @@index([toOrganizationId, targetDoctorId])
+  @@index([fromOrganizationId, fromPatientRecordId])
+  @@index([toOrganizationId, toPatientRecordId])
   @@map("patient_shares")
+}
+
+model PatientShareHistoryItem {
+  shareId       BigInt            @map("share_id")
+  historyItemId BigInt            @map("history_item_id")
+  createdAt     DateTime          @default(now()) @map("created_at") @db.DateTime(6)
+  share         PatientShare      @relation(fields: [shareId], references: [id], onDelete: Cascade)
+  historyItem   PatientHistoryItem @relation(fields: [historyItemId], references: [id], onDelete: Cascade)
+
+  @@id([shareId, historyItemId])
+  @@index([historyItemId])
+  @@map("patient_share_history_items")
+}
+
+model PatientShareMedicalCase {
+  shareId       BigInt       @map("share_id")
+  medicalCaseId BigInt       @map("medical_case_id")
+  createdAt     DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  share         PatientShare @relation(fields: [shareId], references: [id], onDelete: Cascade)
+  medicalCase   MedicalCase  @relation(fields: [medicalCaseId], references: [id], onDelete: Cascade)
+
+  @@id([shareId, medicalCaseId])
+  @@index([medicalCaseId])
+  @@map("patient_share_medical_cases")
+}
+
+model PatientShareVisit {
+  shareId   BigInt       @map("share_id")
+  visitId   BigInt       @map("visit_id")
+  createdAt DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  share     PatientShare @relation(fields: [shareId], references: [id], onDelete: Cascade)
+  visit     Visit        @relation(fields: [visitId], references: [id], onDelete: Cascade)
+
+  @@id([shareId, visitId])
+  @@index([visitId])
+  @@map("patient_share_visits")
+}
+
+model PatientShareAttachment {
+  shareId      BigInt       @map("share_id")
+  attachmentId BigInt       @map("attachment_id")
+  createdAt    DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  share        PatientShare @relation(fields: [shareId], references: [id], onDelete: Cascade)
+  attachment   Attachment  @relation(fields: [attachmentId], references: [id], onDelete: Cascade)
+
+  @@id([shareId, attachmentId])
+  @@index([attachmentId])
+  @@map("patient_share_attachments")
+}
+
+enum PatientShareAccessAction {
+  VIEW
+  DOWNLOAD
+}
+
+model PatientShareAccessLog {
+  id              BigInt                  @id @default(autoincrement())
+  shareId         BigInt                  @map("share_id")
+  accessedByUserId BigInt?                @map("accessed_by_user_id")
+  attachmentId    BigInt?                 @map("attachment_id")
+  action          PatientShareAccessAction
+  ipAddress       String?                 @map("ip_address") @db.VarChar(45)
+  accessedAt      DateTime                @default(now()) @map("accessed_at") @db.DateTime(6)
+  share           PatientShare            @relation(fields: [shareId], references: [id], onDelete: Cascade)
+  accessedBy      User?                   @relation(fields: [accessedByUserId], references: [id], onDelete: SetNull)
+  attachment      Attachment?             @relation(fields: [attachmentId], references: [id], onDelete: SetNull)
+
+  @@index([shareId, accessedAt])
+  @@index([accessedByUserId, accessedAt])
+  @@map("patient_share_access_logs")
 }
 
 model DoctorSchedule {
@@ -474,6 +575,7 @@ model MedicalCase {
   clinic          Clinic?       @relation(fields: [clinicId], references: [id], onDelete: SetNull)
   opener          User?         @relation("MedicalCaseOpenedBy", fields: [openedBy], references: [id], onDelete: SetNull)
   appointments    Appointment[]
+  shareSelections PatientShareMedicalCase[]
 
   @@index([patientRecordId])
   @@map("medical_cases")
@@ -501,11 +603,47 @@ model Appointment {
   medicalCase     MedicalCase?  @relation(fields: [medicalCaseId], references: [id], onDelete: SetNull)
   doctor          User          @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: Restrict)
   visit           Visit?
+  triageRecords   TriageRecord[]
 
+  @@unique([organizationId, id])
   @@index([doctorId, appointmentAt])
   @@index([patientRecordId, appointmentAt])
   @@index([clinicId, appointmentAt])
   @@map("appointments")
+}
+
+enum TriagePriority {
+  ROUTINE
+  URGENT
+  EMERGENCY
+}
+
+model TriageRecord {
+  id                     BigInt         @id @default(autoincrement())
+  organizationId         BigInt         @map("organization_id")
+  appointmentId          BigInt         @map("appointment_id")
+  recordedByUserId       BigInt         @map("recorded_by_user_id")
+  recordedAt             DateTime       @default(now()) @map("recorded_at") @db.DateTime(6)
+  reasonForVisit         String?        @map("reason_for_visit") @db.Text
+  symptoms               String?        @db.Text
+  symptomDuration        String?        @map("symptom_duration") @db.VarChar(100)
+  bloodPressureSystolic  Int?           @map("blood_pressure_systolic") @db.SmallInt
+  bloodPressureDiastolic Int?           @map("blood_pressure_diastolic") @db.SmallInt
+  pulseRate              Int?           @map("pulse_rate") @db.SmallInt
+  temperatureC           Decimal?       @map("temperature_c") @db.Decimal(4, 1)
+  respiratoryRate        Int?           @map("respiratory_rate") @db.SmallInt
+  oxygenSaturation       Decimal?       @map("oxygen_saturation") @db.Decimal(5, 2)
+  weightKg               Decimal?       @map("weight_kg") @db.Decimal(6, 2)
+  heightCm               Decimal?       @map("height_cm") @db.Decimal(5, 2)
+  priority               TriagePriority?
+  notes                  String?        @db.Text
+  createdAt              DateTime       @default(now()) @map("created_at") @db.DateTime(6)
+  appointment            Appointment    @relation(fields: [organizationId, appointmentId], references: [organizationId, id], onDelete: Cascade)
+  recordedBy             User           @relation("TriageRecordedBy", fields: [organizationId, recordedByUserId], references: [organizationId, id], onDelete: Restrict)
+
+  @@index([organizationId, appointmentId, recordedAt])
+  @@index([organizationId, recordedByUserId])
+  @@map("triage_records")
 }
 
 model Visit {
@@ -523,6 +661,7 @@ model Visit {
   prescriptions Prescription[]
   requests      MedicalRequest[]
   attachments   Attachment[]
+  shareSelections PatientShareVisit[]
 
   @@map("visits")
 }
@@ -602,6 +741,8 @@ model Attachment {
   historyItem          PatientHistoryItem? @relation(fields: [patientHistoryItemId], references: [id], onDelete: Cascade)
   visit                Visit?              @relation(fields: [visitId], references: [id], onDelete: Cascade)
   medicalRequest       MedicalRequest?     @relation(fields: [medicalRequestId], references: [id], onDelete: Cascade)
+  shareSelections      PatientShareAttachment[]
+  shareAccessLogs      PatientShareAccessLog[]
   uploader             User?               @relation(fields: [uploadedBy], references: [id], onDelete: SetNull)
 
   @@index([patientRecordId])
