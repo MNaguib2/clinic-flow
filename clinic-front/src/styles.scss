@@ -14,17 +14,25 @@ body {
   min-width: 320px;
   margin: 0;
   color: var(--bs-body-color);
-  background: var(--bs-body-bg);
-    background: linear-gradient(
+  background: linear-gradient(
     135deg,
-    #F7FAFF 0%,
-    #EDF4FF 55%,
-    #E2ECFF 100%
+    #F5F9FF 0%,
+    #EEF5FF 55%,
+    #E7F0FF 100%
   );
   font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
   font-size: var(--bs-font-size-md);
   -webkit-font-smoothing: antialiased;
   transition: background-color 180ms ease, color 180ms ease;
+}
+
+:root[data-bs-theme='dark'] body {
+  background: linear-gradient(
+    135deg,
+    #0b1220 0%,
+    #101a2b 55%,
+    #15243a 100%
+  );
 }
 
 a {

@@ -1,4 +1,16 @@
 <header class="dashboard-header">
+  @if (!auth_store.startup()) {
+  <button
+    type="button"
+    class="sidebar-toggle"
+    [attr.aria-label]="'topbar.toggle_sidebar' | translate"
+    [attr.aria-expanded]="sidebar_state.is_open()"
+    aria-controls="clinicflow-sidebar"
+    (click)="sidebar_state.toggle()"
+  >
+    <app-icon name="menu" />
+  </button>
+  }
   <!-- Search -->
   @if (!auth_store.startup()) {
   <div class="header-search">

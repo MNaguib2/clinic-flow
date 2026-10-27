@@ -210,16 +210,12 @@
       @for (role of startup_form.roles; track $index; let role_index = $index) {
       <fieldset class="role-card card card-body bg-body-tertiary mb-3">
         <legend class="visually-hidden">{{ copy.role }} {{ $index + 1 }}</legend>
-        <div class="role-card-header d-flex flex-column flex-sm-row align-items-sm-end gap-2 mb-3">
+        <div class="role-card-header mb-3">
           <div class="flex-grow-1">
             <app-field-input label="startup.roleName" [required]="true" [maxLength]="100" [formField]="role.name" />
             @if (role_name_is_duplicate(role)) {
             <small class="text-danger d-block mt-1" role="alert">{{ copy.duplicateRoleName }}</small>
             }
-          </div>
-          <div class="w-100"></div>
-          <div class="col-12">
-            <app-field-textarea label="startup.roleDescription" [rows]="2" [maxLength]="2000" [formField]="role.description" />
           </div>
           <span class="role-permission-total badge rounded-pill bg-primary-subtle text-primary-emphasis mb-1">
             {{ selected_role_permission_count(role) }} {{ copy.permissionsSelected }}
@@ -233,6 +229,9 @@
             (click)="remove_role(role_index)">
             <app-icon name="x" /><span class="d-sm-none">{{ copy.remove }}</span>
           </button>
+        </div>
+        <div class="role-description mb-3">
+          <app-field-textarea label="startup.roleDescription" [rows]="2" [maxLength]="2000" [formField]="role.description" />
         </div>
         @if (role_permissions_open().has(role_index)) {
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">

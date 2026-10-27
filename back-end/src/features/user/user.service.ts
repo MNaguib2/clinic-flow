@@ -29,6 +29,7 @@ export class UserService {
         phoneNumber: true,
         passwordHash: true,
         jobTitle: true,
+        organization: true,
         specialties: true,
         // كدا كدا اليوزر اللى هيلوج بيه ليه رول واحده بس حالياً
         roles: {
@@ -118,6 +119,7 @@ export class UserService {
         fullName: true,
         phoneNumber: true,
         clinics: true,
+        organization: true,
         roles: {
           where: {
             userId: user.id,
@@ -299,26 +301,31 @@ export class UserService {
     let startup = false;
     // first check if have another role in the organization and check if exist clinics for that role
     // if not, send attribute startup to front end to show the startup page
-    const otherRoles = await this.prisma.user.findMany({
+    const otherRoles = await this.prisma.role.findMany({
       where: {
         organizationId: matchingUser.organizationId,
-        id: { not: matchingUser.id },
-        isActive: true,
       },
       select: { id: true },
     });
 
-    if (otherRoles.length === 0) {
+    if (otherRoles.length <= 1) {
       const otherRolesClinics = await this.prisma.clinic.findMany({
         where: {
           organizationId: matchingUser.organizationId,
-          users: { some: { userId: { in: otherRoles.map((r) => r.id) } } },
         },
         select: { id: true, name: true },
       });
 
       if (otherRolesClinics.length === 0) {
-        startup = true;
+        const checkSpecialist = await this.prisma.specialty.findMany({
+          where: {
+            organizationId: matchingUser.organizationId,
+          },
+          select: { id: true },
+        });
+        if (checkSpecialist.length === 0) {
+          startup = true;
+        }
       }
     }
     return startup;

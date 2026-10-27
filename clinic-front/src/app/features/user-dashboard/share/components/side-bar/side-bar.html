@@ -1,9 +1,59 @@
-  <aside class="dashboard-sidebar bg-sidebar text-white d-flex flex-lg-column align-items-center align-items-lg-stretch justify-content-between gap-3 p-3 p-lg-4">
-    <a class="dashboard-brand d-inline-flex align-items-center gap-2 text-decoration-none fs-5 fw-bold" routerLink="/" aria-label="ClinicFlow">
-      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
-      <span class="dashboard-brand-name">Clinic<span class="text-info-emphasis brand-accent">Flow</span></span>
-    </a>
-    <nav class="nav nav-pills flex-lg-column mt-lg-4" [attr.aria-label]="'dashboard.title' | translate">
-      <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'dashboard.title' | translate }}</a>
-    </nav>
-  </aside>
+<aside
+  id="clinicflow-sidebar"
+  class="dashboard-sidebar"
+  [class.is-open]="sidebar_state.is_open()"
+>
+  <a
+    class="dashboard-brand"
+    routerLink="/"
+    [attr.aria-label]="organization_name"
+    [attr.title]="organization_name"
+    (click)="close()"
+  >
+    <span class="dashboard-brand-name">{{ organization_name }}</span>
+    <span class="brand-heart" aria-hidden="true"></span>
+  </a>
+
+  <nav class="sidebar-nav" [attr.aria-label]="'sidebar.navigation' | translate">
+    @for (item of nav_items; track item.id) {
+      @if (item.route) {
+        <a
+          class="sidebar-link"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          (click)="close()"
+        >
+          <app-icon [name]="item.icon" class="sidebar-icon" />
+          <span>{{ item.label_key | translate }}</span>
+        </a>
+      } @else {
+        <button type="button" class="sidebar-link" (click)="close()">
+          <app-icon [name]="item.icon" class="sidebar-icon" />
+          <span>{{ item.label_key | translate }}</span>
+        </button>
+      }
+    }
+  </nav>
+
+  <section class="support-card" [attr.aria-label]="'sidebar.support_heading' | translate">
+    <div class="support-copy">
+      <h2>{{ 'sidebar.support_heading' | translate }}</h2>
+      <p>{{ 'sidebar.support_description' | translate }}</p>
+    </div>
+    <span class="support-action" aria-hidden="true">
+      <app-icon name="arrow-right" />
+    </span>
+  </section>
+</aside>
+
+<button
+  type="button"
+  class="sidebar-backdrop"
+  [class.is-visible]="sidebar_state.is_open()"
+  [attr.aria-label]="'topbar.close_sidebar' | translate"
+  [attr.aria-hidden]="!sidebar_state.is_open()"
+  [disabled]="!sidebar_state.is_open()"
+  (click)="close()"
+></button>

@@ -4,7 +4,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Role } from 'generated/prisma/client';
+import { Organization, Role } from 'generated/prisma/client';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -14,6 +14,7 @@ interface UserRecord {
   fullName: string;
   phoneNumber: string | null;
   roles: Role;
+  organization: Organization;
 }
 
 interface UserResponse {
@@ -40,6 +41,7 @@ export class ToPublicUserInterceptor implements NestInterceptor<
             fullName: user.fullName,
             phone: user.phoneNumber,
             roles: user?.roles?.name,
+            organization_name: user?.organization?.name,
           },
         };
       }),

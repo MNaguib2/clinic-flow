@@ -1,6 +1,7 @@
 export interface AuthUser {
   id: string;
   organizationId: string;
+  organization_name: string
   fullName: string;
   phone: string | null;
   roles: string

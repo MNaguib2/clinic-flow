@@ -326,17 +326,6 @@ export class OrganizationService {
           specialtiesByName.set(name, specialty.id);
         }
 
-        const userSpecialtyIds = [...specialtiesByName.values()];
-        if (userSpecialtyIds.length) {
-          await tx.doctorSpecialty.createMany({
-            data: userSpecialtyIds.map((specialtyId) => ({
-              userId: user.id,
-              specialtyId,
-            })),
-            skipDuplicates: true,
-          });
-        }
-
         const clinics: { id: string; name: string }[] = [];
         for (const [clinic_index, clinic_dto] of dto.clinics.entries()) {
           const image_url = clinic_dto.clinicImage

@@ -105,11 +105,29 @@
     "languageLabel": "تغيير اللغة",
     "profileSettings": "إعدادات الملف الشخصي"
   },
+  "sidebar": {
+    "navigation": "التنقل في لوحة التحكم",
+    "dashboard": "لوحة التحكم",
+    "appointments": "المواعيد",
+    "patients": "المرضى",
+    "clinics": "العيادات",
+    "doctors": "الأطباء",
+    "specialties": "التخصصات",
+    "medical_records": "الملفات الطبية",
+    "attachments": "المرفقات",
+    "invoices": "الفواتير",
+    "reports": "التقارير",
+    "settings": "الإعدادات",
+    "support_heading": "هل تحتاج مساعدة؟",
+    "support_description": "تواصل مع فريق الدعم"
+  },
   "auth": {
     "logout": "تسجيل الخروج"
   },
   "topbar": {
     "toggle_profile_menu": "فتح/إغلاق قائمة الملف الشخصي",
+    "toggle_sidebar": "فتح/إغلاق قائمة التنقل",
+    "close_sidebar": "إغلاق قائمة التنقل",
     "user_profile": "الملف الشخصي",
     "notifications": "الإشعارات",
     "search_placeholder": "بحث",

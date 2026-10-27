@@ -105,11 +105,29 @@
     "languageLabel": "Change language",
     "profileSettings": "Profile settings"
   },
+  "sidebar": {
+    "navigation": "Dashboard navigation",
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "patients": "Patients",
+    "clinics": "Clinics",
+    "doctors": "Doctors",
+    "specialties": "Specialties",
+    "medical_records": "Medical Records",
+    "attachments": "Attachments",
+    "invoices": "Invoices",
+    "reports": "Reports",
+    "settings": "Settings",
+    "support_heading": "Need help?",
+    "support_description": "Contact our support team"
+  },
   "auth": {
     "logout": "Log out"
   },
   "topbar": {
     "toggle_profile_menu": "Toggle profile menu",
+    "toggle_sidebar": "Toggle navigation",
+    "close_sidebar": "Close navigation",
     "user_profile": "User profile",
     "notifications": "Notifications",
     "search_placeholder": "Search",

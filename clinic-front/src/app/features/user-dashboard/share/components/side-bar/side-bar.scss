@@ -1,56 +1,289 @@
 :host {
   display: block;
+  flex: 0 0 auto;
+  --sidebar-bg: #f5f9ff;
+  --sidebar-border: #dce7f7;
+  --sidebar-brand: #102e67;
+  --sidebar-text: #17366f;
+  --sidebar-icon: #254d91;
+  --sidebar-secondary: #8192ad;
+  --sidebar-primary: #216cf3;
+  --sidebar-active-bg: #e7f0ff;
+  --sidebar-hover-bg: #f2f7ff;
+  --sidebar-focus: rgb(33 108 243 / 35%);
+  --support-bg: #f3f8ff;
+  --support-border: #dfeafc;
+  --support-action: #2878f5;
+}
+
+:host-context([data-bs-theme='dark']) {
+  --sidebar-bg: #111827;
+  --sidebar-border: #273449;
+  --sidebar-brand: #e8f0ff;
+  --sidebar-text: #c3d3ee;
+  --sidebar-icon: #a8c0e8;
+  --sidebar-secondary: #9eb2d0;
+  --sidebar-primary: #78a9ff;
+  --sidebar-active-bg: #1d3763;
+  --sidebar-hover-bg: #1b2940;
+  --sidebar-focus: rgb(127 176 255 / 45%);
+  --support-bg: #17263c;
+  --support-border: #2a3e5d;
+  --support-action: #2878f5;
 }
 
 .dashboard-sidebar {
-  flex: 0 0 auto;
-  z-index: 10;
+  position: fixed;
+  z-index: 111;
+  inset-block: 0;
+  inset-inline-start: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(280px, calc(100vw - 48px));
+  height: 100vh;
+  height: 100dvh;
+  padding: 12px;
+  overflow-y: auto;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-brand);
+  border-inline-end: 1px solid var(--sidebar-border);
+  transform: translateX(var(--sidebar-closed-offset, -105%));
+  visibility: hidden;
+  transition: transform 180ms ease, visibility 180ms ease;
 }
 
-.brand-mark {
-  display: grid;
-  width: 1.75rem;
-  height: 1.75rem;
-  flex: 0 0 1.75rem;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 3px;
-  transform: rotate(-8deg);
+:host-context([dir='rtl']) {
+  --sidebar-closed-offset: 105%;
 }
 
-.brand-mark span {
+.dashboard-sidebar.is-open {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+.dashboard-brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  gap: 7px;
+  width: 100%;
   min-width: 0;
-  min-height: 0;
-  border-radius: 3px;
-  background: var(--bs-primary);
+  height: 52px;
+  min-height: 52px;
+  flex: 0 0 52px;
+  color: var(--sidebar-brand);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
 }
 
-.brand-mark span:nth-child(2),
-.brand-mark span:nth-child(3) {
-  background: var(--bs-warning);
-}
-
-.brand-accent {
-  color: var(--bs-info);
+.dashboard-brand::after {
+  position: absolute;
+  inset-inline: -12px;
+  inset-block-end: 0;
+  border-block-end: 1px solid var(--sidebar-border);
+  content: '';
+  pointer-events: none;
 }
 
 .dashboard-brand-name {
-  color: var(--bs-body-color);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.nav-pills {
-  --bs-nav-pills-link-active-bg: var(--bs-primary);
-  --bs-nav-link-hover-color: var(--bs-white);
+.brand-heart {
+  display: block;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  background: url('/images/heart/alnoor-icon-dark.png') center / contain no-repeat;
 }
 
-.nav-link:hover:not(.active) {
-  background: rgb(255 255 255 / 8%);
+:host-context([data-bs-theme='dark']) .brand-heart {
+  background-image: url('/images/heart/alnoor-icon-light.png');
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  gap: 5px;
+  margin-block-start: 22px;
+}
+
+.sidebar-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 46px;
+  flex: 0 0 46px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sidebar-text);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 170ms ease, background-color 170ms ease;
+}
+
+.sidebar-link:hover:not(.active) {
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-primary);
+}
+
+.sidebar-link.active {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-primary);
+  font-weight: 600;
+}
+
+.sidebar-link.active::before {
+  position: absolute;
+  inset-block: 10px;
+  inset-inline-start: 0;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--sidebar-primary);
+  content: '';
+}
+
+.sidebar-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--sidebar-icon);
+  transition: color 170ms ease;
+}
+
+.sidebar-link:hover .sidebar-icon,
+.sidebar-link.active .sidebar-icon {
+  color: var(--sidebar-primary);
+}
+
+.sidebar-link:focus-visible,
+.dashboard-brand:focus-visible {
+  outline: 2px solid var(--sidebar-focus);
+  outline-offset: 2px;
+}
+
+.support-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 80px;
+  flex: 0 0 auto;
+  margin-block-start: auto;
+  padding: 12px;
+  border: 1px solid var(--support-border);
+  border-radius: 10px;
+  background: var(--support-bg);
+}
+
+.support-copy {
+  min-width: 0;
+}
+
+.support-copy h2,
+.support-copy p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.support-copy h2 {
+  color: var(--sidebar-brand);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.support-copy p {
+  color: var(--sidebar-secondary);
+  font-size: 11px;
+}
+
+.support-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 50%;
+  background: var(--support-action);
+  color: #fff;
+}
+
+.support-action app-icon {
+  width: 16px;
+  height: 16px;
+}
+
+:host-context([dir='rtl']) .support-action app-icon {
+  transform: scaleX(-1);
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  border: 0;
+  background: rgb(16 46 103 / 28%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 220ms ease, visibility 220ms ease;
+}
+
+.sidebar-backdrop.is-visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 @media (min-width: 992px) {
+  :host {
+    width: 216px;
+    flex: 0 0 216px;
+  }
+
   .dashboard-sidebar {
     position: sticky;
-    top: 0;
-    width: 17rem;
+    inset-block-start: 0;
+    width: 216px;
+    flex: 0 0 216px;
     height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    transform: none;
+    visibility: visible;
+    transition: none;
+  }
+
+  .sidebar-backdrop {
+    display: none;
+  }
+}
+
+@media (max-width: 991.98px) {
+  :host {
+    width: 0;
+    height: 0;
+    flex: 0 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-sidebar,
+  .sidebar-link,
+  .sidebar-backdrop {
+    transition-duration: 0.01ms;
   }
 }

@@ -17,7 +17,12 @@
 
   background: var(--bs-body-bg, #fff);
   color: var(--bs-body-color, #243b60);
-  border: 1px solid var(--bs-border-color, #e2eaf7);
+  border: 0;
+  border-bottom: 1px solid #e7eef9;
+}
+
+:host-context([data-bs-theme='dark']) .dashboard-header {
+  border-bottom-color: var(--bs-border-color, #293951);
 }
 
 /* Profile */
@@ -223,6 +228,26 @@
   flex-shrink: 0;
 }
 
+.sidebar-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  padding: 0;
+  border: 1px solid var(--bs-border-color, #dce7f8);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--bs-body-color, #243b60);
+  cursor: pointer;
+}
+
+.sidebar-toggle app-icon {
+  width: 20px;
+  height: 20px;
+}
+
 .notification-btn {
   display: inline-flex;
   align-items: center;
@@ -272,12 +297,19 @@
 /* Keyboard focus */
 .profile-info:focus-visible,
 .profile-dropdown-btn:focus-visible,
-.notification-btn:focus-visible {
+.notification-btn:focus-visible,
+.sidebar-toggle:focus-visible {
   outline: 2px solid var(--bs-primary, #1769f5);
   outline-offset: 2px;
 }
 
 /* Mobile */
+
+@media (max-width: 991.98px) {
+  .sidebar-toggle {
+    display: inline-flex;
+  }
+}
 
 @media (max-width: 767.98px) {
   .dashboard-header {

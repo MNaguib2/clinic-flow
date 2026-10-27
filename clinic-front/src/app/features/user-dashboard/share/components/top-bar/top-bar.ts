@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Icon } from '@share/icon/icon';
 import { ShareModule } from '@share/share.module';
 import { FieldInput } from '@share/fields/field-input';
+import { SidebarState } from '../../services/sidebar-state.service';
 
 @Component({
   selector: 'app-top-bar',
@@ -18,6 +19,7 @@ export class TopBar {
   private readonly router = inject(Router);
 
   protected readonly auth_store = inject(AuthStore);
+  protected readonly sidebar_state = inject(SidebarState);
 
   protected profile_menu_open = false;
 
