@@ -1,4 +1,4 @@
-import { ToastService } from '@share/toast/toast.service';
+import { ToastService } from '@components/toast/toast.service';
 
 export interface ErrorServiceOptions {
   error: unknown;

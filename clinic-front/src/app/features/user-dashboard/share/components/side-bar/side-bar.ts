@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Component, HostListener, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
-import { Icon } from '@share/icon/icon';
+import { Icon } from '@components/icon/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SidebarState } from '../../services/sidebar-state.service';
 

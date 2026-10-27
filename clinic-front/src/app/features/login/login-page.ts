@@ -5,8 +5,8 @@ import { AuthStore } from '@core/auth/auth.store';
 import { ErrorService } from '@core/services/error/error.service';
 import { LanguageService } from '@core/services/language/language.service';
 import { TranslatePipe } from '@ngx-translate/core';
-import { PhoneInputDirective } from '@share/phone-input/phone-input.directive';
-import { ShareModule } from '@share/share.module';
+import { PhoneInputDirective } from '@components/phone-input/phone-input.directive';
+import { ShareModule } from '@components/share.module';
 
 @Component({
   imports: [ShareModule, PhoneInputDirective, ReactiveFormsModule, RouterLink, TranslatePipe],

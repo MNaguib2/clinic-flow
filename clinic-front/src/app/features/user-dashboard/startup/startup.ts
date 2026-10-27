@@ -32,12 +32,12 @@ import type {
   StartupModel,
 } from './service/interfaces';
 import { ThemeService } from '@core/services/theme/theme.service';
-import { FieldFile } from '@share/fields/field-file';
-import { FieldImage } from '@share/fields/field-image';
-import { FieldInput } from '@share/fields/field-input';
-import { FieldPhone } from '@share/fields/field-phone';
-import { FieldTextarea } from '@share/fields/field-textarea';
-import { Icon } from '@share/icon/icon';
+import { FieldFile } from '@components/fields/field-file';
+import { FieldImage } from '@components/fields/field-image';
+import { FieldInput } from '@components/fields/field-input';
+import { FieldPhone } from '@components/fields/field-phone';
+import { FieldTextarea } from '@components/fields/field-textarea';
+import { Icon } from '@components/icon/icon';
 import { Welcome } from './welcome/welcome';
 
 type LocalizedPage = StartupPage & { name: string; description: string };

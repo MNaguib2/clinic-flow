@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { ErrorService } from '@core/services/error/error.service';
-import { ToastService } from '@share/toast/toast.service';
+import { ToastService } from '@components/toast/toast.service';
 
 export const httpErrorInterceptor: HttpInterceptorFn = (request, next) => {
   const toast_service = inject(ToastService);

@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { throwError } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 import { ErrorService } from '@core/services/error/error.service';
-import { ToastService } from '@share/toast/toast.service';
+import { ToastService } from '@components/toast/toast.service';
 import { httpErrorInterceptor } from './http-error.interceptor';
 
 describe('httpErrorInterceptor', () => {

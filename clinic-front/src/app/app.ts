@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { AuthStore } from './core/auth/auth.store';
 import { LanguageService } from './core/services/language/language.service';
 import { ThemeService } from './core/services/theme/theme.service';
-import { Toast } from './share/toast/toast';
+import { Toast } from '@components/toast/toast';
 
 @Component({
   imports: [RouterOutlet, Toast],

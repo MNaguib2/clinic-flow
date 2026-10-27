@@ -15,7 +15,7 @@
     "module": "preserve",
     "paths": {
       "@core/*": ["./src/app/core/*"],
-      "@share/*": ["./src/app/share/*"]
+      "@components/*": ["./src/app/ui-component/*"]
     }
   },
   "angularCompilerOptions": {

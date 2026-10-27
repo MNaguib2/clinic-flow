@@ -3,9 +3,9 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Icon } from '@share/icon/icon';
-import { ShareModule } from '@share/share.module';
-import { FieldInput } from '@share/fields/field-input';
+import { Icon } from '@components/icon/icon';
+import { ShareModule } from '@components/share.module';
+import { FieldInput } from '@components/fields/field-input';
 import { SidebarState } from '../../services/sidebar-state.service';
 
 @Component({

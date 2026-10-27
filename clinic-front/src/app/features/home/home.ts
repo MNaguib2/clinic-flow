@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '@core/services/language/language.service';
-import { ShareModule } from '@share/share.module';
+import { ShareModule } from '@components/share.module';
 import { AuthStore } from '@core/auth/auth.store';
 
 @Component({
