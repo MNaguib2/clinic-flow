@@ -249,12 +249,21 @@
 }
 
 @media (min-width: 992px) {
-  :host {
+  :host:not(:has(> .is-closed)) {
     width: 216px;
     flex: 0 0 216px;
   }
 
-  .dashboard-sidebar {
+  :host {
+    transition: width 180ms ease, flex-basis 180ms ease;
+  }
+
+  :host:has(> .is-closed) {
+    width: 0;
+    flex: 0 0 0;
+  }
+
+  .dashboard-sidebar:not(.is-closed) {
     position: sticky;
     inset-block-start: 0;
     width: 216px;
@@ -283,7 +292,8 @@
 @media (prefers-reduced-motion: reduce) {
   .dashboard-sidebar,
   .sidebar-link,
-  .sidebar-backdrop {
+  .sidebar-backdrop,
+  :host {
     transition-duration: 0.01ms;
   }
 }

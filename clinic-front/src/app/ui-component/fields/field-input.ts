@@ -23,34 +23,41 @@ export type InputFieldType = 'text' | 'email' | 'password' | 'number' | 'url' | 
       [error]="error()"
       [required]="required()"
     >
-      <div class="position-relative">
-        @if (icon()) {
-          <app-icon [name]="icon()" class="field-icon text-body-secondary" />
-        }
-        <input
-          class="form-control"
-          [class]="inputClass()"
-          [class.has-icon]="!!icon()"
-          [class.is-invalid]="!!error()"
-          [id]="uid"
-          [type]="type()"
-          [value]="current() ?? ''"
-          [attr.placeholder]="placeholder() ? (placeholder() | translate) : null"
-          [attr.autocomplete]="autocomplete() || null"
-          [attr.list]="list() || null"
-          [attr.min]="min() ?? null"
-          [attr.max]="max() ?? null"
-          [attr.step]="step() ?? null"
-          [attr.maxlength]="maxLength() ?? null"
-          [attr.aria-describedby]="described_by()"
-          [attr.aria-invalid]="error() ? 'true' : null"
-          [required]="required()"
-          [readOnly]="readOnly()"
-          [disabled]="disabled()"
-          (input)="on_input($event)"
-          (blur)="touch()"
-        />
-      </div>
+
+<div class="field-input__control">
+  @if (icon()) {
+    <app-icon
+      [name]="icon()"
+      class="field-input__icon"
+      aria-hidden="true"
+    />
+  }
+
+  <input
+    class="field-input__native"
+    [class.field-input__native--icon]="!!icon()"
+    [class.field-input__native--invalid]="!!error()"
+    [class]="inputClass()"
+    [id]="uid"
+    [type]="type()"
+    [value]="current() ?? ''"
+    [attr.placeholder]="placeholder() ? (placeholder() | translate) : null"
+    [attr.autocomplete]="autocomplete() || null"
+    [attr.list]="list() || null"
+    [attr.min]="min() ?? null"
+    [attr.max]="max() ?? null"
+    [attr.step]="step() ?? null"
+    [attr.maxlength]="maxLength() ?? null"
+    [attr.aria-describedby]="described_by()"
+    [attr.aria-invalid]="error() ? 'true' : null"
+    [required]="required()"
+    [readOnly]="readOnly()"
+    [disabled]="disabled()"
+    (input)="on_input($event)"
+    (blur)="touch()"
+  />
+</div>
+
     </app-field-shell>
   `,
 })

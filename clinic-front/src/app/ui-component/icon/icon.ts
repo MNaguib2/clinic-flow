@@ -7,8 +7,8 @@ import { Component, computed, input } from '@angular/core';
   styles: `
     :host {
       display: inline-block;
-      width: 1em;
-      height: 1em;
+      width: 1.25em;
+      height: 1.25em;
       flex-shrink: 0;
       background-color: currentColor;
       mask: var(--icon-url) center / contain no-repeat;

@@ -1,48 +1,139 @@
-<div class="table-shell" [attr.aria-busy]="loading()">
-  <div class="table-scroll">
-    <table class="table clinic-table mb-0" [attr.aria-label]="ariaLabel() || ('table.label' | translate)">
+
+<div
+  class="table-shell"
+  [attr.aria-busy]="loading() || loadingMore()"
+>
+  <div
+    class="table-scroll"
+    (scroll)="onTableScroll($event); closeContextMenuOnScroll()"
+  >
+    <table
+      class="table clinic-table mb-0"
+      [class.clinic-table--virtual]="virtualScroll()"
+      [style.--virtual-item-size]="safeItemSize() + 'px'"
+      [attr.aria-label]="ariaLabel() || ('table.label' | translate)"
+    >
       <thead>
         <tr>
           @for (column of columns(); track $index) {
-            <th scope="col">{{ column.header }}</th>
+            <th
+              scope="col"
+              [attr.aria-sort]="
+                column.sortable && sortKey() === column.key
+                  ? (sortDirection() === 'asc' ? 'ascending' : 'descending')
+                  : null
+              "
+              [style.width]="column.width || null"
+              [style.min-width]="column.minWidth || null"
+              [class.text-center]="column.align === 'center'"
+              [class.text-end]="column.align === 'end'"
+            >
+              @if (column.headerTemplate) {
+                <ng-container
+                  [ngTemplateOutlet]="column.headerTemplate"
+                />
+              } @else if (column.sortable) {
+                <button
+                  type="button"
+                  class="table-sort-button"
+                  (click)="requestSort(column)"
+                  [attr.aria-label]="
+                    ('table.sortBy' | translate) + ' ' + column.header
+                  "
+                >
+                  <span>{{ column.header }}</span>
+
+                  <app-icon
+                    name="chevron-down"
+                    [class.table-sort-icon--asc]="
+                      sortKey() !== column.key ||
+                      sortDirection() === 'asc'
+                    "
+                  />
+                </button>
+              } @else {
+                {{ column.header }}
+              }
+            </th>
           }
+
           @if (actionsTemplate()) {
-            <th scope="col" class="table-actions-heading">{{ 'table.actions' | translate }}</th>
+            <th scope="col" class="table-actions-heading">
+              {{ 'table.actions' | translate }}
+            </th>
           }
         </tr>
       </thead>
+
       <tbody>
-        @if (loading()) {
-          @for (skeleton of [0, 1, 2]; track skeleton) {
+        @if (loading() && rows().length === 0) {
+          @for (skeleton of [0, 1, 2, 3, 4]; track skeleton) {
             <tr aria-hidden="true">
               @for (column of columns(); track $index) {
-                <td><span class="table-skeleton"></span></td>
+                <td>
+                  <span class="table-skeleton"></span>
+                </td>
               }
+
               @if (actionsTemplate()) {
-                <td><span class="table-skeleton table-skeleton--short"></span></td>
+                <td>
+                  <span class="table-skeleton table-skeleton--short"></span>
+                </td>
               }
             </tr>
           }
+
           <tr class="visually-hidden">
-            <td [attr.colspan]="visibleColumnCount()">{{ 'table.loading' | translate }}</td>
+            <td [attr.colspan]="visibleColumnCount()">
+              {{ 'table.loading' | translate }}
+            </td>
           </tr>
-        } @else if (error()) {
+        } @else if (error() && rows().length === 0) {
           <tr>
-            <td class="table-state table-state--error" [attr.colspan]="visibleColumnCount()" role="alert">
+            <td
+              class="table-state table-state--error"
+              [attr.colspan]="visibleColumnCount()"
+              role="alert"
+            >
               {{ error() }}
             </td>
           </tr>
         } @else if (rows().length === 0) {
           <tr>
-            <td class="table-state" [attr.colspan]="visibleColumnCount()" role="status">
+            <td
+              class="table-state"
+              [attr.colspan]="visibleColumnCount()"
+              role="status"
+            >
               {{ emptyMessage() || ('table.empty' | translate) }}
             </td>
           </tr>
         } @else {
-          @for (row of rows(); track $index) {
-            <tr>
+          @if (virtualScroll() && topSpacerHeight() > 0) {
+            <tr class="virtual-spacer" aria-hidden="true">
+              <td
+                [attr.colspan]="visibleColumnCount()"
+                [style.height.px]="topSpacerHeight()"
+              ></td>
+            </tr>
+          }
+
+          @for (
+            row of visibleRows();
+            track startIndex() + $index
+          ) {
+            <tr
+              (contextmenu)="onRowContextMenu($event, row)"
+              (touchstart)="onTouchStart($event, row)"
+              (touchmove)="onTouchMove($event)"
+              (touchend)="onTouchEnd()"
+              (touchcancel)="onTouchEnd()"
+            >
               @for (column of columns(); track $index) {
-                <td>
+                <td
+                  [class.text-center]="column.align === 'center'"
+                  [class.text-end]="column.align === 'end'"
+                >
                   @if (column.cellTemplate) {
                     <ng-container
                       [ngTemplateOutlet]="column.cellTemplate"
@@ -53,6 +144,7 @@
                   }
                 </td>
               }
+
               @if (actionsTemplate(); as actions_template) {
                 <td class="table-actions-cell">
                   <ng-container
@@ -63,13 +155,64 @@
               }
             </tr>
           }
+
+          @if (virtualScroll() && bottomSpacerHeight() > 0) {
+            <tr class="virtual-spacer" aria-hidden="true">
+              <td
+                [attr.colspan]="visibleColumnCount()"
+                [style.height.px]="bottomSpacerHeight()"
+              ></td>
+            </tr>
+          }
+
+          @if (infiniteScroll() && hasMore()) {
+            <tr class="table-load-more-row">
+              <td [attr.colspan]="visibleColumnCount()">
+                <div
+                  #loadMoreSentinel
+                  class="table-load-more-sentinel"
+                  aria-hidden="true"
+                ></div>
+
+                @if (loadingMore()) {
+                  <span class="table-load-more-indicator">
+                    <span class="table-spinner"></span>
+                    {{ 'table.loadingMore' | translate }}
+                  </span>
+                }
+              </td>
+            </tr>
+          } @else if (
+            infiniteScroll() &&
+            rows().length > 0 &&
+            !hasMore()
+          ) {
+            <tr class="table-end-row">
+              <td [attr.colspan]="visibleColumnCount()">
+                {{ 'table.endOfResults' | translate }}
+              </td>
+            </tr>
+          }
         }
       </tbody>
     </table>
   </div>
 
+  @if (error() && rows().length > 0) {
+    <div class="table-inline-error" role="alert">
+      <span>{{ error() }}</span>
+
+      <button type="button" (click)="retryLoad()">
+        {{ 'table.retry' | translate }}
+      </button>
+    </div>
+  }
+
   @if (showPagination()) {
-    <nav class="table-pagination" [attr.aria-label]="'table.pagination.label' | translate">
+    <nav
+      class="table-pagination"
+      [attr.aria-label]="'table.pagination.label' | translate"
+    >
       <button
         type="button"
         class="pagination__control pagination__previous"
@@ -80,16 +223,25 @@
         <app-icon name="arrow-left" />
       </button>
 
-      <div class="pagination__pages" role="group" [attr.aria-label]="'table.pagination.pages' | translate" tabindex="0">
+      <div
+        class="pagination__pages"
+        role="group"
+        [attr.aria-label]="'table.pagination.pages' | translate"
+        tabindex="0"
+      >
         @for (page of pages(); track page) {
           <button
             type="button"
             class="pagination__page"
             [class.pagination__page--active]="page === activePage()"
             [attr.aria-current]="page === activePage() ? 'page' : null"
-            [attr.aria-label]="'table.pagination.pageLabel' | translate: { page: page }"
+            [attr.aria-label]="
+              'table.pagination.pageLabel' | translate: { page: page }
+            "
             (click)="requestPage(page)"
-          >{{ page }}</button>
+          >
+            {{ page }}
+          </button>
         }
       </div>
 
@@ -105,7 +257,14 @@
 
       @if (showPageSummary()) {
         <span class="pagination__summary">
-          {{ 'table.pagination.summary' | translate: { from: summaryStart(), to: summaryEnd(), total: totalItems() } }}
+          {{
+            'table.pagination.summary'
+              | translate: {
+                  from: summaryStart(),
+                  to: summaryEnd(),
+                  total: totalItems()
+                }
+          }}
         </span>
       }
     </nav>

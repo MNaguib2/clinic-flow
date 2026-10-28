@@ -1,0 +1,130 @@
+
+:host {
+  display: contents;
+}
+
+.tooltip {
+  --tooltip-bg: #0d2038;
+  --tooltip-color: #ffffff;
+  --tooltip-border: rgb(255 255 255 / 8%);
+  --tooltip-shadow: 0 4px 12px rgb(11 26 45 / 18%);
+
+  position: absolute;
+  z-index: 1100;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  max-inline-size: min(240px, calc(100vw - 24px));
+  padding: 7px 12px;
+
+  border: 1px solid var(--tooltip-border);
+  border-radius: 8px;
+
+  background: var(--tooltip-bg);
+  color: var(--tooltip-color);
+  box-shadow: var(--tooltip-shadow);
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+
+  pointer-events: none;
+
+  opacity: 1;
+  visibility: visible;
+
+  transition:
+    opacity 150ms ease,
+    visibility 150ms ease;
+
+  &__content {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__arrow {
+    position: absolute;
+
+    inline-size: 8px;
+    block-size: 8px;
+
+    background: var(--tooltip-bg);
+    border: 1px solid var(--tooltip-border);
+
+    transform: rotate(45deg);
+  }
+
+  &--top {
+    inset-block-end: calc(100% + 8px);
+    inset-inline-start: 50%;
+    transform: translateX(50%);
+
+    .tooltip__arrow {
+      inset-block-end: -5px;
+      inset-inline-start: calc(50% - 4px);
+      border-block-start: 0;
+      border-inline-start: 0;
+    }
+  }
+
+  &--bottom {
+    inset-block-start: calc(100% + 8px);
+    inset-inline-start: 50%;
+    transform: translateX(50%);
+
+    .tooltip__arrow {
+      inset-block-start: -5px;
+      inset-inline-start: calc(50% - 4px);
+      border-block-end: 0;
+      border-inline-end: 0;
+    }
+  }
+
+  &--start {
+    inset-inline-end: calc(100% + 8px);
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+
+    .tooltip__arrow {
+      inset-inline-end: -5px;
+      inset-block-start: calc(50% - 4px);
+      border-inline-start: 0;
+      border-block-end: 0;
+    }
+  }
+
+  &--end {
+    inset-inline-start: calc(100% + 8px);
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+
+    .tooltip__arrow {
+      inset-inline-start: -5px;
+      inset-block-start: calc(50% - 4px);
+      border-inline-end: 0;
+      border-block-start: 0;
+    }
+  }
+
+  &--disabled {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip {
+    transition: none;
+  }
+}
+
+:host-context([data-bs-theme='dark']) .tooltip {
+  --tooltip-bg: #172d49;
+  --tooltip-border: rgb(255 255 255 / 12%);
+  --tooltip-shadow: 0 4px 16px rgb(0 0 0 / 30%);
+}

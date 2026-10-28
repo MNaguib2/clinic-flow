@@ -1,16 +1,146 @@
-.field-icon {
+
+:host {
+  --field-input-bg: var(--cf-input-bg, var(--cf-surface, #fff));
+  --field-input-color: var(--cf-text, #102f5e);
+  --field-input-placeholder: var(--cf-text-muted, #6482ac);
+  --field-input-border: var(--cf-border, #dce5f0);
+  --field-input-border-hover: var(--cf-border-hover, #a8bfdc);
+  --field-input-primary: var(--cf-primary, #1769f5);
+  --field-input-danger: var(--cf-danger, #dc3545);
+  --field-input-disabled-bg: var(--cf-disabled-bg, #f3f6fb);
+  --field-input-radius: var(--cf-input-radius, 10px);
+  --field-input-height: var(--cf-input-height, 44px);
+
+  display: block;
+  width: 100%;
+}
+
+.field-input__control {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.field-input__native {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--field-input-height);
+  padding: 10px 14px;
+
+  appearance: none;
+  border: 1px solid var(--field-input-border);
+  border-radius: var(--field-input-radius);
+  outline: none;
+
+  background-color: var(--field-input-bg);
+  color: var(--field-input-color);
+
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+
+  &::placeholder {
+    color: var(--field-input-placeholder);
+    opacity: 1;
+  }
+
+  &:hover:not(:disabled, :read-only) {
+    border-color: var(--field-input-border-hover);
+  }
+
+  &:focus-visible {
+    border-color: var(--field-input-primary);
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--field-input-primary) 16%, transparent);
+  }
+
+  &--icon {
+    padding-inline-start: 42px;
+  }
+
+  &--invalid {
+    border-color: var(--field-input-danger);
+
+    &:focus-visible {
+      border-color: var(--field-input-danger);
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--field-input-danger) 15%, transparent);
+    }
+  }
+
+  &:disabled {
+    background-color: var(--field-input-disabled-bg);
+    color: var(--field-input-placeholder);
+    cursor: not-allowed;
+    opacity: 0.75;
+  }
+
+  &:read-only {
+    background-color: var(--field-input-disabled-bg);
+    cursor: default;
+  }
+
+  // Keep native date and number controls usable.
+  &[type='date'],
+  &[type='number'] {
+    text-align: start;
+  }
+
+  &[type='number'] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      margin: 0;
+      -webkit-appearance: none;
+    }
+  }
+
+  &[type='search'] {
+    appearance: none;
+  }
+
+  &:-webkit-autofill {
+    -webkit-text-fill-color: var(--field-input-color);
+    box-shadow: 0 0 0 1000px var(--field-input-bg) inset;
+    caret-color: var(--field-input-color);
+  }
+}
+
+.field-input__icon {
   position: absolute;
+  z-index: 1;
   inset-block-start: 50%;
-  inset-inline-start: 0.85rem;
+  inset-inline-start: 14px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 18px;
+  height: 18px;
+
+  color: var(--field-input-placeholder);
   transform: translateY(-50%);
   pointer-events: none;
 }
 
-.field-icon-top {
-  inset-block-start: 1.1rem;
+@media (max-width: 575.98px) {
+  .field-input__native {
+    min-height: 44px;
+    font-size: 16px;
+  }
 }
 
-.has-icon {
-  padding-inline-start: 2.5rem;
+@media (prefers-reduced-motion: reduce) {
+  .field-input__native {
+    transition: none;
+  }
 }
-

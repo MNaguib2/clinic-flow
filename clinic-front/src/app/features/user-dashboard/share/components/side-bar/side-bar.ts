@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, HostListener, inject } from '@angular/core';
+import { Component, HostListener, inject, linkedSignal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
 import { Icon } from '@components/icon/icon';
@@ -29,7 +29,6 @@ export class SideBar {
     { id: 'reports', label_key: 'sidebar.reports', icon: 'chart', route: null },
     { id: 'settings', label_key: 'sidebar.settings', icon: 'settings', route: null },
   ] as const;
-
   protected get organization_name(): string {
     return this.auth_store.user()?.organization_name?.trim() || 'ClinicFlow';
   }
@@ -45,7 +44,7 @@ export class SideBar {
 
   @HostListener('window:resize')
   protected close_on_desktop_resize(): void {
-    if ((this.document.defaultView?.innerWidth ?? 0) >= 768) {
+    if ((this.document.defaultView?.innerWidth ?? 0) < 992) {
       this.close();
     }
   }

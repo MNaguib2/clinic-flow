@@ -2,6 +2,7 @@
   id="clinicflow-sidebar"
   class="dashboard-sidebar"
   [class.is-open]="sidebar_state.is_open()"
+  [class.is-closed]="!sidebar_state.is_open()"
 >
   <a
     class="dashboard-brand"

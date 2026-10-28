@@ -1,14 +1,25 @@
+
 import { Component, input } from '@angular/core';
 
 type ButtonType = 'button' | 'submit' | 'reset';
-type ButtonVariant = 'primary' | 'text';
+
+type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'danger'
+  | 'warning'
+  | 'info'
+  | 'outline'
+  | 'ghost'
+  | 'text';
 
 @Component({
   selector: 'app-ui-button',
   template: `
     <button
       class="ui-button"
-      [class.ui-button-text]="variant() === 'text'"
+      [class]="'ui-button ui-button--' + variant()"
       [type]="type()"
       [disabled]="disabled()"
       [attr.aria-label]="ariaLabel()"

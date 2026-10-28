@@ -1,5 +1,7 @@
+
 :host {
   display: inline-block;
+  vertical-align: middle;
 }
 
 :host(.submit-button) {
@@ -8,57 +10,287 @@
 }
 
 .ui-button {
-  min-height: 48px;
-  padding: 0 18px;
+  --ui-btn-bg: transparent;
+  --ui-btn-color: var(--clinic-gray-700, #102f5e);
+  --ui-btn-border: transparent;
+  --ui-btn-hover-bg: transparent;
+  --ui-btn-hover-color: var(--ui-btn-color);
+  --ui-btn-hover-border: var(--ui-btn-border);
+  --ui-btn-active-bg: var(--ui-btn-hover-bg);
+  --ui-btn-active-color: var(--ui-btn-hover-color);
+  --ui-btn-active-border: var(--ui-btn-hover-border);
+  --ui-btn-focus: rgb(23 105 245 / 25%);
+  --ui-btn-disabled-bg: #c8dcfb;
+  --ui-btn-disabled-color: #ffffff;
+  --ui-btn-disabled-border: transparent;
+
+  min-height: 2.5rem;
+  padding: 0 .65rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 0;
-  border-radius: 4px;
-  color: var(--bs-primary-contrast);
-  background: var(--bs-primary);
+  gap: 8px;
+
+  border: 1px solid var(--ui-btn-border);
+  border-radius: 8px;
+
+  color: var(--ui-btn-color);
+  background: var(--ui-btn-bg);
+
   font: inherit;
-  font-size: var(--bs-font-size-sm);
+  font-size: var(--bs-font-size-sm, 0.875rem);
   font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
   cursor: pointer;
-  transition: background-color 160ms ease, color 160ms ease;
+  user-select: none;
+
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 120ms ease;
 }
 
-.ui-button:not(:disabled):hover {
-  background: var(--bs-primary-hover);
+.ui-button:where(:not(:disabled)):hover {
+  color: var(--ui-btn-hover-color);
+  background: var(--ui-btn-hover-bg);
+  border-color: var(--ui-btn-hover-border);
+}
+
+.ui-button:where(:not(:disabled)):active {
+  color: var(--ui-btn-active-color);
+  background: var(--ui-btn-active-bg);
+  border-color: var(--ui-btn-active-border);
+  transform: translateY(1px);
 }
 
 .ui-button:focus-visible {
-  outline: 2px solid var(--bs-primary);
-  outline-offset: 3px;
+  outline: 0;
+  box-shadow: 0 0 0 4px var(--ui-btn-focus);
 }
 
 .ui-button:disabled {
-  cursor: wait;
-  opacity: .7;
+  color: var(--ui-btn-disabled-color);
+  background: var(--ui-btn-disabled-bg);
+  border-color: var(--ui-btn-disabled-border);
+  cursor: not-allowed;
+  opacity: 1;
+  box-shadow: none;
+  transform: none;
 }
 
-.ui-button-text {
+/* Primary — ClinicFlow brand blue */
+.ui-button--primary {
+  --ui-btn-bg: #1769f5;
+  --ui-btn-color: #ffffff;
+  --ui-btn-border: #1769f5;
+
+  --ui-btn-hover-bg: #2f7af7;
+  --ui-btn-hover-color: #ffffff;
+  --ui-btn-hover-border: #2f7af7;
+
+  --ui-btn-active-bg: #0e58e6;
+  --ui-btn-active-color: #ffffff;
+  --ui-btn-active-border: #0e58e6;
+
+  --ui-btn-focus: rgb(23 105 245 / 25%);
+
+  --ui-btn-disabled-bg: #c8dcfb;
+  --ui-btn-disabled-color: #ffffff;
+  --ui-btn-disabled-border: #c8dcfb;
+
+  box-shadow: 0 2px 6px rgb(23 105 245 / 15%);
+}
+
+.ui-button--primary:where(:not(:disabled)):hover {
+  box-shadow: 0 5px 14px rgb(23 105 245 / 25%);
+}
+
+.ui-button--primary:active {
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 12%);
+}
+
+/* Secondary — neutral blue-gray */
+.ui-button--secondary {
+  --ui-btn-bg: #6482ac;
+  --ui-btn-color: #ffffff;
+  --ui-btn-border: #6482ac;
+
+  --ui-btn-hover-bg: #536f98;
+  --ui-btn-hover-color: #ffffff;
+  --ui-btn-hover-border: #536f98;
+
+  --ui-btn-active-bg: #435d83;
+  --ui-btn-active-color: #ffffff;
+  --ui-btn-active-border: #435d83;
+
+  --ui-btn-focus: rgb(100 130 172 / 25%);
+}
+
+/* Success — create, confirm, save successfully */
+.ui-button--success {
+  --ui-btn-bg: #18b96a;
+  --ui-btn-color: #ffffff;
+  --ui-btn-border: #18b96a;
+
+  --ui-btn-hover-bg: #139f59;
+  --ui-btn-hover-color: #ffffff;
+  --ui-btn-hover-border: #139f59;
+
+  --ui-btn-active-bg: #0e8549;
+  --ui-btn-active-color: #ffffff;
+  --ui-btn-active-border: #0e8549;
+
+  --ui-btn-focus: rgb(24 185 106 / 25%);
+}
+
+/* Danger — delete and destructive actions */
+.ui-button--danger {
+  --ui-btn-bg: #c62828;
+  --ui-btn-color: #ffffff;
+  --ui-btn-border: #c62828;
+
+  --ui-btn-hover-bg: #ad2228;
+  --ui-btn-hover-color: #ffffff;
+  --ui-btn-hover-border: #ad2228;
+
+  --ui-btn-active-bg: #921c23;
+  --ui-btn-active-color: #ffffff;
+  --ui-btn-active-border: #921c23;
+
+  --ui-btn-focus: rgb(198 40 40 / 25%);
+}
+
+/* Warning — orange, with dark readable text */
+.ui-button--warning {
+  --ui-btn-bg: #ff8a32;
+  --ui-btn-color: #102f5e;
+  --ui-btn-border: #ff8a32;
+
+  --ui-btn-hover-bg: #f2761c;
+  --ui-btn-hover-color: #102f5e;
+  --ui-btn-hover-border: #f2761c;
+
+  --ui-btn-active-bg: #dc6410;
+  --ui-btn-active-color: #102f5e;
+  --ui-btn-active-border: #dc6410;
+
+  --ui-btn-focus: rgb(255 138 50 / 30%);
+}
+
+/* Info — ClinicFlow indigo */
+.ui-button--info {
+  --ui-btn-bg: #4f46e5;
+  --ui-btn-color: #ffffff;
+  --ui-btn-border: #4f46e5;
+
+  --ui-btn-hover-bg: #4338ca;
+  --ui-btn-hover-color: #ffffff;
+  --ui-btn-hover-border: #4338ca;
+
+  --ui-btn-active-bg: #3730a3;
+  --ui-btn-active-color: #ffffff;
+  --ui-btn-active-border: #3730a3;
+
+  --ui-btn-focus: rgb(79 70 229 / 25%);
+}
+
+/* Outline — outlined primary action */
+.ui-button--outline {
+  --ui-btn-bg: transparent;
+  --ui-btn-color: #1769f5;
+  --ui-btn-border: #1769f5;
+
+  --ui-btn-hover-bg: #1769f5;
+  --ui-btn-hover-color: #ffffff;
+  --ui-btn-hover-border: #1769f5;
+
+  --ui-btn-active-bg: #0e58e6;
+  --ui-btn-active-color: #ffffff;
+  --ui-btn-active-border: #0e58e6;
+
+  --ui-btn-focus: rgb(23 105 245 / 25%);
+
+  --ui-btn-disabled-bg: transparent;
+  --ui-btn-disabled-color: #9bbcf0;
+  --ui-btn-disabled-border: #c8dcfb;
+}
+
+/* Ghost — subtle background on hover */
+.ui-button--ghost {
+  --ui-btn-bg: transparent;
+  --ui-btn-color: var(--bs-body-color, #102f5e);
+  --ui-btn-border: transparent;
+
+  --ui-btn-hover-bg: var(--bs-surface-muted, #eaf2fd);
+  --ui-btn-hover-color: #1769f5;
+  --ui-btn-hover-border: transparent;
+
+  --ui-btn-active-bg: #dce9fa;
+  --ui-btn-active-color: #0e58e6;
+  --ui-btn-active-border: transparent;
+
+  --ui-btn-focus: rgb(23 105 245 / 20%);
+
+  --ui-btn-disabled-bg: transparent;
+  --ui-btn-disabled-color: var(--bs-secondary-color, #6482ac);
+  --ui-btn-disabled-border: transparent;
+}
+
+/* Text — compact, low-emphasis action */
+.ui-button--text {
   min-height: 38px;
   padding: 8px 11px;
+  border-color: transparent;
   border-radius: 5px;
-  color: var(--bs-body-color);
-  background: transparent;
-  font-size: var(--bs-font-size-xs);
+
+  font-size: var(--bs-font-size-xs, 0.75rem);
   font-weight: 400;
+
+  --ui-btn-bg: transparent;
+  --ui-btn-color: var(--bs-body-color, #102f5e);
+  --ui-btn-border: transparent;
+
+  --ui-btn-hover-bg: var(--bs-surface-muted, #eaf2fd);
+  --ui-btn-hover-color: #1769f5;
+  --ui-btn-hover-border: transparent;
+
+  --ui-btn-active-bg: #dce9fa;
+  --ui-btn-active-color: #0e58e6;
+  --ui-btn-active-border: transparent;
+
+  --ui-btn-disabled-bg: transparent;
+  --ui-btn-disabled-color: var(--bs-secondary-color, #6482ac);
+  --ui-btn-disabled-border: transparent;
+
+  box-shadow: none;
 }
 
-.ui-button-text:not(:disabled):hover {
-  color: var(--bs-primary);
-  background: var(--bs-surface-muted);
+/* Keep projected text and app-icon/SVG content in sync with button color */
+.ui-button > *,
+.ui-button app-icon,
+.ui-button svg {
+  color: inherit;
 }
 
+.ui-button svg {
+  flex: 0 0 auto;
+  stroke: currentColor;
+}
+
+/* Full-width submit buttons */
 :host(.submit-button) .ui-button {
   width: 100%;
 }
 
+/* Existing utility host classes */
 :host(.language-button) .ui-button {
-  font-size: calc(var(--bs-font-size-sm) * 0.9286);
+  font-size: calc(var(--bs-font-size-sm, 0.875rem) * 0.9286);
 }
 
 :host(.language-button) .ui-button,
@@ -71,6 +303,27 @@
   :host(.theme-button) .ui-button {
     min-height: 34px;
     padding: 6px 7px;
-    font-size: calc(var(--bs-font-size-xs) * 0.8333);
+    font-size: calc(var(--bs-font-size-xs, 0.75rem) * 0.8333);
   }
+}
+
+/* Dark theme adjustments */
+[data-bs-theme='dark'] .ui-button--ghost,
+[data-bs-theme='dark'] .ui-button--text {
+  --ui-btn-color: #e6eeff;
+  --ui-btn-hover-bg: #16243b;
+  --ui-btn-hover-color: #a9c9ff;
+  --ui-btn-active-bg: #20334f;
+  --ui-btn-active-color: #c5dbff;
+}
+
+[data-bs-theme='dark'] .ui-button--outline {
+  --ui-btn-color: #7fb0ff;
+  --ui-btn-border: #7fb0ff;
+  --ui-btn-hover-bg: #7fb0ff;
+  --ui-btn-hover-color: #0b1220;
+  --ui-btn-active-bg: #a9c9ff;
+  --ui-btn-active-color: #0b1220;
+  --ui-btn-disabled-color: #536b8e;
+  --ui-btn-disabled-border: #293951;
 }

@@ -1,0 +1,113 @@
+
+<dialog
+  #dialogElement
+  class="dialog"
+  [class.dialog--sm]="size() === 'sm'"
+  [class.dialog--md]="size() === 'md'"
+  [class.dialog--lg]="size() === 'lg'"
+  [class.dialog--xl]="size() === 'xl'"
+  [class.dialog--full]="size() === 'full'"
+  [class.dialog--expanded]="expanded"
+  (click)="onDialogClick($event)"
+  (cancel)="onCancel($event)"
+  (close)="onNativeClose()"
+  [attr.aria-label]="title() || null"
+>
+  <header class="dialog__header">
+    @if (customHeader) {
+      <ng-container
+        [ngTemplateOutlet]="customHeader.template"
+      />
+    } @else {
+      <div class="dialog__heading">
+        <h2 class="dialog__title">
+          {{ title() }}
+        </h2>
+
+        @if (subtitle()) {
+          <p class="dialog__subtitle">
+            {{ subtitle() }}
+          </p>
+        }
+      </div>
+    }
+
+    <div class="dialog__header-actions">
+      @if (expandable()) {
+        <button
+          type="button"
+          class="dialog__icon-button"
+          [attr.aria-label]="
+            expanded ? 'Restore dialog size' : 'Expand dialog'
+          "
+          (click)="toggleExpanded()"
+        >
+          @if (expanded) {
+            <span aria-hidden="true">⊡</span>
+          } @else {
+            <span aria-hidden="true">⛶</span>
+          }
+        </button>
+      }
+
+      @if (showCloseButton()) {
+        <button
+          type="button"
+          class="dialog__icon-button dialog__close"
+          aria-label="Close dialog"
+          (click)="close()"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      }
+    </div>
+  </header>
+
+  <section class="dialog__body">
+    @if (customBody) {
+      <ng-container
+        [ngTemplateOutlet]="customBody.template"
+      />
+    } @else {
+      <ng-content />
+    }
+  </section>
+
+  @if (showFooter()) {
+    <footer class="dialog__footer">
+      @if (customFooter) {
+        <ng-container
+          [ngTemplateOutlet]="customFooter.template"
+        />
+      } @else {
+        @if (showSecondaryAction()) {
+          <button
+            type="button"
+            class="dialog__action dialog__action--secondary"
+            (click)="onSecondaryAction()"
+          >
+            {{ secondaryLabel() }}
+          </button>
+        }
+
+        @if (showPrimaryAction()) {
+          <button
+            type="button"
+            class="dialog__action dialog__action--primary"
+            [disabled]="primaryDisabled() || loading()"
+            (click)="onPrimaryAction()"
+          >
+            @if (loading()) {
+              <span
+                class="dialog__spinner"
+                aria-hidden="true"
+              ></span>
+            }
+
+            {{ primaryLabel() }}
+          </button>
+        }
+      }
+    </footer>
+  }
+</dialog>
