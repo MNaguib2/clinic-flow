@@ -1,0 +1,43 @@
+:root {
+  // Brand
+  --color-primary: #1769f5;
+  --color-primary-hover: #2f7af7;
+  --color-primary-active: #0e58e6;
+  --color-primary-disabled: #c8dcfb;
+
+  // Text
+  --color-text: #102f5e;
+  --color-text-muted: #6482ac;
+
+  // Surfaces
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f7faff;
+
+  // Borders
+  --color-border: #dce9fa;
+
+  // Typography
+  --font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
+
+  // Radius
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+
+  --font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
+  --font-size-md: 16px;
+}
+
+[data-theme='dark'] {
+  --color-primary: #7fb0ff;
+  --color-primary-hover: #a9c9ff;
+  --color-primary-active: #5c9cff;
+  --color-primary-disabled: #354b6b;
+
+  --color-text: #e6eeff;
+  --color-text-muted: #9aadc9;
+
+  --color-surface: #111c30;
+  --color-surface-secondary: #17253b;
+  --color-border: #293951;
+}

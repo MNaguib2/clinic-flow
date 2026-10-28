@@ -1,6 +1,8 @@
-@use './public/css/fonts';
-@use './public/css/ltr';
-@use './public/css/rtl';
+@use './css/fonts';
+@use './css/ltr';
+@use './css/rtl';
+@use './css/tokens';
+@use './css/responsive';
 
 * {
   box-sizing: border-box;
@@ -8,25 +10,34 @@
 
 html {
   scroll-behavior: smooth;
+  font-family: var(--font-family);
+  font-size: var(--font-size-md, 16px);
 }
 
 body {
   min-width: 320px;
   margin: 0;
-  color: var(--bs-body-color);
+
+  color: var(--color-text);
+
   background: linear-gradient(
     135deg,
-    #F5F9FF 0%,
-    #EEF5FF 55%,
-    #E7F0FF 100%
+    #f5f9ff 0%,
+    #eef5ff 55%,
+    #e7f0ff 100%
   );
-  font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
-  font-size: var(--bs-font-size-md);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-md, 1rem);
+
   -webkit-font-smoothing: antialiased;
-  transition: background-color 180ms ease, color 180ms ease;
+
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
 }
 
-:root[data-bs-theme='dark'] body {
+:root[data-theme='dark'] body {
   background: linear-gradient(
     135deg,
     #0b1220 0%,
@@ -38,4 +49,3 @@ body {
 a {
   -webkit-tap-highlight-color: transparent;
 }
-

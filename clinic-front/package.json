@@ -7,12 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:clinic-front": "node dist/clinic-front/server/server.mjs",
-    "build:bootstrap": "sass --load-path=node_modules --quiet-deps --silence-deprecation=import,global-builtin,color-functions --no-source-map --style=compressed src/theme/bootstrap.scss src/public/bootstrap/bootstrap.min.css && rtlcss src/public/bootstrap/bootstrap.min.css src/public/bootstrap/bootstrap.rtl.min.css",
-    "prestart": "npm run build:bootstrap",
-    "prebuild": "npm run build:bootstrap",
-    "prewatch": "npm run build:bootstrap",
-    "pretest": "npm run build:bootstrap"
+    "serve:ssr:clinic-front": "node dist/clinic-front/server/server.mjs"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
@@ -27,7 +22,6 @@
     "@angular/ssr": "^22.1.7",
     "@ngrx/signals": "^22.0.1",
     "@ngx-translate/core": "^18.0.0",
-    "bootstrap": "^5.3.8",
     "express": "^5.1.0",
     "intl-tel-input": "^29.5.4",
     "rxjs": "~7.8.0",

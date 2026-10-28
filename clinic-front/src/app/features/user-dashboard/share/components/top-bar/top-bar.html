@@ -42,13 +42,13 @@
 
   <!-- User profile -->
 
-<app-dropdown
+<app-overlay-panel
   class="header-profile"
   placement="bottom-end"
   autoClose="outside"
   [(open)]="profile_menu_open"
 >
-  <div dropdownTrigger class="d-flex gap-3">
+  <div overlayPanelTrigger class="d-flex gap-3">
     <button
       type="button"
       class="profile-info"
@@ -97,6 +97,6 @@
       <app-theme-toggle />
     </div>
   </div>
-</app-dropdown>
+</app-overlay-panel>
 </div>
 </header>

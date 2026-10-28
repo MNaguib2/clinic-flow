@@ -149,6 +149,10 @@
     "actions": "Actions",
     "loading": "Loading data",
     "empty": "No records to display.",
+    "loadingMore": "Loading more...",
+    "endOfResults": "You have reached the end",
+    "sortBy": "Sort by",
+    "retry": "Retry",
     "pagination": {
       "label": "Table pagination",
       "pages": "Page numbers",
@@ -161,15 +165,26 @@
   },
   "patients": {
     "title": "Patients",
+    "description": "Manage patient records and follow up on their visits in one place.",
+    "breadcrumbLabel": "Page location",
+    "listTitle": "Patient list",
+    "listDescription": "More results load automatically as you reach the end of the table.",
+    "resultUnit": "patients",
+    "scrollHint": "More records load automatically at the end of the table",
     "breadcrumbHome": "Dashboard",
     "newPatient": "New patient",
     "demoNotice": "Temporary demo data",
     "summary": {
+      "label": "Patient summary",
       "new": "New patients this month",
       "total": "Total patients",
       "appointments": "Appointments this month",
       "files": "Medical files",
-      "trend": "{{ value }}% vs last month"
+      "trend": "{{ value }}% vs last month",
+      "totalHint": "All registered records",
+      "thisMonth": "This month",
+      "appointmentsHint": "Visits recorded",
+      "filesHint": "Patient files"
     },
     "searchLabel": "Search patients",
     "searchPlaceholder": "Name, phone, email, or patient ID",
@@ -206,7 +221,8 @@
       "age": "Age",
       "phone": "Phone",
       "email": "Email",
-      "lastAppointment": "Last appointment"
+      "lastAppointment": "Last appointment",
+      "status": "Status"
     },
     "genders": {
       "male": "Male",
@@ -214,7 +230,7 @@
     },
     "selectPatient": "Select {{name}}",
     "selectVisible": "Select current page",
-    "selectedCount": "{{count}} selected",
+    "selectedCount": "{{count}} patients selected",
     "resetFilters": "Reset filters",
     "noData": "No patients have been added yet.",
     "noResults": "No patients match these filters.",
@@ -222,7 +238,10 @@
     "retry": "Retry",
     "actions": {
       "label": "Actions for {{name}}",
-      "view": "View patient details"
+      "view": "View patient details",
+      "visits": "Visit history",
+      "contextLabel": "Patient actions",
+      "closeMenu": "Close menu"
     },
     "details": {
       "title": "Patient details",
@@ -240,7 +259,8 @@
       "gender": "Gender",
       "clinic": "Clinic",
       "save": "Add patient",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "demoAlert": "Patient creation is not connected to a backend flow yet."
     }
   },
   "field": {

@@ -1,0 +1,342 @@
+
+$breakpoints: (
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+// Spacing scale
+$spacing-values: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 1rem,
+  4: 1.5rem,
+  5: 3rem,
+  auto: auto
+);
+
+// Width and height values
+$sizing-values: (
+  25: 25%,
+  50: 50%,
+  75: 75%,
+  100: 100%,
+  auto: auto
+);
+
+// Generate utilities for a specific breakpoint
+@mixin generate-responsive-utilities($infix: '') {
+  // Display
+  .d#{$infix}-none {
+    display: none !important;
+  }
+
+  .d#{$infix}-inline {
+    display: inline !important;
+  }
+
+  .d#{$infix}-inline-block {
+    display: inline-block !important;
+  }
+
+  .d#{$infix}-block {
+    display: block !important;
+  }
+
+  .d#{$infix}-flex {
+    display: flex !important;
+  }
+
+  .d#{$infix}-inline-flex {
+    display: inline-flex !important;
+  }
+
+  .d#{$infix}-grid {
+    display: grid !important;
+  }
+
+  // Flex direction
+  .flex#{$infix}-row {
+    flex-direction: row !important;
+  }
+
+  .flex#{$infix}-row-reverse {
+    flex-direction: row-reverse !important;
+  }
+
+  .flex#{$infix}-column {
+    flex-direction: column !important;
+  }
+
+  .flex#{$infix}-column-reverse {
+    flex-direction: column-reverse !important;
+  }
+
+  // Flex wrapping
+  .flex#{$infix}-wrap {
+    flex-wrap: wrap !important;
+  }
+
+  .flex#{$infix}-nowrap {
+    flex-wrap: nowrap !important;
+  }
+
+  // Flex grow / shrink
+  .flex#{$infix}-fill {
+    flex: 1 1 auto !important;
+  }
+
+  .flex#{$infix}-grow-0 {
+    flex-grow: 0 !important;
+  }
+
+  .flex#{$infix}-grow-1 {
+    flex-grow: 1 !important;
+  }
+
+  .flex#{$infix}-shrink-0 {
+    flex-shrink: 0 !important;
+  }
+
+  .flex#{$infix}-shrink-1 {
+    flex-shrink: 1 !important;
+  }
+
+  // Justify content
+  .justify-content#{$infix}-start {
+    justify-content: flex-start !important;
+  }
+
+  .justify-content#{$infix}-end {
+    justify-content: flex-end !important;
+  }
+
+  .justify-content#{$infix}-center {
+    justify-content: center !important;
+  }
+
+  .justify-content#{$infix}-between {
+    justify-content: space-between !important;
+  }
+
+  .justify-content#{$infix}-around {
+    justify-content: space-around !important;
+  }
+
+  .justify-content#{$infix}-evenly {
+    justify-content: space-evenly !important;
+  }
+
+  // Align items
+  .align-items#{$infix}-start {
+    align-items: flex-start !important;
+  }
+
+  .align-items#{$infix}-end {
+    align-items: flex-end !important;
+  }
+
+  .align-items#{$infix}-center {
+    align-items: center !important;
+  }
+
+  .align-items#{$infix}-baseline {
+    align-items: baseline !important;
+  }
+
+  .align-items#{$infix}-stretch {
+    align-items: stretch !important;
+  }
+
+  // Align self
+  .align-self#{$infix}-start {
+    align-self: flex-start !important;
+  }
+
+  .align-self#{$infix}-end {
+    align-self: flex-end !important;
+  }
+
+  .align-self#{$infix}-center {
+    align-self: center !important;
+  }
+
+  .align-self#{$infix}-stretch {
+    align-self: stretch !important;
+  }
+
+  // Text alignment
+  .text#{$infix}-start {
+    text-align: start !important;
+  }
+
+  .text#{$infix}-end {
+    text-align: end !important;
+  }
+
+  .text#{$infix}-center {
+    text-align: center !important;
+  }
+
+  // Overflow
+  .overflow#{$infix}-auto {
+    overflow: auto !important;
+  }
+
+  .overflow#{$infix}-hidden {
+    overflow: hidden !important;
+  }
+
+  .overflow#{$infix}-visible {
+    overflow: visible !important;
+  }
+
+  .overflow#{$infix}-scroll {
+    overflow: scroll !important;
+  }
+
+  // Gap
+  @each $key, $value in $spacing-values {
+    @if $key != auto {
+      .gap#{$infix}-#{$key} {
+        gap: $value !important;
+      }
+
+      .row-gap#{$infix}-#{$key} {
+        row-gap: $value !important;
+      }
+
+      .column-gap#{$infix}-#{$key} {
+        column-gap: $value !important;
+      }
+    }
+  }
+
+  // Padding and margin
+  @each $key, $value in $spacing-values {
+    .p#{$infix}-#{$key} {
+      padding: $value !important;
+    }
+
+    .px#{$infix}-#{$key} {
+      padding-inline: $value !important;
+    }
+
+    .py#{$infix}-#{$key} {
+      padding-block: $value !important;
+    }
+
+    .pt#{$infix}-#{$key} {
+      padding-top: $value !important;
+    }
+
+    .pb#{$infix}-#{$key} {
+      padding-bottom: $value !important;
+    }
+
+    .ps#{$infix}-#{$key} {
+      padding-inline-start: $value !important;
+    }
+
+    .pe#{$infix}-#{$key} {
+      padding-inline-end: $value !important;
+    }
+
+    .m#{$infix}-#{$key} {
+      margin: $value !important;
+    }
+
+    .mx#{$infix}-#{$key} {
+      margin-inline: $value !important;
+    }
+
+    .my#{$infix}-#{$key} {
+      margin-block: $value !important;
+    }
+
+    .mt#{$infix}-#{$key} {
+      margin-top: $value !important;
+    }
+
+    .mb#{$infix}-#{$key} {
+      margin-bottom: $value !important;
+    }
+
+    .ms#{$infix}-#{$key} {
+      margin-inline-start: $value !important;
+    }
+
+    .me#{$infix}-#{$key} {
+      margin-inline-end: $value !important;
+    }
+  }
+
+  // Width and height
+  @each $key, $value in $sizing-values {
+    .w#{$infix}-#{$key} {
+      width: $value !important;
+    }
+
+    .h#{$infix}-#{$key} {
+      height: $value !important;
+    }
+  }
+
+  .mw#{$infix}-100 {
+    max-width: 100% !important;
+  }
+
+  .mh#{$infix}-100 {
+    max-height: 100% !important;
+  }
+
+  .min-vw#{$infix}-100 {
+    min-width: 100vw !important;
+  }
+
+  .min-vh#{$infix}-100 {
+    min-height: 100vh !important;
+  }
+
+  .vw#{$infix}-100 {
+    width: 100vw !important;
+  }
+
+  .vh#{$infix}-100 {
+    height: 100vh !important;
+  }
+
+  // Position
+  .position#{$infix}-static {
+    position: static !important;
+  }
+
+  .position#{$infix}-relative {
+    position: relative !important;
+  }
+
+  .position#{$infix}-absolute {
+    position: absolute !important;
+  }
+
+  .position#{$infix}-fixed {
+    position: fixed !important;
+  }
+
+  .position#{$infix}-sticky {
+    position: sticky !important;
+  }
+}
+
+// Base utilities: all screen sizes
+@include generate-responsive-utilities();
+
+// Responsive utilities: apply at breakpoint and above
+@each $name, $min-width in $breakpoints {
+  @media (min-width: $min-width) {
+    @include generate-responsive-utilities('-#{$name}');
+  }
+}

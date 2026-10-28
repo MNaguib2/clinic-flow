@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Icon } from '@components/icon/icon';
-import { Dropdown } from '@components/dropdown/dropdown';
+import { OverlayPanel } from '@components/overlay-panel/overlay-panel';
 import { FieldInput } from '@components/fields/field-input';
 import { LanguageToggle } from '@components/language-toggle/language-toggle';
 import { ThemeToggle } from '@components/theme-toggle/theme-toggle';
@@ -13,7 +13,7 @@ import { SidebarState } from '../../services/sidebar-state.service';
 @Component({
   selector: 'app-top-bar',
   standalone: true,
-  imports: [Dropdown, LanguageToggle, ThemeToggle, TranslatePipe, RouterLink, Icon, FieldInput],
+  imports: [OverlayPanel, LanguageToggle, ThemeToggle, TranslatePipe, RouterLink, Icon, FieldInput],
   templateUrl: './top-bar.html',
   styleUrl: './top-bar.scss',
 })

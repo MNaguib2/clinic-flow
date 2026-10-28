@@ -14,7 +14,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-export type DropdownPlacement =
+export type OverlayPanelPlacement =
   | 'bottom-start'
   | 'bottom-center'
   | 'bottom-end'
@@ -22,30 +22,30 @@ export type DropdownPlacement =
   | 'top-center'
   | 'top-end';
 
-export type DropdownAutoClose = 'outside' | 'inside' | 'all' | 'none';
+export type OverlayPanelAutoClose = 'outside' | 'inside' | 'all' | 'none';
 
 @Component({
-  selector: 'app-dropdown',
-  exportAs: 'appDropdown',
+  selector: 'app-overlay-panel',
+  exportAs: 'overlayPanel',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
       #trigger
-      class="dropdown__trigger"
+      class="overlay-panel__trigger"
       (click)="toggle()"
     >
-      <ng-content select="[dropdownTrigger]" />
+      <ng-content select="[overlayPanelTrigger]" />
     </div>
 
     <div
       #panel
-      class="dropdown__panel"
-      [class.dropdown__panel--open]="open()"
-      [class.dropdown__panel--unstyled]="!styled()"
-      [class.dropdown__panel--fit]="matchTriggerWidth()"
+      class="overlay-panel__panel"
+      [class.overlay-panel__panel--open]="open()"
+      [class.overlay-panel__panel--unstyled]="!styled()"
+      [class.overlay-panel__panel--fit]="matchTriggerWidth()"
       [style.left.px]="panel_left()"
       [style.top.px]="panel_top()"
-      [style.--dropdown-max-height]="maxHeight()"
+      [style.--overlay-panel-max-height]="maxHeight()"
       [attr.role]="panelRole()"
       [attr.aria-label]="ariaLabel()"
       [attr.inert]="open() ? null : ''"
@@ -54,17 +54,17 @@ export type DropdownAutoClose = 'outside' | 'inside' | 'all' | 'none';
       <ng-content />
     </div>
   `,
-  styleUrl: './dropdown.scss',
+  styleUrl: './overlay-panel.scss',
   host: {
-    class: 'dropdown',
-    '[class.dropdown--block]': 'block()',
+    class: 'overlay-panel',
+    '[class.overlay-panel--block]': 'block()',
     '(document:pointerdown)': 'onDocumentPointerDown($event)',
     '(document:keydown.escape)': 'onEscape()',
     '(window:resize)': 'updatePlacement()',
     '(window:scroll)': 'updatePlacement()',
   },
 })
-export class Dropdown {
+export class OverlayPanel {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly is_browser = isPlatformBrowser(inject(PLATFORM_ID));
 
@@ -79,10 +79,10 @@ export class Dropdown {
 
   readonly open = model(false);
 
-  readonly placement = input<DropdownPlacement>('bottom-start');
+  readonly placement = input<OverlayPanelPlacement>('bottom-start');
   readonly autoFlip = input(true);
   readonly autoFlipHorizontal = input(true);
-  readonly autoClose = input<DropdownAutoClose>('outside');
+  readonly autoClose = input<OverlayPanelAutoClose>('outside');
   readonly closeOnEscape = input(true);
   readonly disabled = input(false);
   readonly offset = input(6);
@@ -101,20 +101,20 @@ export class Dropdown {
   readonly panel_left = signal(8);
   readonly panel_top = signal(8);
 
-  protected readonly resolved_placement = computed<DropdownPlacement>(() => {
+  protected readonly resolved_placement = computed<OverlayPanelPlacement>(() => {
     let placement = this.placement();
 
     if (this.flipped_vertical()) {
       placement = placement.startsWith('top')
-        ? (placement.replace('top', 'bottom') as DropdownPlacement)
-        : (placement.replace('bottom', 'top') as DropdownPlacement);
+        ? (placement.replace('top', 'bottom') as OverlayPanelPlacement)
+        : (placement.replace('bottom', 'top') as OverlayPanelPlacement);
     }
 
     if (this.flipped_horizontal()) {
       if (placement.endsWith('start')) {
-        placement = placement.replace('start', 'end') as DropdownPlacement;
+        placement = placement.replace('start', 'end') as OverlayPanelPlacement;
       } else if (placement.endsWith('end')) {
-        placement = placement.replace('end', 'start') as DropdownPlacement;
+        placement = placement.replace('end', 'start') as OverlayPanelPlacement;
       }
     }
 

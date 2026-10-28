@@ -19,7 +19,7 @@ export class SideBar {
   protected readonly nav_items = [
     { id: 'dashboard', label_key: 'sidebar.dashboard', icon: 'building-2', route: '/dashboard' },
     { id: 'appointments', label_key: 'sidebar.appointments', icon: 'calendar', route: null },
-    { id: 'patients', label_key: 'sidebar.patients', icon: 'users', route: null },
+    { id: 'patients', label_key: 'sidebar.patients', icon: 'users', route: '/dashboard/patients' },
     { id: 'clinics', label_key: 'sidebar.clinics', icon: 'building', route: null },
     { id: 'doctors', label_key: 'sidebar.doctors', icon: 'user', route: null },
     { id: 'specialties', label_key: 'sidebar.specialties', icon: 'stethoscope', route: null },
