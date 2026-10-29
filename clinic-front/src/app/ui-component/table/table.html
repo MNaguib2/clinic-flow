@@ -197,10 +197,9 @@
         [attr.aria-label]="'table.pagination.pageSizeLabel' | translate"
         (change)="onPageSizeChange($event)"
       >
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="40">40</option>
-        <option value="all">{{ 'table.pagination.all' | translate }}</option>
+        @for (option of options(); track option) {
+        <option [value]="option">{{ option ? option : ('table.pagination.all' | translate) }}</option>
+        }
       </select>
     </label>
   </nav>

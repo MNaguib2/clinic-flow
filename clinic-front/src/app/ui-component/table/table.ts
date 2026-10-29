@@ -82,8 +82,9 @@ export class Table<T extends object> {
   readonly showPagination = input(false);
   readonly showPageSummary = input(true);
   readonly currentPage = model(0);
-  readonly pageSize = model<number | 'all'>(20);
+  readonly pageSize = model<number>(20);
   readonly totalItems = model<number | null>(null);
+  readonly options = input<readonly number[]>([10, 20, 50, 100, 0]);
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
@@ -221,7 +222,7 @@ export class Table<T extends object> {
   protected readonly effectivePageSize = computed(() => {
     const page_size = this.pageSize();
 
-    return page_size === 'all'
+    return page_size === 0
       ? Math.max(1, this.totalItems() ?? this.blocks().length)
       : Math.max(1, page_size);
   });
@@ -286,7 +287,11 @@ export class Table<T extends object> {
       if (previousRows !== rows) {
         previousRows = rows;
         this.loadingMore.set(false);
-        this.blocks.update((blocks) => [...blocks, ...rows]);
+        if (this.infiniteScroll()) {
+          this.blocks.update((blocks) => [...blocks, ...rows]);
+        } else {
+          this.blocks.set(rows);
+        }
       }
     });
 
@@ -331,7 +336,7 @@ export class Table<T extends object> {
    */
   protected onPageSizeChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
-    this.pageSize.set(value === 'all' ? 'all' : Number(value));
+    this.pageSize.set(value === '0' ? 0 : Number(value));
     this.requestMore({ page: 1, refresh: true });
   }
 
