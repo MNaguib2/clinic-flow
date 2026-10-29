@@ -6,6 +6,7 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  NgZone,
   TemplateRef,
   computed,
   effect,
@@ -14,45 +15,19 @@ import {
   output,
   signal,
   viewChild,
+  model,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Icon } from '@components/icon/icon';
-
-export interface TableRowContext<T> {
-  $implicit: T;
-  row: T;
-}
-
-export interface TableCellContext<T> extends TableRowContext<T> {
-  value: unknown;
-  column: TableColumn<T>;
-}
-
-export interface TableColumn<T> {
-  key: keyof T | string;
-  header: string;
-  value?: (row: T) => unknown;
-  headerTemplate?: TemplateRef<unknown>;
-  cellTemplate?: TemplateRef<TableCellContext<T>>;
-  sortable?: boolean;
-  width?: string;
-  minWidth?: string;
-  align?: 'start' | 'center' | 'end';
-}
-
-export type TableSortDirection = 'asc' | 'desc';
-
-export interface TableSortChange {
-  key: string;
-  direction: TableSortDirection;
-}
-
-export interface TableContextMenuEvent<T> {
-  row: T;
-  x: number;
-  y: number;
-  source: 'mouse' | 'touch';
-}
+import { ILoadMoreEvent } from './interfaces/load-more-event';
+import type {
+  TableCellContext,
+  TableColumn,
+  TableContextMenuEvent,
+  TableRowContext,
+  TableSortChange,
+  TableSortDirection,
+} from './interfaces/table.interfaces';
 
 @Component({
   selector: 'app-table',
@@ -66,12 +41,13 @@ export class Table<T extends object> {
   readonly columns = input.required<readonly TableColumn<T>[]>();
   readonly rows = input<readonly T[]>([]);
 
+  protected blocks = signal<readonly T[]>([]);
+
   // Accessibility and states
   readonly ariaLabel = input<string | null>(null);
-  readonly loading = input(false);
-  readonly loadingMore = input(false);
   readonly error = input<string | null>(null);
   readonly emptyMessage = input<string | null>(null);
+  readonly loadingMore = signal(false);
 
   // Virtual scroll
   readonly virtualScroll = input(true);
@@ -80,32 +56,38 @@ export class Table<T extends object> {
 
   // Infinite scroll
   readonly infiniteScroll = input(true);
-  readonly hasMore = input(false);
+  // null init
+  // true after load total items are known
+  // false if there are no more items to load
+  private readonly hasMore = computed(() => {
+    if (this.totalItems() === 0) return false;
+    if (this.totalItems() === null) return null;
+    return this.blocks().length < (this.totalItems() ?? 0);
+  });
 
   // Templates
   readonly actionsTemplate =
     input<TemplateRef<TableRowContext<T>> | null>(null);
 
   // Sorting
-  readonly sortKey = input<string | null>(null);
+  readonly sortKey = input<string>();
   readonly sortDirection = input<TableSortDirection>('asc');
   readonly sortChange = output<TableSortChange>();
 
   // Events
-  readonly loadMore = output<void>();
+  readonly loadMore = output<ILoadMoreEvent>();
   readonly contextMenu = output<TableContextMenuEvent<T>>();
-  readonly retryRequested = output<void>();
 
   // Pagination
   readonly showPagination = input(false);
   readonly showPageSummary = input(true);
-  readonly currentPage = input(1);
-  readonly pageSize = input(10);
-  readonly totalItems = input(0);
-  readonly pageChange = output<number>();
+  readonly currentPage = model(0);
+  readonly pageSize = model<number | 'all'>(20);
+  readonly totalItems = model<number | null>(null);
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly zone = inject(NgZone);
 
   private readonly viewport =
     viewChild<ElementRef<HTMLElement>>('tableViewport');
@@ -113,14 +95,8 @@ export class Table<T extends object> {
   private readonly sentinel =
     viewChild<ElementRef<HTMLElement>>('loadMoreSentinel');
 
-  private readonly renderedRows =
-    viewChild<ElementRef<HTMLElement>>('virtualRows');
-
   protected readonly scrollTop = signal(0);
   protected readonly viewportHeight = signal(500);
-
-  // Automatically measured average row height.
-  protected readonly measuredItemSize = signal(48);
 
   private touchTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -132,32 +108,44 @@ export class Table<T extends object> {
 
   private contextMenuOpenedByTouch = false;
 
-  private rowResizeObserver: ResizeObserver | null = null;
-  private resizeObservedRows = new Set<Element>();
+  private viewportResizeObserver: ResizeObserver | null = null;
+  private scrollAnimationFrame: number | null = null;
 
-  private readonly measureRequest = signal(0);
+  private readonly handleViewportScroll = (): void => {
+    this.closeContextMenuOnScroll();
 
-  protected readonly safeItemSize = computed(
-    () => Math.max(1, this.itemSize()),
-  );
+    if (this.scrollAnimationFrame !== null) {
+      return;
+    }
+
+    this.scrollAnimationFrame = requestAnimationFrame(() => {
+      this.scrollAnimationFrame = null;
+
+      const viewportElement = this.viewport()?.nativeElement;
+
+      if (!viewportElement) {
+        return;
+      }
+
+      const scroll_top = viewportElement.scrollTop;
+      const viewport_height = Math.max(1, viewportElement.clientHeight);
+
+      if (this.scrollTop() !== scroll_top) {
+        this.scrollTop.set(scroll_top);
+      }
+
+      if (this.viewportHeight() !== viewport_height) {
+        this.viewportHeight.set(viewport_height);
+      }
+    });
+  };
 
   protected readonly safeBufferSize = computed(
     () => Math.max(0, this.bufferSize()),
   );
 
-  /**
-   * The virtual scroll uses the measured average while enabled.
-   * The itemSize input is used as the initial/fallback estimate.
-   */
   protected readonly effectiveItemSize = computed(() => {
-    if (!this.virtualScroll()) {
-      return this.safeItemSize();
-    }
-
-    return Math.max(
-      1,
-      this.measuredItemSize() || this.safeItemSize(),
-    );
+    return Math.max(1, this.itemSize());
   });
 
   protected readonly visibleColumnCount = computed(
@@ -167,7 +155,7 @@ export class Table<T extends object> {
   // Virtual viewport calculations.
   protected readonly visibleCount = computed(() => {
     if (!this.virtualScroll()) {
-      return this.rows().length;
+      return this.blocks().length;
     }
 
     return Math.ceil(
@@ -182,7 +170,7 @@ export class Table<T extends object> {
 
     const maxStart = Math.max(
       0,
-      this.rows().length - this.visibleCount(),
+      this.blocks().length - this.visibleCount(),
     );
 
     const requestedStart = Math.max(
@@ -197,10 +185,10 @@ export class Table<T extends object> {
 
   protected readonly visibleRows = computed(() => {
     if (!this.virtualScroll()) {
-      return this.rows();
+      return this.blocks();
     }
 
-    return this.rows().slice(
+    return this.blocks().slice(
       this.startIndex(),
       this.startIndex() + this.visibleCount(),
     );
@@ -221,7 +209,7 @@ export class Table<T extends object> {
 
     const remainingRows = Math.max(
       0,
-      this.rows().length -
+      this.blocks().length -
         this.startIndex() -
         this.visibleRows().length,
     );
@@ -230,20 +218,21 @@ export class Table<T extends object> {
   });
 
   // Pagination calculations.
+  protected readonly effectivePageSize = computed(() => {
+    const page_size = this.pageSize();
+
+    return page_size === 'all'
+      ? Math.max(1, this.totalItems() ?? this.blocks().length)
+      : Math.max(1, page_size);
+  });
+
   protected readonly pageCount = computed(() =>
     Math.max(
       1,
       Math.ceil(
-        Math.max(0, this.totalItems()) /
-          Math.max(1, this.pageSize()),
+        Math.max(0, (this.totalItems() ?? 0)) /
+          this.effectivePageSize(),
       ),
-    ),
-  );
-
-  protected readonly activePage = computed(() =>
-    Math.min(
-      Math.max(1, this.currentPage()),
-      this.pageCount(),
     ),
   );
 
@@ -257,41 +246,48 @@ export class Table<T extends object> {
   protected readonly summaryStart = computed(() =>
     this.totalItems() === 0
       ? 0
-      : (this.activePage() - 1) *
-          Math.max(1, this.pageSize()) +
+      : (this.currentPage() - 1) *
+          this.effectivePageSize() +
         1,
   );
 
   protected readonly summaryEnd = computed(() =>
     Math.min(
-      this.activePage() * Math.max(1, this.pageSize()),
-      Math.max(0, this.totalItems()),
+      this.currentPage() * this.effectivePageSize(),
+      Math.max(0, (this.totalItems() ?? 0)),
     ),
   );
 
   constructor() {
     this.destroyRef.onDestroy(() => {
       this.clearTouchTimer();
-      this.rowResizeObserver?.disconnect();
-      this.rowResizeObserver = null;
-      this.resizeObservedRows.clear();
+      this.viewportResizeObserver?.disconnect();
+      this.viewportResizeObserver = null;
+      this.viewport()?.nativeElement.removeEventListener(
+        'scroll',
+        this.handleViewportScroll,
+      );
+
+      if (this.scrollAnimationFrame !== null) {
+        cancelAnimationFrame(this.scrollAnimationFrame);
+        this.scrollAnimationFrame = null;
+      }
     });
 
-    // Set up observers after the initial DOM render.
     afterNextRender(() => {
-      this.setupRowResizeObserver();
-      this.measureRenderedRows();
+      this.setupViewportResizeObserver();
+      this.requestMore();
     });
 
-    // Reconcile observed rows after Angular renders changes.
+    let previousRows = this.rows();
     effect(() => {
-      this.virtualScroll();
-      this.rows();
-      this.visibleRows();
-      this.startIndex();
-      this.measureRequest();
+      const rows = this.rows();
 
-      this.reconcileObservedRows();
+      if (previousRows !== rows) {
+        previousRows = rows;
+        this.loadingMore.set(false);
+        this.blocks.update((blocks) => [...blocks, ...rows]);
+      }
     });
 
     // Observe the infinite-scroll sentinel.
@@ -319,7 +315,7 @@ export class Table<T extends object> {
         },
         {
           root,
-          rootMargin: '0px 0px 180px 0px',
+          rootMargin: '0px 0px 10px 0px',
           threshold: 0,
         },
       );
@@ -333,141 +329,41 @@ export class Table<T extends object> {
   /**
    * Update the viewport metrics on scrolling and resizing.
    */
-  protected onTableScroll(event: Event): void {
-    const element = event.target as HTMLElement;
-
-    this.scrollTop.set(element.scrollTop);
-    this.viewportHeight.set(Math.max(1, element.clientHeight));
+  protected onPageSizeChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.pageSize.set(value === 'all' ? 'all' : Number(value));
+    this.requestMore({ page: 1, refresh: true });
   }
 
-  /**
-   * Create the observer used to measure actual rendered row heights.
-   */
-  private setupRowResizeObserver(): void {
-    if (
-      !this.virtualScroll() ||
-      typeof ResizeObserver === 'undefined'
-    ) {
-      return;
-    }
-
-    this.rowResizeObserver?.disconnect();
-    this.resizeObservedRows.clear();
-
-    this.rowResizeObserver = new ResizeObserver(() => {
-      this.measureRenderedRows();
-    });
-
-    const viewportElement = this.viewport()?.nativeElement;
-
-    if (viewportElement) {
-      this.rowResizeObserver.observe(viewportElement);
-    }
-
-    this.reconcileObservedRows();
-  }
-
-  /**
-   * Keep ResizeObserver attached only to currently rendered data rows.
-   *
-   * Requires data-virtual-row on each rendered data <tr>.
-   */
-  private reconcileObservedRows(): void {
-    const observer = this.rowResizeObserver;
-
-    if (!observer) {
-      return;
-    }
-
-    const viewportElement = this.viewport()?.nativeElement;
-
-    if (!viewportElement || !this.virtualScroll()) {
-      observer.disconnect();
-      this.resizeObservedRows.clear();
-      return;
-    }
-
-    const currentRows = new Set<Element>(
-      Array.from(
-        viewportElement.querySelectorAll<HTMLElement>(
-          'tbody tr[data-virtual-row]',
-        ),
-      ),
-    );
-
-    for (const oldRow of this.resizeObservedRows) {
-      if (!currentRows.has(oldRow)) {
-        observer.unobserve(oldRow);
-        this.resizeObservedRows.delete(oldRow);
-      }
-    }
-
-    for (const row of currentRows) {
-      if (!this.resizeObservedRows.has(row)) {
-        observer.observe(row);
-        this.resizeObservedRows.add(row);
-      }
-    }
-
-    this.measureRenderedRows();
-  }
-
-  /**
-   * Measure visible rows and use their average height as the estimate
-   * for the virtual scroll spacer calculations.
-   */
-  private measureRenderedRows(): void {
-    if (!this.virtualScroll()) {
-      return;
-    }
-
+  private setupViewportResizeObserver(): void {
     const viewportElement = this.viewport()?.nativeElement;
 
     if (!viewportElement) {
       return;
     }
 
-    const rowElements = Array.from(
-      viewportElement.querySelectorAll<HTMLElement>(
-        'tbody tr[data-virtual-row]',
-      ),
-    );
-
-    if (rowElements.length === 0) {
-      return;
-    }
-
-    const heights = rowElements
-      .map((row) => row.getBoundingClientRect().height)
-      .filter(
-        (height) => Number.isFinite(height) && height > 0,
+    this.zone.runOutsideAngular(() => {
+      viewportElement.addEventListener(
+        'scroll',
+        this.handleViewportScroll,
+        { passive: true },
       );
+    });
 
-    if (heights.length === 0) {
-      return;
+    const updateViewportHeight = (): void => {
+      const height = Math.max(1, viewportElement.clientHeight);
+
+      if (this.viewportHeight() !== height) {
+        this.viewportHeight.set(height);
+      }
+    };
+
+    updateViewportHeight();
+
+    if (typeof ResizeObserver !== 'undefined') {
+      this.viewportResizeObserver = new ResizeObserver(updateViewportHeight);
+      this.viewportResizeObserver.observe(viewportElement);
     }
-
-    const averageHeight =
-      heights.reduce((sum, height) => sum + height, 0) /
-      heights.length;
-
-    // Keep fractional pixels for a more accurate estimate.
-    const roundedAverage =
-      Math.round(averageHeight * 100) / 100;
-
-    if (
-      Math.abs(this.measuredItemSize() - roundedAverage) > 0.5
-    ) {
-      this.measuredItemSize.set(roundedAverage);
-    }
-  }
-
-  /**
-   * Optional explicit remeasurement hook for template or content changes.
-   */
-  protected refreshItemSize(): void {
-    this.measureRequest.update((value) => value + 1);
-    this.measureRenderedRows();
   }
 
   protected cellValue(
@@ -498,18 +394,31 @@ export class Table<T extends object> {
     };
   }
 
-  protected requestMore(): void {
+  protected requestMore(event?: { page?: number, refresh?: boolean }): void {
+    const limit = this.effectivePageSize();
     if (
-      !this.infiniteScroll() ||
-      !this.hasMore() ||
-      this.loading() ||
+      ((!this.hasMore() && this.hasMore() !== null) && !event?.refresh) ||
       this.loadingMore() ||
       this.error()
     ) {
       return;
     }
+    this.loadingMore.set(true);
 
-    this.loadMore.emit();
+    if (event?.refresh) {
+      this.totalItems.set(null);
+      this.currentPage.set(0);
+      this.blocks.set([]);
+      this.scrollTop.set(0);
+
+      const viewportElement = this.viewport()?.nativeElement;
+
+      if (viewportElement) {
+        viewportElement.scrollTop = 0;
+      }
+    }
+    this.currentPage.set(event?.page ?? this.currentPage() + 1);
+    this.loadMore.emit({page: this.currentPage(), sortKey: this.sortKey(), sortDirection: this.sortDirection(), limit});
   }
 
   protected requestSort(column: TableColumn<T>): void {
@@ -523,8 +432,8 @@ export class Table<T extends object> {
       this.sortKey() === key && this.sortDirection() === 'asc'
         ? 'desc'
         : 'asc';
-
-    this.sortChange.emit({ key, direction });
+        this.sortChange.emit({ key, direction });
+        this.requestMore({ refresh: true });
   }
 
   protected onRowContextMenu(
@@ -612,19 +521,7 @@ export class Table<T extends object> {
   }
 
   protected retryLoad(): void {
-    this.retryRequested.emit();
-  }
-
-  protected requestPage(page: number): void {
-    if (
-      page < 1 ||
-      page > this.pageCount() ||
-      page === this.activePage()
-    ) {
-      return;
-    }
-
-    this.pageChange.emit(page);
+    this.requestMore({ refresh: true });
   }
 
   private isInteractiveTarget(

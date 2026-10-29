@@ -160,6 +160,7 @@
       "next": "Next page",
       "pageLabel": "Page {{page}}",
       "pageSizeLabel": "Rows",
+      "all": "All",
       "summary": "{{from}}–{{to}} of {{total}}"
     }
   },

@@ -160,6 +160,7 @@
       "next": "الصفحة التالية",
       "pageLabel": "الصفحة {{page}}",
       "pageSizeLabel": "صفوف",
+      "all": "الكل",
       "summary": "{{from}}–{{to}} من {{total}}"
     }
   },

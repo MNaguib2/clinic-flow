@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { describe, expect, it } from 'vitest';
-import { Table, TableColumn } from './table';
+import { Table } from './table';
+import type { TableColumn } from './interfaces/table.interfaces';
 
 interface DemoRow {
   name: string;
