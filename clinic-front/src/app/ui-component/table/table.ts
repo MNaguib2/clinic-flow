@@ -504,7 +504,6 @@ export class Table<T extends object> {
   }
 
   private openContextMenu(row: T, x: number, y: number, source: 'mouse' | 'touch'): void {
-    console.log("🚀 ~ Table ~ openContextMenu ~ row:", row)
     this.contextMenuDimensions.set({ row, x, y });
     requestAnimationFrame(() => this.contextOverlayPanel()?.show());
   }
@@ -531,6 +530,7 @@ export class Table<T extends object> {
   protected closeContextMenuOnScroll(): void {
     this.clearTouchTimer();
     this.contextOverlayPanel()?.close();
+    this.contextMenuDimensions.set(null);
   }
 
   protected retryLoad(): void {

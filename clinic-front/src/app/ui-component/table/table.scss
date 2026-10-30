@@ -13,6 +13,18 @@
   color: var(--table-text);
 }
 
+// The context menu host must be fixed so left/top are viewport coordinates.
+.table-context-dropdown {
+  position: fixed;
+  z-index: 1099;
+}
+
+.table-context-trigger {
+  display: block;
+  width: 0;
+  height: 0;
+}
+
 :host-context([data-bs-theme='dark']) {
   --table-surface: var(--cf-surface, var(--bs-surface, #10213a));
   --table-border: var(--cf-border, var(--bs-border-color, #294568));

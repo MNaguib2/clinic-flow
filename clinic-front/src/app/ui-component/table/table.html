@@ -19,11 +19,12 @@
                     ('table.sortBy' | translate) + ' ' + column.header
                   ">
               <span>{{ column.header }}</span>
-
+              @if (sortKey() === column.key) {
               <app-icon name="chevron-down" [class.table-sort-icon--asc]="
-                      sortKey() !== column.key ||
+                      sortKey() === column.key &&
                       sortDirection() === 'asc'
                     " />
+              }
             </button>
             } @else {
             {{ column.header }}
@@ -207,10 +208,10 @@
 
 
   @if (contextMenuDimensions(); as menu) {
-  <app-overlay-panel #contextOverlayPanel="overlayPanel" class="patient-context-dropdown" placement="bottom-start"
+  <app-overlay-panel #contextOverlayPanel="overlayPanel" class="table-context-dropdown" placement="bottom-start"
     [style.left.px]="menu.x" [style.top.px]="menu.y" [offset]="0" autoClose="all" [styled]="false" [panelRole]="'menu'"
-    [ariaLabel]="'patients.actions.contextLabel' | translate" (closed)="closeContextMenuOnScroll()">
-    <span overlayPanelTrigger class="patient-context-trigger" aria-hidden="true"></span>
+    (closed)="closeContextMenuOnScroll()">
+    <span overlayPanelTrigger class="table-context-trigger" aria-hidden="true"></span>
 
     <ng-container [ngTemplateOutlet]="contextMenu()?.template" [ngTemplateOutletContext]="rowContext(menu.row)" />
 
