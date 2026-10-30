@@ -1,22 +1,27 @@
+
 :host {
-  --table-surface: var(--cf-surface, var(--bs-surface, #fff));
-  --table-border: var(--cf-border, var(--bs-border-color, #d9e7fc));
-  --table-text: var(--cf-text-primary, var(--bs-body-color, #092b72));
-  --table-muted: var(--cf-text-muted, var(--bs-secondary-color, #7894c6));
-  --table-header: #f1f6fe;
-  --table-hover: var(--cf-hover-bg, var(--bs-surface-hover, #f1f6ff));
-  --table-primary: var(--cf-primary, var(--bs-primary, #1677ff));
+  --table-surface: var(--color-surface);
+  --table-border: var(--color-border);
+  --table-text: var(--color-text);
+  --table-muted: var(--color-text-muted);
+  --table-header: var(--color-surface-secondary);
+  --table-hover: var(--color-hover);
+  --table-primary: var(--color-primary);
 
   display: block;
   min-width: 0;
   max-width: 100%;
   color: var(--table-text);
+  font-family: var(--font-family);
 }
 
-// The context menu host must be fixed so left/top are viewport coordinates.
+// ========================================
+// Context menu
+// ========================================
+
 .table-context-dropdown {
   position: fixed;
-  z-index: 1099;
+  z-index: var(--z-popover, 2000);
 }
 
 .table-context-trigger {
@@ -25,32 +30,57 @@
   height: 0;
 }
 
-:host-context([data-bs-theme='dark']) {
-  --table-surface: var(--cf-surface, var(--bs-surface, #10213a));
-  --table-border: var(--cf-border, var(--bs-border-color, #294568));
-  --table-text: var(--cf-text-primary, var(--bs-body-color, #e5efff));
-  --table-muted: var(--cf-text-muted, var(--bs-secondary-color, #8ba8d8));
-  --table-header: #142b4b;
-  --table-hover: var(--cf-hover-bg, var(--bs-surface-hover, #183354));
-}
+// ========================================
+// Table shell
+// ========================================
 
 .table-shell {
   width: 100%;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
+
   background: var(--table-surface);
+  color: var(--table-text);
+
+  border-radius: inherit;
 }
 
 .table-scroll {
   width: 100%;
   max-width: 100%;
-  max-height: min(50vh, 500px);
+  max-height: min(50vh, 31.25rem);
+
   overflow: auto;
   overflow-anchor: none;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+
+  &::-webkit-scrollbar {
+    width: 0.375rem;
+    height: 0.375rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: var(--radius-full);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
 }
+
+// ========================================
+// Main table
+// ========================================
 
 .table {
   border-spacing: 0;
@@ -59,97 +89,131 @@
 .clinic-table {
   width: max-content;
   min-width: 100%;
+
   color: var(--table-text);
   vertical-align: middle;
   white-space: nowrap;
+
+  > :not(caption) > * > * {
+    padding: var(--space-3);
+
+    border-bottom: var(--border-width) solid var(--table-border);
+
+    background-color: transparent;
+    color: inherit;
+
+    font-family: var(--font-family);
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-normal);
+  }
+
+  thead {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 2;
+
+    th {
+      height: 2.75rem;
+
+      background: var(--table-header) !important;
+      color: var(--table-muted);
+
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+
+  tbody > tr:last-child > * {
+    border-bottom: 0;
+  }
 }
 
-.clinic-table> :not(caption)>*>* {
-  padding: 10px 12px;
-  border-bottom-color: var(--table-border);
-  background-color: transparent;
-  color: inherit;
-  font-size: 12px;
-  line-height: 1.4;
+// ========================================
+// Table row hover
+// Keep this OUTSIDE .clinic-table
+// ========================================
+
+.clinic-table > tbody > tr:not(.virtual-spacer):not(.table-load-more-row):not(.table-end-row):not(:has(.table-state)) {
+  > td {
+    transition: background-color 150ms ease;
+  }
+
+  &:hover > td {
+    background-color: var(--table-hover) !important;
+  }
 }
 
-.clinic-table thead {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 2;
-}
-
-.clinic-table thead th {
-  height: 44px;
-  background-color: var(--table-header) !important;
-  color: var(--table-muted);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.clinic-table tbody tr:last-child>* {
-  border-bottom: 0;
-}
-
-.clinic-table tbody tr:not(:has(.table-state)) :not(.table-load-more-row):not(.table-end-row):hover>* {
-  background: var(--table-hover);
-}
+// ========================================
+// Table actions
+// ========================================
 
 .table-actions-heading,
 .table-actions-cell {
   text-align: end;
 }
 
+// ========================================
+// Sorting
+// ========================================
+
 .table-sort-button {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--space-2);
+
   padding: 0;
+
   border: 0;
   background: transparent;
   color: inherit;
+
   font: inherit;
   font-weight: inherit;
-  cursor: pointer;
-}
 
-.table-sort-button app-icon {
-  opacity: 0.65;
+  cursor: pointer;
+
+  app-icon {
+    opacity: 0.65;
+  }
+
+  &:hover {
+    color: var(--table-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
 }
 
 .table-sort-icon--asc {
   transform: rotate(180deg);
 }
 
-.table-sort-button:focus-visible {
-  outline: 2px solid var(--table-primary);
-  outline-offset: 3px;
-  border-radius: 3px;
-}
+// ========================================
+// Table states
+// ========================================
 
 .table-state {
-  height: 140px;
+  height: 8.75rem;
+
   color: var(--table-muted) !important;
   text-align: center;
   white-space: normal;
 }
 
 .table-state--error {
-  color: #b42332 !important;
+  color: var(--color-danger) !important;
 }
 
-:host-context([data-bs-theme='dark']) .table-state--error {
-  color: #ff9a9f !important;
-}
+// ========================================
+// Virtual scroll
+// ========================================
 
-/* Virtual scroll */
-
-.clinic-table--virtual tbody>tr:not(.virtual-spacer)>td {
-  height: var(--virtual-item-size, 48px);
+.clinic-table--virtual tbody > tr:not(.virtual-spacer) > td {
+  height: var(--virtual-item-size, 3rem);
   box-sizing: border-box;
-}
-
-.clinic-table--virtual tbody>tr:not(.virtual-spacer)>td {
   overflow: hidden;
 }
 
@@ -157,40 +221,52 @@
   pointer-events: none;
 }
 
-.clinic-table>tbody>.virtual-spacer>td {
+.clinic-table > tbody > .virtual-spacer > td {
   padding: 0 !important;
   border: 0 !important;
   background: transparent !important;
+
   font-size: 0;
   line-height: 0;
 }
 
-.clinic-table>tbody>.virtual-spacer:hover>td {
+.clinic-table > tbody > .virtual-spacer:hover > td {
   background: transparent !important;
 }
 
-/* Loading skeleton */
+// ========================================
+// Loading skeleton
+// ========================================
 
 .table-skeleton {
   display: block;
-  width: min(100%, 180px);
-  height: 12px;
-  border-radius: 5px;
-  background: linear-gradient(90deg,
-      var(--table-header),
-      var(--table-border),
-      var(--table-header));
+
+  width: min(100%, 11.25rem);
+  height: 0.75rem;
+
+  border-radius: var(--radius-sm);
+
+  background: linear-gradient(
+    90deg,
+    var(--table-header),
+    var(--table-border),
+    var(--table-header)
+  );
+
   background-size: 200% 100%;
+
   animation: table-shimmer 1.4s ease-in-out infinite;
 }
 
 .table-skeleton--short {
-  width: 54px;
+  width: 3.375rem;
 }
 
-/* Infinite scroll */
+// ========================================
+// Infinite scroll
+// ========================================
 
-.table-load-more-row>td {
+.table-load-more-row > td {
   padding: 0 !important;
   border: 0;
 }
@@ -204,147 +280,207 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 38px;
+  gap: var(--space-2);
+
+  min-height: 2.375rem;
+
   color: var(--table-muted);
-  font-size: 12px;
+  font-size: var(--font-size-xs);
 }
 
 .table-spinner {
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
+
   border: 2px solid var(--table-border);
   border-top-color: var(--table-primary);
-  border-radius: 50%;
+  border-radius: var(--radius-full);
+
   animation: table-spin 0.7s linear infinite;
 }
 
 .table-end-row td {
-  padding: 12px !important;
+  padding: var(--space-3) !important;
+
   color: var(--table-muted) !important;
   text-align: center;
-  font-size: 11px !important;
+
+  font-size: var(--font-size-xs) !important;
 }
 
-/* Inline error */
+// ========================================
+// Inline error
+// ========================================
 
 .table-inline-error {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 10px 14px;
-  border-top: 1px solid var(--table-border);
-  color: #b42332;
-  font-size: 12px;
+  gap: var(--space-3);
+
+  padding: var(--space-3) var(--space-4);
+
+  border-block-start: var(--border-width) solid var(--table-border);
+
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
 }
 
 .table-inline-error button {
+  padding: 0;
+
   border: 0;
   background: transparent;
   color: var(--table-primary);
-  font-weight: 700;
+
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-semibold);
+
   cursor: pointer;
+
+  &:hover {
+    color: var(--color-primary-hover);
+  }
 }
 
-/* Pagination */
+// ========================================
+// Pagination
+// ========================================
 
 .table-pagination {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-2);
+
   width: 100%;
-  padding: 10px 12px;
-  border-top: 1px solid var(--table-border);
+  padding: var(--space-3);
+
+  border-block-start: var(--border-width) solid var(--table-border);
+
   background: var(--table-surface);
+  color: var(--table-text);
+
   direction: inherit;
 }
 
 .pagination__control,
 .pagination__page {
   display: inline-flex;
-  flex: 0 0 34px;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border: 1px solid var(--table-border);
-  border-radius: 7px;
-  color: var(--table-text);
-  background: transparent;
-  font: inherit;
-  cursor: pointer;
-}
 
-.pagination__control:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+  flex: 0 0 2.125rem;
+  width: 2.125rem;
+  height: 2.125rem;
+
+  padding: 0;
+
+  border: var(--border-width) solid var(--table-border);
+  border-radius: var(--radius-md);
+
+  color: var(--table-text);
+  background: var(--table-surface);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+
+  cursor: pointer;
+
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--table-primary);
+    background: var(--table-hover);
+    color: var(--table-primary);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
 }
 
 .pagination__pages {
   display: flex;
-  flex: 0 1 auto;
-  flex-wrap: nowrap;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-1);
+
+  flex: 0 1 auto;
   min-width: 0;
+
   overflow-x: auto;
 }
 
 .pagination__page--active {
   border-color: var(--table-primary);
-  color: #fff;
   background: var(--table-primary);
+  color: var(--color-text-inverse);
+
+  &:hover {
+    border-color: var(--color-primary-hover);
+    background: var(--color-primary-hover);
+    color: var(--color-text-inverse);
+  }
 }
 
-:host-context([dir="rtl"]) .pagination__control {
+:host-context([dir='rtl']) .pagination__control {
   transform: rotate(180deg);
-}
-
-.pagination__control:focus-visible,
-.pagination__page:focus-visible,
-.pagination__pages:focus-visible {
-  outline: 2px solid var(--table-primary);
-  outline-offset: 2px;
 }
 
 .pagination__summary {
   flex-grow: 1;
   text-align: end;
+
   color: var(--table-muted);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
 }
 
 .pagination__size-control {
   display: inline-flex;
-  flex-grow: 1;
-  justify-content: flex-end;
-  gap: 6px;
-  color: var(--table-muted);
-  font-size: .875rem;
   align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+
+  flex-grow: 1;
+
+  color: var(--table-muted);
+  font-size: var(--font-size-sm);
   white-space: nowrap;
 }
 
 .pagination__size-control select {
-  min-width: 64px;
-  height: 34px;
-  padding: 0 8px;
-  border: 1px solid var(--table-border);
-  border-radius: 6px;
+  min-width: 4rem;
+  height: 2.125rem;
+
+  padding-inline: var(--space-2);
+
+  border: var(--border-width) solid var(--table-border);
+  border-radius: var(--radius-sm);
+
   color: var(--table-text);
   background: var(--table-surface);
-  font: inherit;
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
 }
 
-.pagination__size-control select:focus-visible {
-  outline: 2px solid var(--table-primary);
-  outline-offset: 2px;
-}
-
-/* Animations */
+// ========================================
+// Animations
+// ========================================
 
 @keyframes table-shimmer {
   to {
@@ -358,24 +494,58 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-
-  .table-skeleton,
-  .table-spinner {
-    animation: none;
-  }
-}
+// ========================================
+// Scroll hint
+// ========================================
 
 .scroll-hint {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  color: var(--patients-muted);
-  font-size: .875rem;
+  gap: var(--space-2);
+
+  color: var(--table-muted);
+  font-size: var(--font-size-sm);
+
+  app-icon {
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+  }
 }
 
-.scroll-hint app-icon {
-  width: 13px;
-  height: 13px;
+// ========================================
+// Responsive
+// ========================================
+
+@media (max-width: 40rem) {
+  .table-pagination {
+    gap: var(--space-1);
+    padding: var(--space-2);
+  }
+
+  .pagination__summary {
+    flex-basis: 100%;
+    text-align: center;
+  }
+
+  .pagination__size-control {
+    flex-basis: 100%;
+    justify-content: center;
+  }
+}
+
+// ========================================
+// Reduced motion
+// ========================================
+
+@media (prefers-reduced-motion: reduce) {
+  .table-skeleton,
+  .table-spinner {
+    animation: none;
+  }
+
+  .pagination__control,
+  .pagination__page {
+    transition: none;
+  }
 }

@@ -1,0 +1,173 @@
+
+:host {
+  display: block;
+  width: 100%;
+
+  --textarea-radius: var(--radius-md);
+  --textarea-min-height: 100px;
+}
+
+// ========================================
+// Wrapper
+// ========================================
+
+.ui-textarea {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+// ========================================
+// Textarea control
+// ========================================
+
+.ui-textarea__control {
+  display: block;
+  width: 100%;
+  min-height: var(--textarea-min-height);
+
+  padding: 12px 14px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--textarea-radius);
+
+  outline: none;
+  box-shadow: none;
+
+  resize: vertical;
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.6;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+    font-size: 14px;
+  }
+
+  &:hover:not(:disabled):not(:read-only):not(:focus) {
+    border-color: var(--color-primary);
+  }
+
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+  }
+
+  &:disabled {
+    background: var(--color-input-disabled, var(--color-surface-secondary));
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+    opacity: 0.65;
+    resize: none;
+  }
+
+  &:read-only {
+    cursor: default;
+  }
+
+  // Invalid
+  &--invalid {
+    border-color: var(--color-danger);
+
+    &:focus {
+      box-shadow: 0 0 0 3px color-mix(
+        in srgb,
+        var(--color-danger) 14%,
+        transparent
+      );
+    }
+  }
+
+  // With leading icon
+  &--with-icon {
+    padding-inline-start: 42px;
+  }
+}
+
+// ========================================
+// Leading icon
+// ========================================
+
+.ui-textarea__icon {
+  position: absolute;
+
+  inset-inline-start: 14px;
+  top: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--color-text-muted);
+
+  pointer-events: none;
+
+  transition: color 160ms ease;
+}
+
+// Icon active state
+.ui-textarea:focus-within .ui-textarea__icon {
+  color: var(--color-primary);
+}
+
+// ========================================
+// Character counter
+// ========================================
+
+.ui-textarea__footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  margin-top: 6px;
+  min-height: 18px;
+}
+
+.ui-textarea__counter {
+  color: var(--color-text-muted);
+
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+
+  &--limit {
+    color: var(--color-danger);
+  }
+}
+
+// ========================================
+// Responsive
+// ========================================
+
+@media (max-width: 575.98px) {
+  :host {
+    --textarea-min-height: 90px;
+    --textarea-radius: var(--radius-sm);
+  }
+
+  .ui-textarea__control {
+    padding: 10px 12px;
+    font-size: 14px;
+
+    &--with-icon {
+      padding-inline-start: 38px;
+    }
+  }
+
+  .ui-textarea__icon {
+    inset-inline-start: 12px;
+    top: 12px;
+  }
+}

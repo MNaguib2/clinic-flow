@@ -1,18 +1,19 @@
 
 :host {
-  --field-input-bg: var(--cf-input-bg, var(--cf-surface, #fff));
-  --field-input-color: var(--cf-text, #102f5e);
-  --field-input-placeholder: var(--cf-text-muted, #6482ac);
-  --field-input-border: var(--cf-border, #dce5f0);
-  --field-input-border-hover: var(--cf-border-hover, #a8bfdc);
-  --field-input-primary: var(--cf-primary, #1769f5);
-  --field-input-danger: var(--cf-danger, #dc3545);
-  --field-input-disabled-bg: var(--cf-disabled-bg, #f3f6fb);
-  --field-input-radius: var(--cf-input-radius, 10px);
-  --field-input-height: var(--cf-input-height, 44px);
+  --field-input-bg: var(--color-surface);
+  --field-input-color: var(--color-text);
+  --field-input-placeholder: var(--color-text-muted);
+  --field-input-border: var(--color-border);
+  --field-input-border-hover: var(--color-border-strong);
+  --field-input-primary: var(--color-primary);
+  --field-input-danger: var(--color-danger);
+  --field-input-disabled-bg: var(--color-disabled-background);
+  --field-input-radius: var(--radius-md);
+  --field-input-height: 2.75rem;
 
   display: block;
   width: 100%;
+  min-width: 0;
 }
 
 .field-input__control {
@@ -26,24 +27,27 @@
   width: 100%;
   min-width: 0;
   min-height: var(--field-input-height);
-  padding: 10px 14px;
+
+  padding: 0.625rem 0.875rem;
 
   appearance: none;
-  border: 1px solid var(--field-input-border);
+  border: var(--border-width) solid var(--field-input-border);
   border-radius: var(--field-input-radius);
   outline: none;
 
   background-color: var(--field-input-bg);
   color: var(--field-input-color);
 
-  font: inherit;
-  font-size: 0.875rem;
-  line-height: 1.5;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
 
   transition:
     border-color 150ms ease,
     box-shadow 150ms ease,
-    background-color 150ms ease;
+    background-color 150ms ease,
+    color 150ms ease;
 
   &::placeholder {
     color: var(--field-input-placeholder);
@@ -56,12 +60,11 @@
 
   &:focus-visible {
     border-color: var(--field-input-primary);
-    box-shadow: 0 0 0 3px
-      color-mix(in srgb, var(--field-input-primary) 16%, transparent);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
   }
 
   &--icon {
-    padding-inline-start: 42px;
+    padding-inline-start: 2.625rem;
   }
 
   &--invalid {
@@ -76,9 +79,9 @@
 
   &:disabled {
     background-color: var(--field-input-disabled-bg);
-    color: var(--field-input-placeholder);
+    color: var(--color-disabled-text);
     cursor: not-allowed;
-    opacity: 0.75;
+    opacity: 1;
   }
 
   &:read-only {
@@ -86,7 +89,6 @@
     cursor: default;
   }
 
-  // Keep native date and number controls usable.
   &[type='date'],
   &[type='number'] {
     text-align: start;
@@ -117,25 +119,26 @@
 .field-input__icon {
   position: absolute;
   z-index: 1;
+
   inset-block-start: 50%;
-  inset-inline-start: 14px;
+  inset-inline-start: 0.875rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  width: 18px;
-  height: 18px;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
 
   color: var(--field-input-placeholder);
   transform: translateY(-50%);
   pointer-events: none;
 }
 
-@media (max-width: 575.98px) {
+@media (max-width: 35.99875rem) {
   .field-input__native {
-    min-height: 44px;
-    font-size: 16px;
+    min-height: 2.75rem;
+    font-size: 1rem;
   }
 }
 

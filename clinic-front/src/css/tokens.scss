@@ -1,43 +1,280 @@
+
+/* =====================================================
+   CLINICFLOW DESIGN SYSTEM
+   Single Source of Truth
+===================================================== */
+
+
+/* =====================================================
+   1. BRAND COLORS
+===================================================== */
+
 :root {
-  // Brand
   --color-primary: #1769f5;
   --color-primary-hover: #2f7af7;
   --color-primary-active: #0e58e6;
   --color-primary-disabled: #c8dcfb;
 
-  // Text
-  --color-text: #102f5e;
-  --color-text-muted: #6482ac;
+  --color-secondary: #6482ac;
 
-  // Surfaces
+  /* Status */
+  --color-danger: #dc3545;
+  --color-success: #18b96a;
+  --color-warning: #ff8a32;
+  --color-info: #2785df;
+}
+
+
+/* =====================================================
+   2. TEXT COLORS
+===================================================== */
+
+:root {
+  --color-text: #102f5e;
+  --color-text-secondary: #6482ac;
+  --color-text-muted: #8293aa;
+  --color-text-inverse: #ffffff;
+  --color-text-disabled: #8998ad;
+}
+
+
+/* =====================================================
+   3. BACKGROUND COLORS
+===================================================== */
+
+:root {
+  --color-background: #f7faff;
+
   --color-surface: #ffffff;
   --color-surface-secondary: #f7faff;
+  --color-surface-tertiary: #edf3fc;
+  --color-surface-elevated: #ffffff;
 
-  // Borders
+  --color-overlay: rgb(16 47 94 / 28%);
+}
+
+
+/* =====================================================
+   4. BORDER COLORS
+===================================================== */
+
+:root {
   --color-border: #dce9fa;
+  --color-border-strong: #c4d7f0;
+  --color-border-focus: var(--color-primary);
+}
 
-  // Typography
+
+/* =====================================================
+   5. INTERACTION COLORS
+===================================================== */
+
+:root {
+  --color-hover: #f2f7ff;
+  --color-active: #e7f0ff;
+  --color-focus: rgb(23 105 245 / 35%);
+  --color-focus-ring: rgb(23 105 245 / 14%);
+
+  --color-disabled-background: #f3f6fa;
+  --color-disabled-text: #8998ad;
+}
+
+
+/* =====================================================
+   6. STATUS BACKGROUNDS
+===================================================== */
+
+:root {
+  --color-danger-background: #fff0f1;
+  --color-success-background: #eafaf2;
+  --color-warning-background: #fff5e9;
+  --color-info-background: #edf6ff;
+}
+
+
+/* =====================================================
+   7. TYPOGRAPHY
+===================================================== */
+
+:root {
+  /* Font family */
   --font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
 
-  // Radius
+  /* Font sizes */
+  --font-size-xs: 0.6875rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-md: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+
+  /* Font weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+}
+
+
+/* =====================================================
+   8. SPACING
+===================================================== */
+
+:root {
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+}
+
+
+/* =====================================================
+   9. BORDER RADIUS
+===================================================== */
+
+:root {
+  --radius-xs: 0.25rem;
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-
-  --font-family: 'DM Sans', 'Noto Sans Arabic', sans-serif;
-  --font-size-md: 16px;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-full: 9999px;
 }
 
+
+/* =====================================================
+   10. COMPONENT DIMENSIONS
+===================================================== */
+
+:root {
+  /* Form controls */
+  --control-height-sm: 2.25rem;
+  --control-height-md: 2.875rem;
+  --control-height-lg: 3.25rem;
+
+  /* Header */
+  --header-height: 4rem;
+  --header-height-mobile: 3.625rem;
+
+  /* Sidebar */
+  --sidebar-width: 13.5rem;
+  --sidebar-width-mobile: 17.5rem;
+
+  /* Icons */
+  --icon-size-sm: 1rem;
+  --icon-size-md: 1.25rem;
+  --icon-size-lg: 1.5rem;
+
+  /* Avatar */
+  --avatar-size-sm: 1.75rem;
+  --avatar-size-md: 2.25rem;
+  --avatar-size-lg: 2.75rem;
+
+  /* Border widths */
+  --border-width: 0.0625rem;
+  --border-width-strong: 0.125rem;
+}
+
+
+/* =====================================================
+   11. SHADOWS
+===================================================== */
+
+:root {
+  --shadow-sm: 0 0.125rem 0.375rem rgb(9 45 89 / 6%);
+  --shadow-md: 0 0.25rem 0.75rem rgb(9 45 89 / 9%);
+  --shadow-lg: 0 0.5rem 1.5rem rgb(9 45 89 / 12%);
+}
+
+
+/* =====================================================
+   12. Z-INDEX
+===================================================== */
+
+:root {
+  --z-sidebar: 110;
+  --z-backdrop: 90;
+  --z-header: 100;
+  --z-dropdown: 200;
+  --z-modal: 1000;
+  --z-toast: 1100;
+}
+
+
+/* =====================================================
+   13. DARK THEME
+===================================================== */
+
 [data-theme='dark'] {
+
+  /* Brand */
   --color-primary: #7fb0ff;
   --color-primary-hover: #a9c9ff;
   --color-primary-active: #5c9cff;
   --color-primary-disabled: #354b6b;
 
+  --color-secondary: #9aadc9;
+
+  /* Text */
   --color-text: #e6eeff;
-  --color-text-muted: #9aadc9;
+  --color-text-secondary: #9aadc9;
+  --color-text-muted: #8498b5;
+  --color-text-inverse: #111c30;
+  --color-text-disabled: #71839e;
+
+  /* Background */
+  --color-background: #0d1829;
 
   --color-surface: #111c30;
   --color-surface-secondary: #17253b;
+  --color-surface-tertiary: #1c2c45;
+  --color-surface-elevated: #192940;
+
+  --color-overlay: rgb(0 0 0 / 55%);
+
+  /* Borders */
   --color-border: #293951;
+  --color-border-strong: #3a506f;
+
+  /* Interaction */
+  --color-hover: #1b2940;
+  --color-active: #1d3763;
+  --color-focus: rgb(127 176 255 / 45%);
+  --color-focus-ring: rgb(127 176 255 / 18%);
+
+  --color-disabled-background: #1c2a40;
+  --color-disabled-text: #71839e;
+
+  /* Status */
+  --color-danger: #ff7b86;
+  --color-success: #42d392;
+  --color-warning: #ffad66;
+  --color-info: #76baff;
+
+  /* Status backgrounds */
+  --color-danger-background: #3b202d;
+  --color-success-background: #173b32;
+  --color-warning-background: #3d3024;
+  --color-info-background: #19334d;
+
+  /* Shadows */
+  --shadow-sm: 0 0.125rem 0.375rem rgb(0 0 0 / 15%);
+  --shadow-md: 0 0.25rem 0.75rem rgb(0 0 0 / 20%);
+  --shadow-lg: 0 0.5rem 1.5rem rgb(0 0 0 / 30%);
 }

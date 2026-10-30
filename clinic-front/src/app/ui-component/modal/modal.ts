@@ -11,6 +11,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 
 import {
@@ -24,12 +25,16 @@ import {
   selector: 'app-modal',
   standalone: true,
   templateUrl: './modal.html',
-  styleUrls: ['./modal.scss'],
+  styleUrl: './modal.scss',
   imports: [CommonModule],
 })
 export class Modal implements AfterViewInit, OnDestroy {
   @ViewChild('dialogElement', { static: true })
   private dialogElement!: ElementRef<HTMLDialogElement>;
+
+  // ========================================
+  // Inputs
+  // ========================================
 
   readonly title = input('');
   readonly subtitle = input('');
@@ -75,10 +80,18 @@ export class Modal implements AfterViewInit, OnDestroy {
     transform: booleanAttribute,
   });
 
+  // ========================================
+  // Outputs
+  // ========================================
+
   @Output() closed = new EventEmitter<void>();
   @Output() primaryAction = new EventEmitter<void>();
   @Output() secondaryAction = new EventEmitter<void>();
   @Output() expandedChange = new EventEmitter<boolean>();
+
+  // ========================================
+  // Custom templates
+  // ========================================
 
   @ContentChild(ModalHeaderDirective)
   customHeader?: ModalHeaderDirective;
@@ -89,9 +102,17 @@ export class Modal implements AfterViewInit, OnDestroy {
   @ContentChild(ModalFooterDirective)
   customFooter?: ModalFooterDirective;
 
+  // ========================================
+  // State
+  // ========================================
+
   expanded = false;
 
   private destroyed = false;
+
+  // ========================================
+  // Lifecycle
+  // ========================================
 
   ngAfterViewInit(): void {
     const dialog = this.dialogElement.nativeElement;
@@ -111,6 +132,10 @@ export class Modal implements AfterViewInit, OnDestroy {
     }
   }
 
+  // ========================================
+  // Dialog actions
+  // ========================================
+
   close(): void {
     const dialog = this.dialogElement.nativeElement;
 
@@ -120,8 +145,10 @@ export class Modal implements AfterViewInit, OnDestroy {
   }
 
   onDialogClick(event: MouseEvent): void {
+    const dialog = this.dialogElement.nativeElement;
+
     if (
-      event.target === this.dialogElement.nativeElement &&
+      event.target === dialog &&
       this.closeOnBackdrop()
     ) {
       this.close();
@@ -135,10 +162,17 @@ export class Modal implements AfterViewInit, OnDestroy {
   }
 
   onNativeClose(): void {
-    if (!this.destroyed) {
-      this.closed.emit();
+    if (this.destroyed) {
+      return;
     }
+
+    this.expanded = false;
+    this.closed.emit();
   }
+
+  // ========================================
+  // Footer actions
+  // ========================================
 
   onPrimaryAction(): void {
     if (this.loading() || this.primaryDisabled()) {
@@ -151,6 +185,10 @@ export class Modal implements AfterViewInit, OnDestroy {
   onSecondaryAction(): void {
     this.secondaryAction.emit();
   }
+
+  // ========================================
+  // Expand / Restore
+  // ========================================
 
   toggleExpanded(): void {
     if (!this.expandable()) {

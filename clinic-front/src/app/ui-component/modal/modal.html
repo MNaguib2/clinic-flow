@@ -11,18 +11,18 @@
   (click)="onDialogClick($event)"
   (cancel)="onCancel($event)"
   (close)="onNativeClose()"
-  [attr.aria-label]="title() || null"
+  [attr.aria-label]="title() || 'Dialog'"
 >
   <header class="dialog__header">
     @if (customHeader) {
-      <ng-container
-        [ngTemplateOutlet]="customHeader.template"
-      />
+      <ng-container [ngTemplateOutlet]="customHeader.template" />
     } @else {
       <div class="dialog__heading">
-        <h2 class="dialog__title">
-          {{ title() }}
-        </h2>
+        @if (title()) {
+          <h2 class="dialog__title">
+            {{ title() }}
+          </h2>
+        }
 
         @if (subtitle()) {
           <p class="dialog__subtitle">
@@ -37,9 +37,8 @@
         <button
           type="button"
           class="dialog__icon-button"
-          [attr.aria-label]="
-            expanded ? 'Restore dialog size' : 'Expand dialog'
-          "
+          [attr.aria-label]="expanded ? 'Restore dialog size' : 'Expand dialog'"
+          [attr.aria-pressed]="expanded"
           (click)="toggleExpanded()"
         >
           @if (expanded) {
@@ -65,9 +64,7 @@
 
   <section class="dialog__body">
     @if (customBody) {
-      <ng-container
-        [ngTemplateOutlet]="customBody.template"
-      />
+      <ng-container [ngTemplateOutlet]="customBody.template" />
     } @else {
       <ng-content />
     }
@@ -76,9 +73,7 @@
   @if (showFooter()) {
     <footer class="dialog__footer">
       @if (customFooter) {
-        <ng-container
-          [ngTemplateOutlet]="customFooter.template"
-        />
+        <ng-container [ngTemplateOutlet]="customFooter.template" />
       } @else {
         @if (showSecondaryAction()) {
           <button
@@ -98,10 +93,7 @@
             (click)="onPrimaryAction()"
           >
             @if (loading()) {
-              <span
-                class="dialog__spinner"
-                aria-hidden="true"
-              ></span>
+              <span class="dialog__spinner" aria-hidden="true"></span>
             }
 
             {{ primaryLabel() }}

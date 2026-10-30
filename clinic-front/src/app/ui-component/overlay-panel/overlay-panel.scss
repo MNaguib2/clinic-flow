@@ -3,40 +3,66 @@
   position: relative;
   display: inline-block;
   vertical-align: middle;
+  min-width: 0;
 }
 
 :host(.overlay-panel--block) {
   display: block;
+  width: 100%;
 }
+
+// ========================================
+// Trigger
+// ========================================
 
 .overlay-panel__trigger {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
+  min-width: 0;
 }
 
+// ========================================
+// Panel base
+// ========================================
 
 .overlay-panel__panel {
   position: fixed;
-  z-index: 2000;
+  z-index: var(--z-popover, 2000);
 
-  /* Position is calculated from the trigger in TypeScript */
+  // Position is calculated from the trigger in TypeScript.
   inset: auto;
 
-  min-inline-size: 190px;
-  max-inline-size: calc(100vw - 16px);
+  min-inline-size: 11.875rem;
+  max-inline-size: calc(100vw - 1rem);
   max-block-size: var(--overlay-panel-max-height, 24rem);
 
   box-sizing: border-box;
   overflow: auto;
   overscroll-behavior: contain;
 
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
 
-  transition: opacity 120ms ease, visibility 120ms;
+  transition:
+    opacity 140ms ease,
+    visibility 140ms ease,
+    transform 140ms ease;
+
+  // Prevent inherited text styles from the trigger.
+  font-family: var(--font-family);
 }
+
+// ========================================
+// Open state
+// ========================================
 
 .overlay-panel__panel--open {
   visibility: visible;
@@ -44,22 +70,57 @@
   pointer-events: auto;
 }
 
+// ========================================
+// Fit trigger width
+// ========================================
 
 .overlay-panel__panel--fit {
   inline-size: 100%;
   min-inline-size: 0;
 }
 
-.overlay-panel__panel:not(.overlay-panel__panel--unstyled) {
-  padding: 0.5rem;
-  border: 1px solid var(--bs-border-color, #e5e7eb);
-  border-radius: 0.75rem;
+// ========================================
+// Unstyled variant
+// ========================================
 
-  color: var(--bs-body-color, #1f2937);
-  background: var(--bs-body-bg, #fff);
-
-  box-shadow: 0 0.65rem 1.8rem rgb(15 23 42 / 15%);
+.overlay-panel__panel--unstyled {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
+
+// ========================================
+// Scrollbar
+// ========================================
+
+.overlay-panel__panel {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+
+  &::-webkit-scrollbar {
+    width: 0.375rem;
+    height: 0.375rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: var(--radius-full);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
+}
+
+// ========================================
+// Reduced motion
+// ========================================
 
 @media (prefers-reduced-motion: reduce) {
   .overlay-panel__panel {

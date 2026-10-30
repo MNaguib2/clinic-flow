@@ -1,212 +1,141 @@
+
 :host {
   display: block;
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-family);
 }
+
+// ========================================
+// Header layout
+// ========================================
 
 .dashboard-header {
   position: sticky;
-  top: 0;
-  z-index: 100;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 30px;
-
-  min-height: 64px;
-  padding: 8px 16px;
-
-  background: var(--bs-body-bg, #fff);
-  color: var(--bs-body-color, #243b60);
-  border: 0;
-  border-bottom: 1px solid #e7eef9;
-}
-
-:host-context([data-bs-theme='dark']) .dashboard-header {
-  border-bottom-color: var(--bs-border-color, #293951);
-}
-
-/* Profile */
-
-.header-profile {
-  position: relative;
+  inset-block-start: 0;
+  z-index: var(--z-header);
 
   display: flex;
   align-items: center;
-  gap: 12px;
-
-  flex-shrink: 0;
-}
-
-.profile-dropdown-btn,
-.profile-info {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.profile-dropdown-btn {
-  width: 30px;
-  height: 30px;
-  padding: 0;
-
-  border: 1px solid var(--bs-border-color, #dce7f8);
-  border-radius: 7px;
-
-  background: transparent;
-  color: var(--bs-secondary-color, #7890b5);
-
-  cursor: pointer;
-}
-
-.profile-dropdown-btn app-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.profile-info {
-  gap: 8px;
-  padding: 0;
-
-  border: 0;
-  background: transparent;
-  color: inherit;
-
-  text-align: start;
-  cursor: pointer;
-}
-
-.user-avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
-
-  border-radius: 50%;
-  background: var(--bs-primary, #3978f6);
-  color: #fff;
-
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
-
-  min-width: 0;
-  text-align: start;
-}
-
-.user-name {
-  max-width: 130px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  color: var(--bs-body-color, #243b60);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 16px;
-}
-
-.user-role {
-  max-width: 130px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  color: var(--bs-secondary-color, #8192ad);
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 13px;
-}
-
-/* Profile dropdown */
-
-.profile-dropdown {
-  min-width: 190px;
-}
-
-.dropdown-user-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px;
-}
-
-.dropdown-user-name {
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.dropdown-user-role {
-  color: var(--bs-secondary-color, #8192ad);
-  font-size: 11px;
-}
-
-.dropdown-divider {
-  height: 1px;
-  margin: 5px 0;
-  background: var(--bs-border-color, #e2eaf7);
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 9px;
+  gap: var(--space-4);
 
   width: 100%;
-  padding: 9px;
+  min-width: 0;
+  min-height: var(--header-height);
 
-  border: 0;
-  border-radius: 7px;
+  padding: var(--space-2) var(--space-5);
 
-  background: transparent;
-  color: var(--bs-body-color, #243b60);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-block-end: var(--border-width) solid var(--color-border);
 
-  font-size: 12px;
-  text-align: start;
-  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
 }
 
-.dropdown-item:hover {
-  background: var(--bs-tertiary-bg, #f2f6fc);
-}
+// ========================================
+// Sidebar toggle
+// ========================================
 
-/* Brand */
-
-.dashboard-brand {
+.sidebar-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 2.5rem;
+
+  padding: 0;
+
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  cursor: pointer;
+
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+
+  app-icon {
+    display: flex;
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+  }
+
+  &:hover {
+    background: var(--color-hover);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
+
+// ========================================
+// Search
+// ========================================
+
+.header-search {
+  display: flex;
+  align-items: center;
+
+  flex: 1 1 20rem;
+  min-width: 10rem;
+  max-width: 22rem;
+}
+
+// ========================================
+// Brand
+// ========================================
+
+.dashboard-brand {
+  display: none;
+  align-items: center;
+  gap: var(--space-1);
 
   flex-shrink: 0;
   white-space: nowrap;
+
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
   text-decoration: none;
 
-  color: var(--bs-primary, #216cf3);
-  font-size: 17px;
-  font-weight: 700;
+  &:hover {
+    color: var(--color-text);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
 }
 
 .brand-name {
-  color: var(--bs-body-color) !important;
+  color: var(--color-text);
 
   span {
-    color: var(--bs-primary, #216cf3);
+    color: var(--color-primary);
   }
 }
 
 .brand-heart {
-  display: inline-block;
-  width: 25px;
-  height: 25px;
+  display: block;
+
+  width: 1.5625rem;
+  height: 1.5625rem;
+  flex: 0 0 1.5625rem;
 
   background-image: url('/images/heart/alnoor-icon-dark.png');
   background-position: center;
@@ -214,108 +143,402 @@
   background-size: contain;
 }
 
-:host-context([data-bs-theme='dark']) .brand-heart {
+:host-context([data-theme='dark']) .brand-heart {
   background-image: url('/images/heart/alnoor-icon-light.png');
 }
 
-/* Header actions */
+// ========================================
+// Right section
+// ========================================
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+
+  flex: 0 0 auto;
+  min-width: 0;
+
+  // In RTL this keeps the user section at the left edge.
+  margin-inline-start: auto;
+}
+
+// ========================================
+// Header actions
+// ========================================
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  min-height: 2.5rem;
 }
 
-.sidebar-toggle {
+.header-separator {
+  display: block;
+
+  width: var(--border-width);
+  height: 1.75rem;
+
+  background: var(--color-border);
+}
+
+// Keep child component hosts aligned with the header.
+.header-actions > app-language-toggle,
+.header-actions > app-theme-toggle {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  padding: 0;
-  border: 1px solid var(--bs-border-color, #dce7f8);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--bs-body-color, #243b60);
-  cursor: pointer;
+  flex: 0 0 auto;
 }
 
-.sidebar-toggle app-icon {
-  width: 20px;
-  height: 20px;
-}
+// ========================================
+// Notifications
+// ========================================
 
 .notification-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  width: 32px;
-  height: 32px;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 2.5rem;
+
   padding: 0;
 
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
 
   background: transparent;
-  color: var(--bs-secondary-color, #7188ad);
+  color: var(--color-text-secondary);
 
+  cursor: pointer;
+
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+
+  app-icon {
+    display: flex;
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+  }
+
+  &:hover {
+    background: var(--color-hover);
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
+
+// ========================================
+// Profile
+// ========================================
+
+.header-profile {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   cursor: pointer;
 }
 
-.notification-btn:hover {
-  background: var(--bs-tertiary-bg, #f2f6fc);
+.profile-info {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  min-width: 0;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+
+  text-align: start;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
 }
 
-.header-separator {
-  width: 1px;
-  height: 30px;
-  background: var(--bs-border-color, #e7edf7);
+.user-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
+  flex: 0 0 var(--avatar-size-md);
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
 }
 
-/* Search */
+.user-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.125rem;
 
-.header-search {
-  position: relative;
-  flex: 1;
-  min-width: 100px;
-  max-width: 380px;
+  min-width: 0;
+  text-align: start;
 }
 
-:host ::ng-deep .header-search-input {
-  height: 34px;
-  padding-inline: 12px 36px;
-  border-radius: 9px;
-  background-color: var(--bs-search-field-bg, #f8fbff);
-  font: inherit;
-  font-size: 11px;
+.user-name {
+  display: block;
+  max-width: 8.75rem;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--color-text);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
 }
 
-/* Keyboard focus */
-.profile-info:focus-visible,
-.profile-dropdown-btn:focus-visible,
-.notification-btn:focus-visible,
-.sidebar-toggle:focus-visible {
-  outline: 2px solid var(--bs-primary, #1769f5);
-  outline-offset: 2px;
+.user-role {
+  display: block;
+  max-width: 8.75rem;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
 }
 
-/* Mobile */
+// ========================================
+// Profile dropdown indicator
+// ========================================
 
-@media (max-width: 767.98px) {
-  .dashboard-header {
-    min-height: 58px;
-    padding: 8px 12px;
-    justify-content: space-between;
+.profile-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 1.875rem;
+  height: 1.875rem;
+  flex: 0 0 1.875rem;
+
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+
+  app-icon {
+    display: flex;
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
   }
 
-  .header-profile,
+  .profile-trigger:hover & {
+    background: var(--color-hover);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+}
+
+// ========================================
+// Profile dropdown
+// ========================================
+
+.profile-dropdown {
+  min-width: 13.75rem;
+  padding: var(--space-2);
+
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.dropdown-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  padding: var(--space-2);
+}
+
+.dropdown-user-name {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.dropdown-user-role {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.dropdown-divider {
+  height: var(--border-width);
+  margin-block: var(--space-1);
+  background: var(--color-border);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  width: 100%;
+  padding: var(--space-2);
+
+  border: 0;
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  text-align: start;
+
+  cursor: pointer;
+
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+
+  app-icon {
+    display: flex;
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  &:hover {
+    background: var(--color-hover);
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
+
+.profile-mobile-actions {
+  display: none;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  padding: var(--space-2);
+  margin-block-start: var(--space-2);
+
+  border-block-start: var(--border-width) solid var(--color-border);
+}
+
+// ========================================
+// Child controls: readable in dark mode
+// ========================================
+
+// These selectors only apply to controls rendered inside the two components.
+:host ::ng-deep {
+  .header-actions app-language-toggle button,
+  .header-actions app-theme-toggle button,
+  .profile-mobile-actions app-language-toggle button,
+  .profile-mobile-actions app-theme-toggle button {
+    color: var(--color-text-secondary);
+    font-family: var(--font-family);
+  }
+
+  .header-actions app-language-toggle button:hover,
+  .header-actions app-theme-toggle button:hover,
+  .profile-mobile-actions app-language-toggle button:hover,
+  .profile-mobile-actions app-theme-toggle button:hover {
+    color: var(--color-primary);
+  }
+}
+
+// ========================================
+// Tablet
+// ========================================
+
+@media (max-width: 62rem) {
+  .dashboard-header {
+    gap: var(--space-3);
+    padding-inline: var(--space-3);
+  }
+
+  .header-search {
+    max-width: 19rem;
+  }
+
+  .header-right {
+    gap: var(--space-3);
+  }
+
   .header-actions {
-    position: relative;
-    z-index: 2;
-    flex-shrink: 0;
+    gap: var(--space-2);
+  }
+}
+
+// ========================================
+// Mobile
+// ========================================
+
+@media (max-width: 47.99875rem) {
+  .dashboard-header {
+    min-height: var(--header-height-mobile);
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .dashboard-brand {
+    display: inline-flex;
+  }
+
+  .header-search {
+    display: none;
+  }
+
+  .header-right {
+    gap: var(--space-2);
+  }
+
+  .header-actions {
+    gap: var(--space-2);
+  }
+
+  .header-separator,
+  .header-actions > app-language-toggle,
+  .header-actions > app-theme-toggle {
+    display: none;
   }
 
   .user-details,
@@ -323,49 +546,52 @@
     display: none;
   }
 
-  .header-actions {
-    margin-inline-end: auto;
-    gap: 8px;
+  .profile-mobile-actions {
+    display: flex;
   }
-
-  .header-separator,
-  .header-actions>app-language-toggle,
-  .header-actions>app-theme-toggle {
-    display: none;
-  }
-
-  .header-search {
-    display: none;
-  }
-
 }
 
-@media (max-width: 360px) {
+// ========================================
+// Small mobile
+// ========================================
+
+@media (max-width: 22.5rem) {
   .dashboard-header {
-    padding-inline: 8px;
+    padding-inline: var(--space-2);
   }
 
   .dashboard-brand {
-    font-size: 13px;
+    gap: 0.125rem;
+    font-size: var(--font-size-md);
   }
 
   .brand-heart {
-    width: 21px;
-    height: 21px;
+    width: 1.3125rem;
+    height: 1.3125rem;
+    flex-basis: 1.3125rem;
   }
 
-  .header-actions {
-    gap: 4px;
+  .header-right {
+    gap: var(--space-1);
+  }
+
+  .user-avatar {
+    width: var(--avatar-size-sm);
+    height: var(--avatar-size-sm);
+    flex-basis: var(--avatar-size-sm);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+// ========================================
+// Reduced motion
+// ========================================
 
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-header,
+  .sidebar-toggle,
+  .notification-btn,
+  .profile-dropdown-btn,
+  .dropdown-item {
+    transition-duration: 0.01ms;
   }
 }

@@ -1,246 +1,368 @@
+
 :host {
   display: block;
   flex: 0 0 auto;
-  --sidebar-bg: #f5f9ff;
-  --sidebar-border: #dce7f7;
-  --sidebar-brand: #102e67;
-  --sidebar-text: #17366f;
-  --sidebar-icon: #254d91;
-  --sidebar-secondary: #8192ad;
-  --sidebar-primary: #216cf3;
-  --sidebar-active-bg: #e7f0ff;
-  --sidebar-hover-bg: #f2f7ff;
-  --sidebar-focus: rgb(33 108 243 / 35%);
-  --support-bg: #f3f8ff;
-  --support-border: #dfeafc;
-  --support-action: #2878f5;
+  font-family: var(--font-family);
 }
 
-:host-context([data-bs-theme='dark']) {
-  --sidebar-bg: #111827;
-  --sidebar-border: #273449;
-  --sidebar-brand: #e8f0ff;
-  --sidebar-text: #c3d3ee;
-  --sidebar-icon: #a8c0e8;
-  --sidebar-secondary: #9eb2d0;
-  --sidebar-primary: #78a9ff;
-  --sidebar-active-bg: #1d3763;
-  --sidebar-hover-bg: #1b2940;
-  --sidebar-focus: rgb(127 176 255 / 45%);
-  --support-bg: #17263c;
-  --support-border: #2a3e5d;
-  --support-action: #2878f5;
-}
+// ========================================
+// Sidebar
+// ========================================
 
 .dashboard-sidebar {
   position: fixed;
-  z-index: 111;
+  z-index: var(--z-sidebar);
+
   inset-block: 0;
   inset-inline-start: 0;
+
   display: flex;
   flex-direction: column;
-  width: min(280px, calc(100vw - 48px));
+
+  width: min(
+    var(--sidebar-width-mobile),
+    calc(100vw - var(--space-12))
+  );
+
   height: 100vh;
   height: 100dvh;
-  padding: 12px;
+
+  padding: var(--space-3);
+
+  overflow-x: hidden;
   overflow-y: auto;
-  background: var(--sidebar-bg);
-  color: var(--sidebar-brand);
-  border-inline-end: 1px solid var(--sidebar-border);
+
+  background: var(--color-surface-secondary);
+  color: var(--color-text);
+
+  border-inline-end: var(--border-width) solid var(--color-border);
+
   transform: translateX(var(--sidebar-closed-offset, -105%));
   visibility: hidden;
-  transition: transform 180ms ease, visibility 180ms ease;
+
+  transition:
+    transform 180ms ease,
+    visibility 180ms ease;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }
+
+// RTL closed position
 
 :host-context([dir='rtl']) {
   --sidebar-closed-offset: 105%;
 }
+
+// Open state
 
 .dashboard-sidebar.is-open {
   transform: translateX(0);
   visibility: visible;
 }
 
+// ========================================
+// Brand
+// ========================================
+
 .dashboard-brand {
   position: relative;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   align-self: flex-start;
-  gap: 7px;
+
+  gap: var(--space-2);
+
   width: 100%;
   min-width: 0;
-  height: 52px;
-  min-height: 52px;
-  flex: 0 0 52px;
-  color: var(--sidebar-brand);
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-}
 
-.dashboard-brand::after {
-  position: absolute;
-  inset-inline: -12px;
-  inset-block-end: 0;
-  border-block-end: 1px solid var(--sidebar-border);
-  content: '';
-  pointer-events: none;
+  height: 3.25rem;
+  min-height: 3.25rem;
+  flex: 0 0 3.25rem;
+
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+
+  text-decoration: none;
+
+  &::after {
+    position: absolute;
+
+    inset-inline: calc(var(--space-3) * -1);
+    inset-block-end: 0;
+
+    border-block-end: var(--border-width) solid var(--color-border);
+
+    content: '';
+    pointer-events: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
 }
 
 .dashboard-brand-name {
   min-width: 0;
+
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+// ========================================
+// Brand image
+// ========================================
+
 .brand-heart {
   display: block;
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  background: url('/images/heart/alnoor-icon-dark.png') center / contain no-repeat;
+
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 2.25rem;
+
+  background-image: url('/images/heart/alnoor-icon-dark.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
-:host-context([data-bs-theme='dark']) .brand-heart {
+:host-context([data-theme='dark']) .brand-heart {
   background-image: url('/images/heart/alnoor-icon-light.png');
 }
+
+// ========================================
+// Navigation
+// ========================================
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
+
   flex: 0 0 auto;
-  gap: 5px;
-  margin-block-start: 22px;
+
+  gap: var(--space-1);
+
+  margin-block-start: var(--space-6);
 }
+
+// ========================================
+// Navigation link
+// ========================================
 
 .sidebar-link {
   position: relative;
+
   display: flex;
   align-items: center;
-  gap: 10px;
+
+  gap: var(--space-3);
+
   width: 100%;
-  min-height: 46px;
-  flex: 0 0 46px;
-  padding: 0 12px;
+  min-height: 2.875rem;
+  flex: 0 0 2.875rem;
+
+  padding-inline: var(--space-3);
+
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
+
   background: transparent;
-  color: var(--sidebar-text);
-  font-size: 14px;
-  font-weight: 500;
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+
   text-align: start;
   text-decoration: none;
+
   cursor: pointer;
-  transition: color 170ms ease, background-color 170ms ease;
+
+  transition:
+    color 170ms ease,
+    background-color 170ms ease;
+
+  &:hover:not(.active) {
+    background: var(--color-hover);
+    color: var(--color-primary);
+  }
+
+  &.active {
+    background: var(--color-active);
+    color: var(--color-primary);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  &.active::before {
+    position: absolute;
+
+    inset-block: var(--space-2);
+    inset-inline-start: 0;
+
+    width: 0.1875rem;
+
+    border-radius: var(--radius-full);
+
+    background: var(--color-primary);
+
+    content: '';
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
 }
 
-.sidebar-link:hover:not(.active) {
-  background: var(--sidebar-hover-bg);
-  color: var(--sidebar-primary);
-}
-
-.sidebar-link.active {
-  background: var(--sidebar-active-bg);
-  color: var(--sidebar-primary);
-  font-weight: 600;
-}
-
-.sidebar-link.active::before {
-  position: absolute;
-  inset-block: 10px;
-  inset-inline-start: 0;
-  width: 3px;
-  border-radius: 2px;
-  background: var(--sidebar-primary);
-  content: '';
-}
+// ========================================
+// Navigation icon
+// ========================================
 
 .sidebar-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--sidebar-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+
+  flex: 0 0 var(--icon-size-md);
+
+  color: var(--color-text-secondary);
+
   transition: color 170ms ease;
 }
 
 .sidebar-link:hover .sidebar-icon,
 .sidebar-link.active .sidebar-icon {
-  color: var(--sidebar-primary);
+  color: var(--color-primary);
 }
 
-.sidebar-link:focus-visible,
-.dashboard-brand:focus-visible {
-  outline: 2px solid var(--sidebar-focus);
-  outline-offset: 2px;
-}
+// ========================================
+// Support card
+// ========================================
 
 .support-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  min-height: 80px;
+
+  gap: var(--space-2);
+
+  min-height: 5rem;
   flex: 0 0 auto;
+
   margin-block-start: auto;
-  padding: 12px;
-  border: 1px solid var(--support-border);
-  border-radius: 10px;
-  background: var(--support-bg);
+  padding: var(--space-3);
+
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+  color: var(--color-text);
 }
+
+// ========================================
+// Support content
+// ========================================
 
 .support-copy {
   min-width: 0;
+
+  h2,
+  p {
+    margin: 0;
+    line-height: var(--line-height-normal);
+  }
+
+  h2 {
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  p {
+    margin-block-start: var(--space-1);
+
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+  }
 }
 
-.support-copy h2,
-.support-copy p {
-  margin: 0;
-  line-height: 1.5;
-}
-
-.support-copy h2 {
-  color: var(--sidebar-brand);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.support-copy p {
-  color: var(--sidebar-secondary);
-  font-size: 11px;
-}
+// ========================================
+// Support action
+// ========================================
 
 .support-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
-  border-radius: 50%;
-  background: var(--support-action);
-  color: #fff;
-}
 
-.support-action app-icon {
-  width: 16px;
-  height: 16px;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 2rem;
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+
+  cursor: pointer;
+
+  transition: background-color 160ms ease;
+
+  &:hover {
+    background: var(--color-primary-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  app-icon {
+    display: flex;
+
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+  }
 }
 
 :host-context([dir='rtl']) .support-action app-icon {
   transform: scaleX(-1);
 }
 
+// ========================================
+// Sidebar backdrop
+// ========================================
+
 .sidebar-backdrop {
   position: fixed;
-  z-index: 90;
+  z-index: var(--z-backdrop);
+
   inset: 0;
+
   border: 0;
-  background: rgb(16 46 103 / 28%);
+
+  background: var(--color-overlay);
+
   opacity: 0;
   visibility: hidden;
-  transition: opacity 220ms ease, visibility 220ms ease;
+
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease;
 }
 
 .sidebar-backdrop.is-visible {
@@ -248,14 +370,20 @@
   visibility: visible;
 }
 
-@media (min-width: 992px) {
-  :host:not(:has(> .is-closed)) {
-    width: 216px;
-    flex: 0 0 216px;
+// ========================================
+// Desktop
+// ========================================
+
+@media (min-width: 62rem) {
+  :host {
+    transition:
+      width 180ms ease,
+      flex-basis 180ms ease;
   }
 
-  :host {
-    transition: width 180ms ease, flex-basis 180ms ease;
+  :host:not(:has(> .is-closed)) {
+    width: var(--sidebar-width);
+    flex: 0 0 var(--sidebar-width);
   }
 
   :host:has(> .is-closed) {
@@ -265,14 +393,21 @@
 
   .dashboard-sidebar:not(.is-closed) {
     position: sticky;
+
     inset-block-start: 0;
-    width: 216px;
-    flex: 0 0 216px;
+
+    width: var(--sidebar-width);
+
+    flex: 0 0 var(--sidebar-width);
+
     height: 100vh;
     height: 100dvh;
+
     overflow-y: auto;
+
     transform: none;
     visibility: visible;
+
     transition: none;
   }
 
@@ -281,13 +416,37 @@
   }
 }
 
-@media (max-width: 991.98px) {
+// ========================================
+// Tablet and mobile
+// ========================================
+
+@media (max-width: 61.99875rem) {
   :host {
     width: 0;
     height: 0;
     flex: 0 0 0;
   }
 }
+
+// ========================================
+// Small screens
+// ========================================
+
+@media (max-width: 30rem) {
+  .dashboard-sidebar {
+    padding: var(--space-2);
+  }
+
+  .sidebar-link {
+    min-height: 2.75rem;
+    flex-basis: 2.75rem;
+    font-size: var(--font-size-base);
+  }
+}
+
+// ========================================
+// Reduced motion
+// ========================================
 
 @media (prefers-reduced-motion: reduce) {
   .dashboard-sidebar,

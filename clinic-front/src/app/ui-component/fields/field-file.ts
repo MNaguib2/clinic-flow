@@ -1,20 +1,46 @@
-import { Component, computed, forwardRef, input, signal } from '@angular/core';
+
+import {
+  Component,
+  computed,
+  forwardRef,
+  input,
+  signal,
+} from '@angular/core';
+
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+
 import { Icon } from '../icon/icon';
 import { FieldBase } from './field-base';
 import { FieldShell } from './field-shell';
-import { formatFileSize, validateFile } from './file-validation';
+
+import {
+  formatFileSize,
+  validateFile,
+} from './file-validation';
 
 /**
- * Value: `File | null`, or `File[]` when `multiple` is set (selections are appended).
- * Validation errors are shown locally and the value is left unchanged.
+ * Value:
+ * - File | null
+ * - File[] when multiple is enabled.
+ *
+ * Multiple selections are appended.
+ * Invalid files do not change the current value.
  */
 @Component({
   selector: 'app-field-file',
-  imports: [FieldShell, Icon, TranslatePipe],
+  standalone: true,
+  imports: [
+    FieldShell,
+    Icon,
+    TranslatePipe,
+  ],
   providers: [
-    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => FieldFile), multi: true },
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FieldFile),
+      multi: true,
+    },
   ],
   styleUrl: './field-dropzone.scss',
   template: `
@@ -25,22 +51,36 @@ import { formatFileSize, validateFile } from './file-validation';
       [error]="shown_error()"
       [required]="required()"
     >
+      <!-- Dropzone -->
       <label
         class="field-dropzone"
-        [class.is-dragging]="dragging()"
-        [class.is-disabled]="disabled()"
-        [class.is-invalid]="!!shown_error()"
+        [class.field-dropzone--dragging]="dragging()"
+        [class.field-dropzone--disabled]="disabled() || readOnly()"
+        [class.field-dropzone--invalid]="!!shown_error()"
+        [class.field-dropzone--has-files]="files().length > 0"
+        [attr.aria-disabled]="disabled() || readOnly()"
         (dragover)="on_drag_over($event)"
-        (dragleave)="dragging.set(false)"
+        (dragleave)="on_drag_leave($event)"
         (drop)="on_drop($event)"
       >
-        <app-icon name="cloud-upload" class="fs-2 text-primary" />
-        <span class="small fw-semibold">{{ 'field.upload.prompt' | translate }}</span>
-        @if (hint()) {
-          <small class="text-body-secondary">{{ hint() | translate }}</small>
-        }
+        <span class="field-dropzone__icon">
+          <app-icon name="cloud-upload" />
+        </span>
+
+        <span class="field-dropzone__content">
+          <span class="field-dropzone__title">
+            {{ 'field.upload.prompt' | translate }}
+          </span>
+
+          @if (hint()) {
+            <span class="field-dropzone__hint">
+              {{ hint() | translate }}
+            </span>
+          }
+        </span>
+
         <input
-          class="visually-hidden"
+          class="field-dropzone__input"
           type="file"
           [id]="uid"
           [attr.accept]="accept() || null"
@@ -53,21 +93,37 @@ import { formatFileSize, validateFile } from './file-validation';
           (blur)="touch()"
         />
       </label>
+
+      <!-- Selected files -->
       @if (files().length) {
-        <ul class="list-unstyled d-grid gap-2 mt-2 mb-0">
+        <ul class="field-file-list">
           @for (file of files(); track $index) {
-            <li class="d-flex align-items-center gap-2 border rounded p-2 bg-body">
-              <app-icon name="file-check" class="text-success fs-5" />
-              <span class="flex-grow-1 text-truncate" [title]="file.name">{{ file.name }}</span>
-              <small class="text-body-secondary">{{ format_size(file.size) }}</small>
+            <li class="field-file-item">
+              <span class="field-file-item__icon">
+                <app-icon name="file-check" />
+              </span>
+
+              <span class="field-file-item__info">
+                <span
+                  class="field-file-item__name"
+                  [title]="file.name"
+                >
+                  {{ file.name }}
+                </span>
+
+                <small class="field-file-item__size">
+                  {{ format_size(file.size) }}
+                </small>
+              </span>
+
               <button
                 type="button"
-                class="btn btn-sm btn-link text-danger p-0 d-inline-flex"
+                class="field-file-item__remove"
                 [attr.aria-label]="'field.upload.remove' | translate"
                 [disabled]="disabled() || readOnly()"
                 (click)="remove($index)"
               >
-                <app-icon name="file-x" class="fs-5" />
+                <app-icon name="file-x" />
               </button>
             </li>
           }
@@ -77,64 +133,158 @@ import { formatFileSize, validateFile } from './file-validation';
   `,
 })
 export class FieldFile extends FieldBase<File | File[] | null> {
+
+  // ========================================
+  // Inputs
+  // ========================================
+
   readonly accept = input('');
   readonly multiple = input(false);
-  /** Maximum size per file in bytes; `null` disables the check. */
+
+  /** Maximum size per file in bytes. Null disables the check. */
   readonly maxFileSize = input<number | null>(null);
-  /** Translation key or plain text shown inside the dropzone. */
+
+  /** Translation key or text shown inside the dropzone. */
   readonly hint = input('');
 
+  // ========================================
+  // State
+  // ========================================
+
   protected readonly dragging = signal(false);
+
   protected readonly files = computed<File[]>(() => {
     const value = this.current();
-    if (!value) return [];
+
+    if (!value) {
+      return [];
+    }
+
     return Array.isArray(value) ? value : [value];
   });
+
   protected readonly format_size = formatFileSize;
 
   constructor() {
     super(null);
   }
 
+  // ========================================
+  // File input
+  // ========================================
+
   protected on_select(event: Event): void {
-    const input_element = event.target as HTMLInputElement;
-    this.accept_files(Array.from(input_element.files ?? []));
-    input_element.value = '';
+    const inputElement = event.target as HTMLInputElement;
+
+    this.accept_files(
+      Array.from(inputElement.files ?? []),
+    );
+
+    // Allow selecting the same file again.
+    inputElement.value = '';
+
     this.touch();
   }
 
+  // ========================================
+  // Drag & Drop
+  // ========================================
+
   protected on_drag_over(event: DragEvent): void {
     event.preventDefault();
-    if (!this.disabled() && !this.readOnly()) this.dragging.set(true);
+
+    if (this.disabled() || this.readOnly()) {
+      return;
+    }
+
+    this.dragging.set(true);
+  }
+
+  protected on_drag_leave(event: DragEvent): void {
+    event.preventDefault();
+
+    this.dragging.set(false);
   }
 
   protected on_drop(event: DragEvent): void {
     event.preventDefault();
+
     this.dragging.set(false);
-    this.accept_files(Array.from(event.dataTransfer?.files ?? []));
+
+    if (this.disabled() || this.readOnly()) {
+      return;
+    }
+
+    this.accept_files(
+      Array.from(event.dataTransfer?.files ?? []),
+    );
+
     this.touch();
   }
 
+  // ========================================
+  // Remove file
+  // ========================================
+
   protected remove(index: number): void {
+    if (this.disabled() || this.readOnly()) {
+      return;
+    }
+
     this.local_error.set(null);
-    if (!this.multiple()) return this.commit(null);
-    this.commit(this.files().filter((_, file_index) => file_index !== index));
+
+    if (!this.multiple()) {
+      this.commit(null);
+      return;
+    }
+
+    this.commit(
+      this.files().filter(
+        (_, fileIndex) => fileIndex !== index,
+      ),
+    );
   }
 
+  // ========================================
+  // Validation & Commit
+  // ========================================
+
   private accept_files(selected: File[]): void {
-    if (this.disabled() || this.readOnly() || selected.length === 0) return;
-    const candidates = this.multiple() ? selected : selected.slice(0, 1);
+    if (
+      this.disabled() ||
+      this.readOnly() ||
+      selected.length === 0
+    ) {
+      return;
+    }
+
+    const candidates = this.multiple()
+      ? selected
+      : selected.slice(0, 1);
+
     for (const file of candidates) {
       const failure = validateFile(file, {
         accept: this.accept(),
         max_size: this.maxFileSize(),
       });
+
       if (failure) {
-        this.local_error.set(failure === 'type' ? 'field.errors.type' : 'field.errors.size');
+        this.local_error.set(
+          failure === 'type'
+            ? 'field.errors.type'
+            : 'field.errors.size',
+        );
+
         return;
       }
     }
+
     this.local_error.set(null);
-    this.commit(this.multiple() ? [...this.files(), ...candidates] : candidates[0]);
+
+    this.commit(
+      this.multiple()
+        ? [...this.files(), ...candidates]
+        : candidates[0],
+    );
   }
 }

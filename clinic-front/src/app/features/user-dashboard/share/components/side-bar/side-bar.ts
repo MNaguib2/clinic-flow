@@ -34,7 +34,9 @@ export class SideBar {
   }
 
   protected close(): void {
-    this.sidebar_state.close();
+    if ((this.document.defaultView?.innerWidth ?? 0) < 992) {
+      this.sidebar_state.close();
+    }
   }
 
   @HostListener('document:keydown.escape')
