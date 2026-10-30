@@ -1,7 +1,8 @@
 <div class="table-shell" [attr.aria-busy]="loadingMore()">
   <div #tableViewport class="table-scroll">
     <table class="table clinic-table mb-0" [class.clinic-table--virtual]="virtualScroll()"
-      [style.--virtual-item-size]="effectiveItemSize() + 'px'" [attr.aria-label]="ariaLabel() || ('table.label' | translate)">
+      [style.--virtual-item-size]="effectiveItemSize() + 'px'"
+      [attr.aria-label]="ariaLabel() || ('table.label' | translate)">
       <thead>
         <tr>
           @for (column of columns(); track $index) {
@@ -184,23 +185,34 @@
       }}
     </span>
 
-  }
+    }
 
     @if(infiniteScroll()) {
     <p class="scroll-hint"><app-icon name="chevron-down" /> {{ 'patients.scrollHint' | translate }}</p>
     }
-        <label class="pagination__size-control">
+    <label class="pagination__size-control">
       <span>{{ 'table.pagination.pageSizeLabel' | translate }}</span>
-      <select
-        [value]="pageSize()"
-        [disabled]="totalItems() === null || loadingMore()"
-        [attr.aria-label]="'table.pagination.pageSizeLabel' | translate"
-        (change)="onPageSizeChange($event)"
-      >
+      <select [value]="pageSize()" [disabled]="totalItems() === null || loadingMore()"
+        [attr.aria-label]="'table.pagination.pageSizeLabel' | translate" (change)="onPageSizeChange($event)">
         @for (option of options(); track option) {
         <option [value]="option">{{ option ? option : ('table.pagination.all' | translate) }}</option>
         }
       </select>
     </label>
+    <app-ui-button [variant]="'ghost'" type="button" (click)="retryLoad()">
+    <app-icon name="refresh"/>
+    </app-ui-button>
   </nav>
 </div>
+
+
+  @if (contextMenuDimensions(); as menu) {
+  <app-overlay-panel #contextOverlayPanel="overlayPanel" class="patient-context-dropdown" placement="bottom-start"
+    [style.left.px]="menu.x" [style.top.px]="menu.y" [offset]="0" autoClose="all" [styled]="false" [panelRole]="'menu'"
+    [ariaLabel]="'patients.actions.contextLabel' | translate" (closed)="closeContextMenuOnScroll()">
+    <span overlayPanelTrigger class="patient-context-trigger" aria-hidden="true"></span>
+
+    <ng-container [ngTemplateOutlet]="contextMenu()?.template" [ngTemplateOutletContext]="rowContext(menu.row)" />
+
+  </app-overlay-panel>
+  }

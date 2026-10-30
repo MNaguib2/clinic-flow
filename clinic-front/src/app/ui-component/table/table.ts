@@ -16,6 +16,7 @@ import {
   signal,
   viewChild,
   model,
+  EventEmitter,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Icon } from '@components/icon/icon';
@@ -23,15 +24,16 @@ import { ILoadMoreEvent } from './interfaces/load-more-event';
 import type {
   TableCellContext,
   TableColumn,
-  TableContextMenuEvent,
   TableRowContext,
   TableSortChange,
   TableSortDirection,
 } from './interfaces/table.interfaces';
+import { UiButtonComponent } from '@components/ui-button/ui-button.component';
+import { OverlayPanel } from '@components/overlay-panel/overlay-panel';
 
 @Component({
   selector: 'app-table',
-  imports: [Icon, NgTemplateOutlet, TranslatePipe],
+  imports: [Icon, NgTemplateOutlet, TranslatePipe, UiButtonComponent, OverlayPanel],
   templateUrl: './table.html',
   styleUrl: './table.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,6 +50,8 @@ export class Table<T extends object> {
   readonly error = input<string | null>(null);
   readonly emptyMessage = input<string | null>(null);
   readonly loadingMore = signal(false);
+  private readonly contextOverlayPanel = viewChild<OverlayPanel>('contextOverlayPanel');
+  private readonly contextMenuDimensions = signal<{ row: T; x: number; y: number } | null>(null);
 
   // Virtual scroll
   readonly virtualScroll = input(true);
@@ -69,6 +73,9 @@ export class Table<T extends object> {
   readonly actionsTemplate =
     input<TemplateRef<TableRowContext<T>> | null>(null);
 
+  readonly contextMenu =
+    input<{ template: TemplateRef<TableRowContext<T>> } | null>(null);
+
   // Sorting
   readonly sortKey = input<string>();
   readonly sortDirection = input<TableSortDirection>('asc');
@@ -76,8 +83,7 @@ export class Table<T extends object> {
 
   // Events
   readonly loadMore = output<ILoadMoreEvent>();
-  readonly contextMenu = output<TableContextMenuEvent<T>>();
-
+  readonly resetTable = new EventEmitter<void>();
   // Pagination
   readonly showPagination = input(false);
   readonly showPageSummary = input(true);
@@ -211,8 +217,8 @@ export class Table<T extends object> {
     const remainingRows = Math.max(
       0,
       this.blocks().length -
-        this.startIndex() -
-        this.visibleRows().length,
+      this.startIndex() -
+      this.visibleRows().length,
     );
 
     return remainingRows * this.effectiveItemSize();
@@ -232,7 +238,7 @@ export class Table<T extends object> {
       1,
       Math.ceil(
         Math.max(0, (this.totalItems() ?? 0)) /
-          this.effectivePageSize(),
+        this.effectivePageSize(),
       ),
     ),
   );
@@ -248,8 +254,8 @@ export class Table<T extends object> {
     this.totalItems() === 0
       ? 0
       : (this.currentPage() - 1) *
-          this.effectivePageSize() +
-        1,
+      this.effectivePageSize() +
+      1,
   );
 
   protected readonly summaryEnd = computed(() =>
@@ -273,6 +279,10 @@ export class Table<T extends object> {
         cancelAnimationFrame(this.scrollAnimationFrame);
         this.scrollAnimationFrame = null;
       }
+    });
+
+    this.resetTable.subscribe(() => {
+      this.requestMore({ page: 1, refresh: true });
     });
 
     afterNextRender(() => {
@@ -423,7 +433,7 @@ export class Table<T extends object> {
       }
     }
     this.currentPage.set(event?.page ?? this.currentPage() + 1);
-    this.loadMore.emit({page: this.currentPage(), sortKey: this.sortKey(), sortDirection: this.sortDirection(), limit});
+    this.loadMore.emit({ page: this.currentPage(), sortKey: this.sortKey(), sortDirection: this.sortDirection(), limit });
   }
 
   protected requestSort(column: TableColumn<T>): void {
@@ -437,14 +447,15 @@ export class Table<T extends object> {
       this.sortKey() === key && this.sortDirection() === 'asc'
         ? 'desc'
         : 'asc';
-        this.sortChange.emit({ key, direction });
-        this.requestMore({ refresh: true });
+    this.sortChange.emit({ key, direction });
+    this.requestMore({ refresh: true });
   }
 
   protected onRowContextMenu(
     event: MouseEvent,
     row: T,
   ): void {
+    if (!this.contextMenu()) return;
     if (this.contextMenuOpenedByTouch) {
       this.contextMenuOpenedByTouch = false;
       event.preventDefault();
@@ -453,12 +464,7 @@ export class Table<T extends object> {
 
     event.preventDefault();
 
-    this.contextMenu.emit({
-      row,
-      x: event.clientX,
-      y: event.clientY,
-      source: 'mouse',
-    });
+    this.openContextMenu(row, event.clientX, event.clientY, 'mouse');
   }
 
   protected onTouchStart(
@@ -491,15 +497,16 @@ export class Table<T extends object> {
 
       this.contextMenuOpenedByTouch = true;
 
-      this.contextMenu.emit({
-        row: touchedRow,
-        x,
-        y,
-        source: 'touch',
-      });
+      this.openContextMenu(touchedRow, x, y, 'touch');
 
       this.clearTouchTimer();
     }, 2000);
+  }
+
+  private openContextMenu(row: T, x: number, y: number, source: 'mouse' | 'touch'): void {
+    console.log("🚀 ~ Table ~ openContextMenu ~ row:", row)
+    this.contextMenuDimensions.set({ row, x, y });
+    requestAnimationFrame(() => this.contextOverlayPanel()?.show());
   }
 
   protected onTouchMove(event: TouchEvent): void {
@@ -523,6 +530,7 @@ export class Table<T extends object> {
 
   protected closeContextMenuOnScroll(): void {
     this.clearTouchTimer();
+    this.contextOverlayPanel()?.close();
   }
 
   protected retryLoad(): void {
