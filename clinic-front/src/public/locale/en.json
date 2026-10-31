@@ -337,7 +337,8 @@
         "category": "Category",
         "startDate": "Start date",
         "description": "Description",
-        "relatedTo": "Related condition"
+        "relatedTo": "Related condition",
+        "profileImage": "Patient profile image"
       },
       "placeholders": {
         "fullName": "Enter the patient's full name",
@@ -369,6 +370,14 @@
       "historyEmptyDescription": "Add chronic conditions, allergies, and previous surgeries.",
       "historyEntry": "Medical history entry {{number}}",
       "removeHistory": "Remove entry {{number}}",
+      "profileImage": {
+        "label": "Patient profile image",
+        "hint": "JPEG or PNG. Maximum 5 MB."
+      },
+      "historyAttachments": {
+        "label": "Record attachments",
+        "hint": "PDF, JPG, or PNG. Maximum 10 MB per file."
+      },
       "attachments": {
         "label": "Attachments",
         "hint": "Supported files: PDF, JPG, and PNG. Maximum 10 MB per file.",
@@ -388,6 +397,8 @@
     "upload": {
       "prompt": "Click to upload or drag and drop",
       "replace": "Click or drop to replace",
+      "chooseImage": "Choose image",
+      "dropImage": "Drag and drop an image here",
       "remove": "Remove file",
       "removeImage": "Remove image",
       "previewAlt": "Selected image preview"

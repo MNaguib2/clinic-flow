@@ -309,7 +309,8 @@
         "category": "الفئة",
         "startDate": "تاريخ البداية",
         "description": "الوصف",
-        "relatedTo": "الحالة المرتبطة"
+        "relatedTo": "الحالة المرتبطة",
+        "profileImage": "الصورة الشخصية للمريض"
       },
       "placeholders": {
         "fullName": "أدخل الاسم الكامل للمريض",
@@ -341,6 +342,14 @@
       "historyEmptyDescription": "يمكنك إضافة الأمراض المزمنة والحساسية والعمليات السابقة.",
       "historyEntry": "السجل الطبي {{number}}",
       "removeHistory": "حذف السجل {{number}}",
+      "profileImage": {
+        "label": "الصورة الشخصية للمريض",
+        "hint": "JPEG أو PNG. الحد الأقصى 5 ميجابايت."
+      },
+      "historyAttachments": {
+        "label": "مرفقات السجل",
+        "hint": "PDF أو JPG أو PNG. الحد الأقصى 10 ميجابايت لكل ملف."
+      },
       "attachments": {
         "label": "المرفقات",
         "hint": "الملفات المدعومة: PDF وJPG وPNG. الحد الأقصى 10 ميجابايت لكل ملف.",
@@ -360,6 +369,8 @@
     "upload": {
       "prompt": "انقر للرفع أو اسحب الملف وأفلته",
       "replace": "انقر أو أفلت ملفًا للاستبدال",
+      "chooseImage": "اختر صورة",
+      "dropImage": "اسحب الصورة وأفلتها هنا",
       "remove": "إزالة الملف",
       "removeImage": "إزالة الصورة",
       "previewAlt": "معاينة الصورة المحددة"

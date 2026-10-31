@@ -1,4 +1,3 @@
-
 @use "sass:math";
 
 // =====================================================
@@ -253,7 +252,7 @@ $grid-gutter-y: 0;
   // ---------------------------------------------------
 
   @each $key, $value in $spacing-values {
-    @if $key != auto {
+    @if $key !=auto {
       .gap#{$infix}-#{$key} {
         gap: $value !important;
       }
@@ -405,13 +404,9 @@ $grid-gutter-y: 0;
     display: flex;
     flex-wrap: wrap;
 
-    margin-inline: calc(
-      #{$grid-gutter-x} / -2
-    );
+    margin-inline: calc(#{$grid-gutter-x} / -2);
 
-    margin-block: calc(
-      #{$grid-gutter-y} / -2
-    );
+    margin-block: calc(#{$grid-gutter-y} / -2);
   }
 }
 
@@ -425,13 +420,9 @@ $grid-gutter-y: 0;
     flex-shrink: 0;
     width: 100%;
 
-    padding-inline: calc(
-      #{$grid-gutter-x} / 2
-    );
+    padding-inline: calc(#{$grid-gutter-x} / 2);
 
-    padding-block: calc(
-      #{$grid-gutter-y} / 2
-    );
+    padding-block: calc(#{$grid-gutter-y} / 2);
   }
 }
 
@@ -446,9 +437,7 @@ $grid-gutter-y: 0;
     .col#{$infix}-#{$i} {
       flex: 0 0 auto;
 
-      width: math.percentage(
-        math.div($i, 12)
-      );
+      width: math.percentage(math.div($i, 12));
     }
   }
 
@@ -466,6 +455,34 @@ $grid-gutter-y: 0;
 @include generate-row-utility();
 @include generate-column-utility();
 @include generate-column-widths();
+
+// =====================================================
+// Visually hidden
+// =====================================================
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.visually-hidden-focusable:not(:focus, :focus-within) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
 
 // =====================================================
 // Responsive utilities: breakpoint and above
