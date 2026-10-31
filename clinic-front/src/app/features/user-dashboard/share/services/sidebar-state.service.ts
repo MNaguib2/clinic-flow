@@ -16,10 +16,12 @@ export class SidebarState {
     }
     effect((on_cleanup) => {
       if (!this.is_browser || !this.is_open()) return;
-
+      const width = this.document.defaultView?.innerWidth ?? 0;
       const body = this.document.body;
       const previous_overflow = body.style.overflow;
-      body.style.overflow = 'hidden';
+      if (width < 992) {
+        body.style.overflow = 'hidden';
+      }
       on_cleanup(() => {
         console.log('Cleaning up sidebar overflow');
         body.style.overflow = previous_overflow;

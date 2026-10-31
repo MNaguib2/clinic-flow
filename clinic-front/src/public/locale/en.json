@@ -144,6 +144,17 @@
     "copyFailed": "Could not copy. Please try again.",
     "dismiss": "Dismiss notification"
   },
+  "fields": {
+    "date": {
+      "placeholder": "Select a date",
+      "today": "Today",
+      "clear": "Clear",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "previousYear": "Previous year",
+      "nextYear": "Next year"
+    }
+  },
   "table": {
     "label": "Data table",
     "actions": "Actions",

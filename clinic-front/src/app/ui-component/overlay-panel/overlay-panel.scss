@@ -1,4 +1,3 @@
-
 :host {
   position: relative;
   display: inline-block;
@@ -30,8 +29,8 @@
   position: fixed;
   z-index: var(--z-popover, 2000);
 
-  // Position is calculated from the trigger in TypeScript.
-  inset: auto;
+  // left/top are written directly by TypeScript (no change detection).
+  inset: 0 auto auto 0;
 
   min-inline-size: 11.875rem;
   max-inline-size: calc(100vw - 1rem);
@@ -51,12 +50,11 @@
   opacity: 0;
   pointer-events: none;
 
+  // Only compositor-friendly properties are animated.
   transition:
     opacity 140ms ease,
-    visibility 140ms ease,
-    transform 140ms ease;
+    visibility 140ms ease;
 
-  // Prevent inherited text styles from the trigger.
   font-family: var(--font-family);
 }
 
@@ -72,10 +70,12 @@
 
 // ========================================
 // Fit trigger width
+// (the variable is set from TypeScript; 100% of a fixed element would be
+// the viewport width, not the trigger width)
 // ========================================
 
 .overlay-panel__panel--fit {
-  inline-size: 100%;
+  inline-size: var(--overlay-panel-trigger-width, auto);
   min-inline-size: 0;
 }
 

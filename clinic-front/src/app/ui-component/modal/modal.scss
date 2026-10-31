@@ -51,7 +51,9 @@
 
   &[open] {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    // Keep fixed-position descendants (such as date pickers) positioned
+    // against the viewport instead of this dialog.
+    transform: none;
   }
 
   &[open]::backdrop {

@@ -20,7 +20,7 @@ export class ThemeService {
     this.isDark.set(isDark);
     const root = this.document.documentElement;
     root.classList.toggle('app-dark', isDark);
-    root.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+    root.setAttribute('data-theme', isDark ? 'dark' : 'light');
     root.style.colorScheme = isDark ? 'dark' : 'light';
     if (persist && this.isBrowser) {
       this.document.defaultView?.localStorage.setItem(

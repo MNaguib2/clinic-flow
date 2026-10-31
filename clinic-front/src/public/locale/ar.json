@@ -144,6 +144,17 @@
     "copyFailed": "تعذر النسخ. يرجى المحاولة مرة أخرى.",
     "dismiss": "إغلاق الإشعار"
   },
+  "fields": {
+    "date": {
+      "placeholder": "اختر تاريخًا",
+      "today": "اليوم",
+      "clear": "مسح",
+      "previousMonth": "الشهر السابق",
+      "nextMonth": "الشهر التالي",
+      "previousYear": "السنة السابقة",
+      "nextYear": "السنة التالية"
+    }
+  },
   "table": {
     "label": "جدول البيانات",
     "actions": "الإجراءات",
