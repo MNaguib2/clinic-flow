@@ -48,7 +48,7 @@ import {
       [control_id]="uid"
       [label]="label()"
       [help_text]="helpText()"
-      [error]="shown_error()"
+      [error]="error()"
       [required]="required()"
     >
       <!-- Dropzone -->
@@ -56,7 +56,7 @@ import {
         class="field-dropzone"
         [class.field-dropzone--dragging]="dragging()"
         [class.field-dropzone--disabled]="disabled() || readOnly()"
-        [class.field-dropzone--invalid]="!!shown_error()"
+        [class.field-dropzone--invalid]="!!error().length"
         [class.field-dropzone--has-files]="files().length > 0"
         [attr.aria-disabled]="disabled() || readOnly()"
         (dragover)="on_drag_over($event)"
@@ -88,7 +88,7 @@ import {
           [required]="required() && files().length === 0"
           [disabled]="disabled() || readOnly()"
           [attr.aria-describedby]="described_by()"
-          [attr.aria-invalid]="shown_error() ? 'true' : null"
+          [attr.aria-invalid]="error().length ? 'true' : null"
           (change)="on_select($event)"
           (blur)="touch()"
         />
@@ -271,8 +271,8 @@ export class FieldFile extends FieldBase<File | File[] | null> {
       if (failure) {
         this.local_error.set(
           failure === 'type'
-            ? 'field.errors.type'
-            : 'field.errors.size',
+            ? ['field.errors.type']
+            : ['field.errors.size'],
         );
 
         return;

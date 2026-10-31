@@ -35,12 +35,12 @@ export interface SelectOption {
       <div class="ui-select">
         <select
           class="ui-select__control"
-          [class.ui-select__control--invalid]="!!error()"
+          [class.ui-select__control--invalid]="!!error().length"
           [class.ui-select__control--placeholder]="!current()"
           [id]="uid"
           [value]="current()"
           [attr.aria-describedby]="described_by()"
-          [attr.aria-invalid]="error() ? 'true' : null"
+          [attr.aria-invalid]="error().length ? 'true' : null"
           [required]="required()"
           [disabled]="disabled() || readOnly()"
           (change)="commit($any($event.target).value)"

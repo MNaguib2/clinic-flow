@@ -37,7 +37,7 @@ import { Icon } from '../icon/icon';
         <textarea
           class="ui-textarea__control"
           [class.ui-textarea__control--with-icon]="!!icon()"
-          [class.ui-textarea__control--invalid]="!!error()"
+          [class.ui-textarea__control--invalid]="!!error().length"
           [id]="uid"
           [rows]="rows()"
           [value]="current()"
@@ -46,7 +46,7 @@ import { Icon } from '../icon/icon';
           "
           [attr.maxlength]="maxLength() ?? null"
           [attr.aria-describedby]="described_by()"
-          [attr.aria-invalid]="error() ? 'true' : null"
+          [attr.aria-invalid]="error().length ? 'true' : null"
           [required]="required()"
           [readOnly]="readOnly()"
           [disabled]="disabled()"

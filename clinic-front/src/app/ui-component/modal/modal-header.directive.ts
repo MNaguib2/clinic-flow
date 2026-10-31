@@ -4,7 +4,7 @@ import {
   TemplateRef,
 } from '@angular/core';
 
-export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl' | 'full';
 
 @Directive({
   selector: 'ng-template[modalHeader]',

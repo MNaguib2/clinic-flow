@@ -36,7 +36,7 @@ export type InputFieldType = 'text' | 'email' | 'password' | 'number' | 'url' | 
   <input
     class="field-input__native"
     [class.field-input__native--icon]="!!icon()"
-    [class.field-input__native--invalid]="!!error()"
+    [class.field-input__native--invalid]="!!error().length"
     [class]="inputClass()"
     [id]="uid"
     [type]="type()"
@@ -49,7 +49,7 @@ export type InputFieldType = 'text' | 'email' | 'password' | 'number' | 'url' | 
     [attr.step]="step() ?? null"
     [attr.maxlength]="maxLength() ?? null"
     [attr.aria-describedby]="described_by()"
-    [attr.aria-invalid]="error() ? 'true' : null"
+    [attr.aria-invalid]="error().length ? 'true' : null"
     [required]="required()"
     [readOnly]="readOnly()"
     [disabled]="disabled()"

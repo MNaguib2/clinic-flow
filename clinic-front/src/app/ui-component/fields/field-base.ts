@@ -25,7 +25,8 @@ export abstract class FieldBase<T> implements ControlValueAccessor {
   readonly label = input<string>('');
   readonly helpText = input<string>('');
   /** Translation key or plain text; shown when set. */
-  readonly error = input<string | null>(null);
+  readonly shownError = input<Array<string> | null>(null);
+
   readonly required = input(false, { transform: booleanAttribute });
   readonly readOnly = input(false, { alias: 'readonly', transform: booleanAttribute });
   readonly disabledInput = input(false, { alias: 'disabled', transform: booleanAttribute });
@@ -37,15 +38,19 @@ export abstract class FieldBase<T> implements ControlValueAccessor {
 
   protected readonly uid = `field-${next_field_id++}`;
   protected readonly current: WritableSignal<T>;
+
   /** Error produced by the component itself (e.g. file validation). */
-  protected readonly local_error = signal<string | null>(null);
-  protected readonly shown_error = computed(() => this.local_error() ?? this.error());
+  protected readonly local_error = signal<Array<string> | null>(null);
+
+  protected readonly error = computed(() => [...(this.local_error() ?? []), ... (this.shownError() ?? [])]);
+
   private readonly forms_disabled = signal(false);
   protected readonly disabled = computed(() => this.disabledInput() || this.forms_disabled());
+
   protected readonly described_by = computed(() => {
     const ids = [
       this.helpText() ? `${this.uid}-help` : '',
-      this.shown_error() ? `${this.uid}-error` : '',
+      this.error().join('') ? `${this.uid}-error` : '',
     ].filter(Boolean);
     return ids.length ? ids.join(' ') : null;
   });
@@ -53,11 +58,20 @@ export abstract class FieldBase<T> implements ControlValueAccessor {
   private on_change: (value: T) => void = () => undefined;
   private on_touched: () => void = () => undefined;
 
+  readonly touched = input(false);
+  readonly errors = input<readonly { kind: string; message?: string }[]>([]);
+
   protected constructor(private readonly empty: T) {
     this.current = signal<T>(empty);
     effect(() => {
       const value = this.initialValue();
       if (value !== undefined) untracked(() => this.current.set(value));
+    });
+    effect(() => {
+      if (this.touched()) {
+        this.touch();
+        if (this.errors().length > 0) this.local_error.set(this.errors().map(e => e.message ?? '').filter(Boolean) ?? null);
+      }
     });
   }
 

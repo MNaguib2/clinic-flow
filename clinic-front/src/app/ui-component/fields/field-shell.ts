@@ -24,13 +24,15 @@ import { TranslatePipe } from '@ngx-translate/core';
       </div>
     }
 
-    @if (error()) {
+    @if (error()?.length) {
       <div
         class="field-error"
         role="alert"
         [id]="control_id() + '-error'"
       >
-        {{ error() | translate }}
+      @for (err of error(); track err) {
+        {{ err | translate }}
+      }
       </div>
     }
   `,
@@ -42,6 +44,6 @@ export class FieldShell {
   readonly control_id = input.required<string>();
   readonly label = input('');
   readonly help_text = input('');
-  readonly error = input<string | null>(null);
+  readonly error = input<Array<string> | null>(null);
   readonly required = input(false);
 }

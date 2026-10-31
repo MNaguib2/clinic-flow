@@ -6,27 +6,27 @@ import { FieldBase } from './field-base';
 import { FieldShell } from './field-shell';
 import { IMAGE_ACCEPT, validateFile } from './file-validation';
 
-/** Value: `File | null`. Previews use object URLs that are revoked on replace/destroy. */
+/** Value: `File | null`. Errors are arrays of strings. Previews use object URLs that are revoked on replace/destroy. */
 @Component({
   selector: 'app-field-image',
   imports: [FieldShell, Icon, TranslatePipe],
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => FieldImage), multi: true },
   ],
-  styleUrl: './field-dropzone.scss',
+  styleUrls: ['./field-dropzone.scss'],
   template: `
     <app-field-shell
       [control_id]="uid"
       [label]="label()"
       [help_text]="helpText()"
-      [error]="shown_error()"
+      [error]="error()"
       [required]="required()"
     >
       <label
         class="field-dropzone"
         [class.is-dragging]="dragging()"
         [class.is-disabled]="disabled()"
-        [class.is-invalid]="!!shown_error()"
+        [class.is-invalid]="!!error().length"
         (dragover)="on_drag_over($event)"
         (dragleave)="dragging.set(false)"
         (drop)="on_drop($event)"
@@ -51,7 +51,7 @@ import { IMAGE_ACCEPT, validateFile } from './file-validation';
           [required]="required() && !current()"
           [disabled]="disabled() || readOnly()"
           [attr.aria-describedby]="described_by()"
-          [attr.aria-invalid]="shown_error() ? 'true' : null"
+          [attr.aria-invalid]="error().length ? 'true' : null"
           (change)="on_select($event)"
           (blur)="touch()"
         />
@@ -125,7 +125,7 @@ export class FieldImage extends FieldBase<File | null> {
     if (!file || this.disabled() || this.readOnly()) return;
     const failure = validateFile(file, { accept: this.accept(), max_size: this.maxFileSize() });
     if (failure) {
-      this.local_error.set(failure === 'type' ? 'field.errors.type' : 'field.errors.size');
+      this.local_error.set(failure === 'type' ? ['field.errors.type'] : ['field.errors.size']);
       return;
     }
     this.local_error.set(null);

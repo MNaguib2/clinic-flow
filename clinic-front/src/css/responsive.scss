@@ -1,5 +1,10 @@
 
+@use "sass:math";
+
+// =====================================================
 // Breakpoints
+// =====================================================
+
 $breakpoints: (
   sm: 576px,
   md: 768px,
@@ -8,7 +13,10 @@ $breakpoints: (
   xxl: 1400px
 );
 
+// =====================================================
 // Spacing scale
+// =====================================================
+
 $spacing-values: (
   0: 0,
   1: 0.25rem,
@@ -19,7 +27,10 @@ $spacing-values: (
   auto: auto
 );
 
+// =====================================================
 // Width and height values
+// =====================================================
+
 $sizing-values: (
   25: 25%,
   50: 50%,
@@ -28,14 +39,23 @@ $sizing-values: (
   auto: auto
 );
 
+// =====================================================
 // Grid spacing
+// =====================================================
+
 $grid-gutter-x: 1.5rem;
 $grid-gutter-y: 0;
 
+// =====================================================
 // Generate responsive utilities
+// =====================================================
+
 @mixin generate-responsive-utilities($infix: '') {
 
+  // ---------------------------------------------------
   // Display
+  // ---------------------------------------------------
+
   .d#{$infix}-none {
     display: none !important;
   }
@@ -64,7 +84,10 @@ $grid-gutter-y: 0;
     display: grid !important;
   }
 
+  // ---------------------------------------------------
   // Flex direction
+  // ---------------------------------------------------
+
   .flex#{$infix}-row {
     flex-direction: row !important;
   }
@@ -81,7 +104,10 @@ $grid-gutter-y: 0;
     flex-direction: column-reverse !important;
   }
 
+  // ---------------------------------------------------
   // Flex wrapping
+  // ---------------------------------------------------
+
   .flex#{$infix}-wrap {
     flex-wrap: wrap !important;
   }
@@ -90,7 +116,10 @@ $grid-gutter-y: 0;
     flex-wrap: nowrap !important;
   }
 
+  // ---------------------------------------------------
   // Flex grow / shrink
+  // ---------------------------------------------------
+
   .flex#{$infix}-fill {
     flex: 1 1 auto !important;
   }
@@ -111,7 +140,10 @@ $grid-gutter-y: 0;
     flex-shrink: 1 !important;
   }
 
+  // ---------------------------------------------------
   // Justify content
+  // ---------------------------------------------------
+
   .justify-content#{$infix}-start {
     justify-content: flex-start !important;
   }
@@ -136,7 +168,10 @@ $grid-gutter-y: 0;
     justify-content: space-evenly !important;
   }
 
+  // ---------------------------------------------------
   // Align items
+  // ---------------------------------------------------
+
   .align-items#{$infix}-start {
     align-items: flex-start !important;
   }
@@ -157,7 +192,10 @@ $grid-gutter-y: 0;
     align-items: stretch !important;
   }
 
+  // ---------------------------------------------------
   // Align self
+  // ---------------------------------------------------
+
   .align-self#{$infix}-start {
     align-self: flex-start !important;
   }
@@ -174,7 +212,10 @@ $grid-gutter-y: 0;
     align-self: stretch !important;
   }
 
+  // ---------------------------------------------------
   // Text alignment
+  // ---------------------------------------------------
+
   .text#{$infix}-start {
     text-align: start !important;
   }
@@ -187,7 +228,10 @@ $grid-gutter-y: 0;
     text-align: center !important;
   }
 
+  // ---------------------------------------------------
   // Overflow
+  // ---------------------------------------------------
+
   .overflow#{$infix}-auto {
     overflow: auto !important;
   }
@@ -204,7 +248,10 @@ $grid-gutter-y: 0;
     overflow: scroll !important;
   }
 
+  // ---------------------------------------------------
   // Gap
+  // ---------------------------------------------------
+
   @each $key, $value in $spacing-values {
     @if $key != auto {
       .gap#{$infix}-#{$key} {
@@ -221,8 +268,12 @@ $grid-gutter-y: 0;
     }
   }
 
+  // ---------------------------------------------------
   // Padding and margin
+  // ---------------------------------------------------
+
   @each $key, $value in $spacing-values {
+
     .p#{$infix}-#{$key} {
       padding: $value !important;
     }
@@ -280,8 +331,12 @@ $grid-gutter-y: 0;
     }
   }
 
+  // ---------------------------------------------------
   // Width and height
+  // ---------------------------------------------------
+
   @each $key, $value in $sizing-values {
+
     .w#{$infix}-#{$key} {
       width: $value !important;
     }
@@ -315,7 +370,10 @@ $grid-gutter-y: 0;
     height: 100vh !important;
   }
 
+  // ---------------------------------------------------
   // Position
+  // ---------------------------------------------------
+
   .position#{$infix}-static {
     position: static !important;
   }
@@ -337,34 +395,60 @@ $grid-gutter-y: 0;
   }
 }
 
+// =====================================================
 // Generate row utility
+// =====================================================
+
 @mixin generate-row-utility($infix: '') {
+
   .row#{$infix} {
     display: flex;
     flex-wrap: wrap;
 
-    margin-inline: calc($grid-gutter-x / -2);
-    margin-block: calc($grid-gutter-y / -2);
+    margin-inline: calc(
+      #{$grid-gutter-x} / -2
+    );
+
+    margin-block: calc(
+      #{$grid-gutter-y} / -2
+    );
   }
 }
 
+// =====================================================
 // Generate column utility
+// =====================================================
+
 @mixin generate-column-utility($infix: '') {
+
   [class*="col#{$infix}-"] {
     flex-shrink: 0;
     width: 100%;
 
-    padding-inline: calc($grid-gutter-x / 2);
-    padding-block: calc($grid-gutter-y / 2);
+    padding-inline: calc(
+      #{$grid-gutter-x} / 2
+    );
+
+    padding-block: calc(
+      #{$grid-gutter-y} / 2
+    );
   }
 }
 
+// =====================================================
 // Generate column widths
+// =====================================================
+
 @mixin generate-column-widths($infix: '') {
+
   @for $i from 1 through 12 {
+
     .col#{$infix}-#{$i} {
       flex: 0 0 auto;
-      width: percentage(calc($i / 12));
+
+      width: math.percentage(
+        math.div($i, 12)
+      );
     }
   }
 
@@ -374,18 +458,29 @@ $grid-gutter-y: 0;
   }
 }
 
+// =====================================================
 // Base utilities: all screen sizes
+// =====================================================
+
 @include generate-responsive-utilities();
 @include generate-row-utility();
 @include generate-column-utility();
 @include generate-column-widths();
 
-// Responsive utilities: apply at breakpoint and above
+// =====================================================
+// Responsive utilities: breakpoint and above
+// =====================================================
+
 @each $name, $min-width in $breakpoints {
+
   @media (min-width: $min-width) {
+
     @include generate-responsive-utilities('-#{$name}');
+
     @include generate-row-utility('-#{$name}');
+
     @include generate-column-utility('-#{$name}');
+
     @include generate-column-widths('-#{$name}');
   }
 }
