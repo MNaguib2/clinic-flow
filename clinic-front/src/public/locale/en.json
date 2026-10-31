@@ -401,7 +401,10 @@
       "dropImage": "Drag and drop an image here",
       "remove": "Remove file",
       "removeImage": "Remove image",
-      "previewAlt": "Selected image preview"
+      "previewAlt": "Selected image preview",
+      "chooseFile": "Choose file",
+      "preview": "Preview file",
+      "download": "Download file"
     },
     "errors": {
       "type": "This file type is not allowed.",

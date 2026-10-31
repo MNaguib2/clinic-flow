@@ -5,12 +5,15 @@ import {
   forwardRef,
   input,
   signal,
+  viewChild,
+  ElementRef,
 } from '@angular/core';
 
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { Icon } from '../icon/icon';
+import { UiButtonComponent } from '../ui-button/ui-button.component';
 import { FieldBase } from './field-base';
 import { FieldShell } from './field-shell';
 
@@ -19,14 +22,6 @@ import {
   validateFile,
 } from './file-validation';
 
-/**
- * Value:
- * - File | null
- * - File[] when multiple is enabled.
- *
- * Multiple selections are appended.
- * Invalid files do not change the current value.
- */
 @Component({
   selector: 'app-field-file',
   standalone: true,
@@ -34,6 +29,7 @@ import {
     FieldShell,
     Icon,
     TranslatePipe,
+    UiButtonComponent,
   ],
   providers: [
     {
@@ -51,9 +47,8 @@ import {
       [error]="error()"
       [required]="required()"
     >
-      <!-- Dropzone -->
-      <label
-        class="field-dropzone"
+      <div
+        class="field-dropzone field-file-dropzone"
         [class.field-dropzone--dragging]="dragging()"
         [class.field-dropzone--disabled]="disabled() || readOnly()"
         [class.field-dropzone--invalid]="!!error().length"
@@ -79,7 +74,25 @@ import {
           }
         </span>
 
+        <app-ui-button
+          type="button"
+          variant="outline"
+          [disabled]="disabled() || readOnly()"
+          (click)="on_choose_button_click($event)"
+        >
+          <app-icon name="folder-open" />
+
+          {{
+            (
+              files().length > 0
+                ? 'field.upload.replace'
+                : 'field.upload.chooseFile'
+            ) | translate
+          }}
+        </app-ui-button>
+
         <input
+          #fileInput
           class="field-dropzone__input"
           type="file"
           [id]="uid"
@@ -92,12 +105,11 @@ import {
           (change)="on_select($event)"
           (blur)="touch()"
         />
-      </label>
+      </div>
 
-      <!-- Selected files -->
-      @if (files().length) {
+      @if (files().length > 0 && showPreview()) {
         <ul class="field-file-list">
-          @for (file of files(); track $index) {
+          @for (file of files(); track file; let i = $index) {
             <li class="field-file-item">
               <span class="field-file-item__icon">
                 <app-icon name="file-check" />
@@ -116,15 +128,35 @@ import {
                 </small>
               </span>
 
-              <button
-                type="button"
-                class="field-file-item__remove"
-                [attr.aria-label]="'field.upload.remove' | translate"
-                [disabled]="disabled() || readOnly()"
-                (click)="remove($index)"
-              >
-                <app-icon name="file-x" />
-              </button>
+              <div class="field-file-item__actions">
+                <button
+                  type="button"
+                  class="field-file-item__action"
+                  [attr.aria-label]="'field.upload.preview' | translate"
+                  (click)="preview(file, $event)"
+                >
+                  <app-icon name="eye" />
+                </button>
+
+                <button
+                  type="button"
+                  class="field-file-item__action"
+                  [attr.aria-label]="'field.upload.download' | translate"
+                  (click)="download(file, $event)"
+                >
+                  <app-icon name="download" />
+                </button>
+
+                <button
+                  type="button"
+                  class="field-file-item__remove"
+                  [attr.aria-label]="'field.upload.remove' | translate"
+                  [disabled]="disabled() || readOnly()"
+                  (click)="remove(i, $event)"
+                >
+                  <app-icon name="trash-2" />
+                </button>
+              </div>
             </li>
           }
         </ul>
@@ -140,6 +172,8 @@ export class FieldFile extends FieldBase<File | File[] | null> {
 
   readonly accept = input('');
   readonly multiple = input(false);
+
+  readonly showPreview = input(true);
 
   /** Maximum size per file in bytes. Null disables the check. */
   readonly maxFileSize = input<number | null>(null);
@@ -165,6 +199,9 @@ export class FieldFile extends FieldBase<File | File[] | null> {
 
   protected readonly format_size = formatFileSize;
 
+  private readonly file_input =
+    viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
+
   constructor() {
     super(null);
   }
@@ -173,15 +210,30 @@ export class FieldFile extends FieldBase<File | File[] | null> {
   // File input
   // ========================================
 
+  protected select_file(): void {
+    if (this.disabled() || this.readOnly()) {
+      return;
+    }
+
+    this.file_input().nativeElement.click();
+  }
+
+  protected on_choose_button_click(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.select_file();
+  }
+
   protected on_select(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
+    const input_element = event.target as HTMLInputElement;
 
     this.accept_files(
-      Array.from(inputElement.files ?? []),
+      Array.from(input_element.files ?? []),
     );
 
     // Allow selecting the same file again.
-    inputElement.value = '';
+    input_element.value = '';
 
     this.touch();
   }
@@ -223,10 +275,58 @@ export class FieldFile extends FieldBase<File | File[] | null> {
   }
 
   // ========================================
+  // Preview
+  // ========================================
+
+  protected preview(file: File, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const url = URL.createObjectURL(file);
+
+    const preview_window = window.open(url, '_blank');
+
+    if (!preview_window) {
+      URL.revokeObjectURL(url);
+      return;
+    }
+
+    preview_window.addEventListener(
+      'load',
+      () => URL.revokeObjectURL(url),
+      { once: true },
+    );
+  }
+
+  // ========================================
+  // Download
+  // ========================================
+
+  protected download(file: File, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = file.name;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+  }
+
+  // ========================================
   // Remove file
   // ========================================
 
-  protected remove(index: number): void {
+  protected remove(index: number, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
     if (this.disabled() || this.readOnly()) {
       return;
     }
@@ -235,14 +335,15 @@ export class FieldFile extends FieldBase<File | File[] | null> {
 
     if (!this.multiple()) {
       this.commit(null);
-      return;
+    } else {
+      this.commit(
+        this.files().filter(
+          (_, file_index) => file_index !== index,
+        ),
+      );
     }
 
-    this.commit(
-      this.files().filter(
-        (_, fileIndex) => fileIndex !== index,
-      ),
-    );
+    this.touch();
   }
 
   // ========================================
