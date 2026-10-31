@@ -303,6 +303,81 @@
       "save": "Add patient",
       "cancel": "Cancel",
       "demoAlert": "Patient creation is not connected to a backend flow yet."
+    },
+    "form": {
+      "createTitle": "Add new patient",
+      "editTitle": "Edit patient details",
+      "createSubtitle": "Enter the patient's personal and medical information",
+      "editSubtitle": "Update the patient's personal and medical information",
+      "savePatient": "Save patient",
+      "saveChanges": "Save changes",
+      "cancel": "Cancel",
+      "remove": "Remove",
+      "sections": {
+        "basic": "Basic information",
+        "medicalRecord": "Medical record",
+        "medicalHistory": "Medical history",
+        "attachments": "Attachments",
+        "notes": "Additional notes"
+      },
+      "fields": {
+        "fullName": "Full name",
+        "phone": "Phone number",
+        "email": "Email address",
+        "birthDate": "Date of birth",
+        "gender": "Gender",
+        "nationalId": "National ID",
+        "address": "Address",
+        "medicalRecordNumber": "Medical record number",
+        "generalNotes": "General notes",
+        "category": "Category",
+        "startDate": "Start date",
+        "description": "Description",
+        "relatedTo": "Related condition"
+      },
+      "placeholders": {
+        "fullName": "Enter the patient's full name",
+        "phone": "Enter a phone number",
+        "email": "Enter an email address",
+        "gender": "Select a gender",
+        "nationalId": "Enter the national ID",
+        "address": "Enter the full address",
+        "medicalRecordNumber": "Enter the medical record number",
+        "generalNotes": "Add any other notes about the patient...",
+        "category": "Select a category",
+        "description": "Enter the medical description and details...",
+        "relatedTo": "Enter the related condition"
+      },
+      "addHistory": "Add record",
+      "historyFilters": {
+        "label": "Medical history filters",
+        "all": "All"
+      },
+      "historyCategories": {
+        "chronic": "Chronic conditions",
+        "surgeries": "Surgeries",
+        "sensitivity": "Allergies",
+        "currentMedications": "Current medications",
+        "family": "Family history",
+        "other": "Other"
+      },
+      "historyEmptyTitle": "No medical history has been added.",
+      "historyEmptyDescription": "Add chronic conditions, allergies, and previous surgeries.",
+      "historyEntry": "Medical history entry {{number}}",
+      "removeHistory": "Remove entry {{number}}",
+      "attachments": {
+        "label": "Attachments",
+        "hint": "Supported files: PDF, JPG, and PNG. Maximum 10 MB per file.",
+        "image": "Image",
+        "remove": "Remove file {{name}}",
+        "invalidFiles": "Unsupported or oversized files: {{files}}. Accepted: PDF, JPG, JPEG, and PNG, up to 10 MB per file."
+      },
+      "patientInformation": "Patient information",
+      "illustrationAlt": "Medical examination",
+      "secureInfoTitle": "Secure information",
+      "secureInfoDescription": "All patient information is protected according to high security standards.",
+      "passwordTitle": "Password",
+      "passwordDescription": "A random password will be created and emailed to the patient when saved."
     }
   },
   "field": {

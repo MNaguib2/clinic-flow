@@ -179,13 +179,6 @@
   }
 }
 
-// Next direction
-.date-picker__nav--next {
-  .date-picker__chevron {
-    transform: rotate(-45deg);
-  }
-}
-
 // ========================================
 // Calendar grid
 // ========================================
@@ -435,10 +428,6 @@
   }
 
   .date-picker__nav--next {
-    .date-picker__chevron {
-      transform: rotate(135deg);
-    }
-
     .date-picker__chevrons {
       transform: scaleX(-1);
     }

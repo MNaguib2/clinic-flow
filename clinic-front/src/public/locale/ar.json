@@ -275,6 +275,81 @@
       "save": "إضافة المريض",
       "cancel": "إلغاء",
       "demoAlert": "لم يتم ربط إنشاء المرضى بتدفق الخادم حتى الآن."
+    },
+    "form": {
+      "createTitle": "إضافة مريض جديد",
+      "editTitle": "تعديل بيانات المريض",
+      "createSubtitle": "أدخل البيانات الشخصية والطبية للمريض",
+      "editSubtitle": "حدّث البيانات الشخصية والطبية للمريض",
+      "savePatient": "حفظ المريض",
+      "saveChanges": "حفظ التعديلات",
+      "cancel": "إلغاء",
+      "remove": "حذف",
+      "sections": {
+        "basic": "البيانات الأساسية",
+        "medicalRecord": "السجل الطبي",
+        "medicalHistory": "التاريخ الطبي",
+        "attachments": "المرفقات",
+        "notes": "ملاحظات إضافية"
+      },
+      "fields": {
+        "fullName": "الاسم الكامل",
+        "phone": "رقم الهاتف",
+        "email": "البريد الإلكتروني",
+        "birthDate": "تاريخ الميلاد",
+        "gender": "الجنس",
+        "nationalId": "الرقم القومي",
+        "address": "العنوان",
+        "medicalRecordNumber": "رقم الملف الطبي",
+        "generalNotes": "ملاحظات عامة",
+        "category": "الفئة",
+        "startDate": "تاريخ البداية",
+        "description": "الوصف",
+        "relatedTo": "الحالة المرتبطة"
+      },
+      "placeholders": {
+        "fullName": "أدخل الاسم الكامل للمريض",
+        "phone": "أدخل رقم الهاتف",
+        "email": "أدخل البريد الإلكتروني",
+        "gender": "اختر الجنس",
+        "nationalId": "أدخل الرقم القومي",
+        "address": "أدخل العنوان بالتفصيل",
+        "medicalRecordNumber": "أدخل الرقم الطبي",
+        "generalNotes": "أدخل أي ملاحظات إضافية عن المريض...",
+        "category": "اختر الفئة",
+        "description": "أدخل الوصف والتفاصيل الطبية...",
+        "relatedTo": "أدخل المرض أو الحالة المرتبطة"
+      },
+      "addHistory": "إضافة سجل",
+      "historyFilters": {
+        "label": "فلاتر التاريخ الطبي",
+        "all": "الكل"
+      },
+      "historyCategories": {
+        "chronic": "الأمراض المزمنة",
+        "surgeries": "العمليات الجراحية",
+        "sensitivity": "الحساسية",
+        "currentMedications": "الأدوية الحالية",
+        "family": "التاريخ العائلي",
+        "other": "أخرى"
+      },
+      "historyEmptyTitle": "لا توجد سجلات طبية مضافة.",
+      "historyEmptyDescription": "يمكنك إضافة الأمراض المزمنة والحساسية والعمليات السابقة.",
+      "historyEntry": "السجل الطبي {{number}}",
+      "removeHistory": "حذف السجل {{number}}",
+      "attachments": {
+        "label": "المرفقات",
+        "hint": "الملفات المدعومة: PDF وJPG وPNG. الحد الأقصى 10 ميجابايت لكل ملف.",
+        "image": "صورة",
+        "remove": "حذف الملف {{name}}",
+        "invalidFiles": "ملفات غير مدعومة أو كبيرة الحجم: {{files}}. الملفات المقبولة: PDF وJPG وJPEG وPNG، بحد أقصى 10 ميجابايت لكل ملف."
+      },
+      "patientInformation": "معلومات المريض",
+      "illustrationAlt": "فحص طبي",
+      "secureInfoTitle": "معلومات آمنة",
+      "secureInfoDescription": "جميع بيانات المريض محمية وفق أعلى معايير الأمان.",
+      "passwordTitle": "كلمة المرور",
+      "passwordDescription": "سيتم إنشاء كلمة مرور عشوائية وإرسالها إلى بريد المريض عند الحفظ."
     }
   },
   "field": {

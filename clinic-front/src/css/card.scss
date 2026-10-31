@@ -1,0 +1,83 @@
+/* Base card */
+.ui-card {
+  min-width: 0;
+  padding: var(--space-4);
+  border: var(--border-width, 1px) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+/* Card structure */
+.ui-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+
+  margin: calc(var(--space-4) * -1);
+  margin-bottom: var(--space-3);
+  padding: var(--space-4);
+
+  background: var(--color-surface-tertiary);
+  border-bottom: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.ui-card__body {
+  min-width: 0;
+}
+
+.ui-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+/* Variants */
+.ui-card--muted {
+  background: var(--color-surface-secondary);
+}
+
+.ui-card--outlined {
+  background: transparent;
+}
+
+.ui-card--interactive {
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-border-focus);
+    background: var(--color-hover);
+  }
+
+  &:focus-visible {
+    outline: var(--border-width-strong, 2px) solid var(--color-border-focus);
+    outline-offset: var(--space-1);
+  }
+}
+
+.ui-card--secure {
+  border-color: color-mix(
+    in srgb,
+    var(--color-success) 30%,
+    var(--color-border)
+  );
+
+  background: color-mix(
+    in srgb,
+    var(--color-success) 6%,
+    var(--color-surface)
+  );
+}
+
+.ui-card--compact {
+  padding: var(--space-3);
+}

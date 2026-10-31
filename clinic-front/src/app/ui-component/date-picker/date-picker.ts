@@ -280,6 +280,7 @@ function parseByPattern(text: string, pattern: string): string | undefined {
           <!-- Header -->
           <div class="date-picker__header">
             <button
+            style="transform: rotate(-90deg);"
               type="button"
               class="date-picker__nav date-picker__nav--previous"
               [disabled]="!canGoPrevious()"
@@ -290,6 +291,7 @@ function parseByPattern(text: string, pattern: string): string | undefined {
             </button>
 
             <button
+            style="transform: rotate(-90deg);"
               type="button"
               class="date-picker__nav date-picker__nav--previous"
               [disabled]="!canGoPrevious()"
@@ -308,6 +310,7 @@ function parseByPattern(text: string, pattern: string): string | undefined {
             </strong>
 
             <button
+            style="transform: rotate(90deg);"
               type="button"
               class="date-picker__nav date-picker__nav--next"
               [disabled]="!canGoNext()"
@@ -318,6 +321,7 @@ function parseByPattern(text: string, pattern: string): string | undefined {
             </button>
 
             <button
+            style="transform: rotate(90deg);"
               type="button"
               class="date-picker__nav date-picker__nav--next"
               [disabled]="!canGoNext()"
