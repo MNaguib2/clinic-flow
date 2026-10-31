@@ -71,6 +71,7 @@ export abstract class FieldBase<T> implements ControlValueAccessor {
       if (this.touched()) {
         this.touch();
         if (this.errors().length > 0) this.local_error.set(this.errors().map(e => e.message ?? '').filter(Boolean) ?? null);
+        else this.local_error.set(null);
       }
     });
   }
