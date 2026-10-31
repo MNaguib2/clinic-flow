@@ -121,8 +121,12 @@ function isNumericPattern(pattern: string): boolean {
 }
 
 /** Parses typed text with the pattern. Returns 'YYYY-MM-DD' or undefined if invalid. */
+const SEPARATORS = /[-/.\s]/;
+
+/** Parses typed text with the pattern. Returns 'YYYY-MM-DD' or undefined if invalid. */
 function parseByPattern(text: string, pattern: string): string | undefined {
   const order: string[] = [];
+  const lenient = /[^dMy]/.test(pattern); // pattern has separators between tokens
   let source = '';
   let last = 0;
 
@@ -130,21 +134,27 @@ function parseByPattern(text: string, pattern: string): string | undefined {
     const index = match.index ?? 0;
     const token = match[0];
 
-    source += escapeRegExp(pattern.slice(last, index));
-    source +=
-      token === 'yyyy'
-        ? '(\\d{4})'
-        : token.length === 2
-          ? '(\\d{2})'
-          : '(\\d{1,2})';
+    source += literalToRegex(pattern.slice(last, index));
+
+    if (token === 'yyyy') {
+      source += '(\\d{4})';
+    } else if (token === 'yy') {
+      source += '(\\d{2})';
+    } else {
+      // d, dd, M, MM: accept 1 or 2 digits when separators exist (1-10-1994),
+      // stay strict for separator-less patterns like ddMMyyyy.
+      source += lenient ? '(\\d{1,2})' : token.length === 2 ? '(\\d{2})' : '(\\d{1,2})';
+    }
 
     order.push(token);
     last = index + token.length;
   }
 
-  source += escapeRegExp(pattern.slice(last));
+  source += literalToRegex(pattern.slice(last));
 
-  const result = new RegExp(`^${source}$`).exec(normalizeDigits(text.trim()));
+  const result = new RegExp(`^${source}$`).exec(
+    normalizeDigits(text.trim()).replace(/\s+/g, ' '),
+  );
 
   if (!result) {
     return undefined;
@@ -157,7 +167,8 @@ function parseByPattern(text: string, pattern: string): string | undefined {
   order.forEach((token, i) => {
     const value = Number(result[i + 1]);
 
-    if (token[0] === 'y') year = token === 'yy' ? 2000 + value : value;
+    if (token === 'yyyy') year = value;
+    else if (token === 'yy') year = expandTwoDigitYear(value);
     else if (token[0] === 'M') month = value;
     else day = value;
   });
@@ -170,6 +181,33 @@ function parseByPattern(text: string, pattern: string): string | undefined {
 
   // parseIso rejects impossible dates such as 31-09-2026.
   return parseIso(iso) ? iso : undefined;
+}
+
+/** Any separator char in the pattern (- / . space) accepts any other of them. */
+function literalToRegex(literal: string): string {
+  let out = '';
+  let inSeparator = false;
+
+  for (const char of literal) {
+    if (SEPARATORS.test(char)) {
+      if (!inSeparator) out += '\\s*[-/.\\s]\\s*';
+      inSeparator = true;
+    } else {
+      out += escapeRegExp(char);
+      inSeparator = false;
+    }
+  }
+
+  return out;
+}
+
+/** 94 -> 1994, 26 -> 2026, 40 -> 2040 (window: up to 10 years ahead). */
+function expandTwoDigitYear(value: number): number {
+  const currentYear = new Date().getFullYear();
+  const century = Math.floor(currentYear / 100) * 100;
+  const year = century + value;
+
+  return year > currentYear + 10 ? year - 100 : year;
 }
 
 // ==========================================
@@ -240,14 +278,14 @@ function parseByPattern(text: string, pattern: string): string | undefined {
               autocomplete="off"
               class="field-input__native date-field__button"
               [class.field-input__native--icon]="!!icon()"
-              [class.field-input__native--invalid]="!!shownError()"
+              [class.field-input__native--invalid]="shownError().length > 0"
               [id]="uid"
               [value]="inputText()"
               [placeholder]="typedFormat()"
               [disabled]="disabled()"
               [readOnly]="readOnly()"
               [attr.aria-describedby]="described_by()"
-              [attr.aria-invalid]="shownError() ? 'true' : null"
+              [attr.aria-invalid]="shownError().length > 0 ? 'true' : null"
               (input)="onTyping($event)"
               (keydown)="onTypeKeydown($event)"
               (blur)="applyTyped()"
@@ -258,14 +296,14 @@ function parseByPattern(text: string, pattern: string): string | undefined {
               type="button"
               class="field-input__native date-field__button"
               [class.field-input__native--icon]="!!icon()"
-              [class.field-input__native--invalid]="!!shownError()"
+              [class.field-input__native--invalid]="shownError().length > 0"
               [class.date-field__button--empty]="!display()"
               [id]="uid"
               [disabled]="disabled() || readOnly()"
               aria-haspopup="dialog"
               [attr.aria-expanded]="overlay.open()"
               [attr.aria-describedby]="described_by()"
-              [attr.aria-invalid]="shownError() ? 'true' : null"
+              [attr.aria-invalid]="shownError().length > 0 ? 'true' : null"
             >
               <span class="date-field__value">
                 {{ display() || (placeholder() | translate) }}
@@ -533,7 +571,9 @@ export class DatePicker implements ControlValueAccessor {
   private readonly typedError = signal<string | null>(null);
 
   protected readonly shownError = computed(
-    () => this.typedError() ?? this.error(),
+    () => [this.typedError(), this.error()].filter(
+      (message): message is string => Boolean(message),
+    ),
   );
 
   protected readonly canType = computed(() => {
@@ -556,7 +596,7 @@ export class DatePicker implements ControlValueAccessor {
   protected readonly described_by = computed(() => {
     const ids = [
       this.helpText() ? `${this.uid}-help` : '',
-      this.shownError() ? `${this.uid}-error` : '',
+      this.shownError().length > 0 ? `${this.uid}-error` : '',
     ].filter(Boolean);
 
     return ids.length ? ids.join(' ') : null;
