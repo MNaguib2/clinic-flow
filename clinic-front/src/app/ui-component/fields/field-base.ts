@@ -70,8 +70,16 @@ export abstract class FieldBase<T> implements ControlValueAccessor {
     effect(() => {
       if (this.touched()) {
         this.touch();
-        if (this.errors().length > 0) this.local_error.set(this.errors().map(e => e.message ?? '').filter(Boolean) ?? null);
-        else this.local_error.set(null);
+        const fallback_messages: Record<string, string> = {
+          intlTelInput: 'fields.validation.invalidPhoneNumber',
+          pattern: 'fields.validation.invalidFormat',
+        };
+        const error_messages = this.errors()
+          .map((validation_error) =>
+            validation_error.message ?? fallback_messages[validation_error.kind] ?? '',
+          )
+          .filter(Boolean);
+        this.local_error.set(error_messages.length > 0 ? error_messages : null);
       }
     });
   }

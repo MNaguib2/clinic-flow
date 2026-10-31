@@ -33,7 +33,9 @@
 
 /* Validation error */
 .field-error {
-  // margin-top: var(--space-2);
+  display: grid;
+  gap: var(--space-1);
+  margin-block-start: var(--space-2);
   margin-inline-start: var(--space-2);
 
   color: var(--color-danger);

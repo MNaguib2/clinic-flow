@@ -30,9 +30,9 @@ import { TranslatePipe } from '@ngx-translate/core';
         role="alert"
         [id]="control_id() + '-error'"
       >
-      @for (err of error(); track err) {
-        {{ err | translate }}
-      }
+        @for (err of error(); track err) {
+          <div class="field-error__message">{{ err | translate }}</div>
+        }
       </div>
     }
   `,

@@ -145,6 +145,10 @@
     "dismiss": "إغلاق الإشعار"
   },
   "fields": {
+    "validation": {
+      "invalidPhoneNumber": "رقم الهاتف غير صالح.",
+      "invalidFormat": "التنسيق غير صالح."
+    },
     "date": {
       "placeholder": "اختر تاريخًا",
       "today": "اليوم",

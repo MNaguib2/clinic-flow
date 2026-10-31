@@ -173,6 +173,10 @@
     "dismiss": "Dismiss notification"
   },
   "fields": {
+    "validation": {
+      "invalidPhoneNumber": "Invalid phone number.",
+      "invalidFormat": "Invalid format."
+    },
     "date": {
       "placeholder": "Select a date",
       "today": "Today",
