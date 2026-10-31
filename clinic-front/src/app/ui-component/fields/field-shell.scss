@@ -1,0 +1,43 @@
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Label */
+.field-label {
+  display: block;
+  margin-bottom: var(--space-2);
+
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+}
+
+/* Required indicator */
+.field-required {
+  margin-inline-start: var(--space-1);
+  color: var(--color-danger);
+}
+
+/* Help text */
+.field-help {
+  margin-top: var(--space-2);
+
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+}
+
+/* Validation error */
+.field-error {
+  // margin-top: var(--space-2);
+  margin-inline-start: var(--space-2);
+
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+}

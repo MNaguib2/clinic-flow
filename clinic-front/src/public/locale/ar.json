@@ -152,7 +152,9 @@
       "previousMonth": "الشهر السابق",
       "nextMonth": "الشهر التالي",
       "previousYear": "السنة السابقة",
-      "nextYear": "السنة التالية"
+      "nextYear": "السنة التالية",
+      "invalidFormat": "تاريخ غير صالح. استخدم التنسيق {{format}}",
+      "notAllowed": "هذا التاريخ غير متاح"
     }
   },
   "table": {

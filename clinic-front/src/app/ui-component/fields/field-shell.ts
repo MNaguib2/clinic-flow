@@ -4,26 +4,39 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-field-shell',
   imports: [TranslatePipe],
+  styleUrls: ['./field-shell.scss'],
   template: `
     @if (label()) {
-      <label class="form-label" [attr.for]="control_id()">
+      <label class="field-label" [attr.for]="control_id()">
         {{ label() | translate }}
+
         @if (required()) {
-          <span class="text-danger ms-1" aria-hidden="true">*</span>
+          <span class="field-required" aria-hidden="true">*</span>
         }
       </label>
     }
+
     <ng-content />
+
     @if (help_text()) {
-      <div class="form-text" [id]="control_id() + '-help'">{{ help_text() | translate }}</div>
+      <div class="field-help" [id]="control_id() + '-help'">
+        {{ help_text() | translate }}
+      </div>
     }
+
     @if (error()) {
-      <div class="invalid-feedback d-block" role="alert" [id]="control_id() + '-error'">
+      <div
+        class="field-error"
+        role="alert"
+        [id]="control_id() + '-error'"
+      >
         {{ error() | translate }}
       </div>
     }
   `,
-  host: { class: 'd-block w-100' },
+  host: {
+    class: 'field-shell',
+  },
 })
 export class FieldShell {
   readonly control_id = input.required<string>();

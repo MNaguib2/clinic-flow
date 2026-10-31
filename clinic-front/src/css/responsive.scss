@@ -1,4 +1,5 @@
 
+// Breakpoints
 $breakpoints: (
   sm: 576px,
   md: 768px,
@@ -27,8 +28,13 @@ $sizing-values: (
   auto: auto
 );
 
-// Generate utilities for a specific breakpoint
+// Grid spacing
+$grid-gutter-x: 1.5rem;
+$grid-gutter-y: 0;
+
+// Generate responsive utilities
 @mixin generate-responsive-utilities($infix: '') {
+
   // Display
   .d#{$infix}-none {
     display: none !important;
@@ -331,12 +337,55 @@ $sizing-values: (
   }
 }
 
+// Generate row utility
+@mixin generate-row-utility($infix: '') {
+  .row#{$infix} {
+    display: flex;
+    flex-wrap: wrap;
+
+    margin-inline: calc($grid-gutter-x / -2);
+    margin-block: calc($grid-gutter-y / -2);
+  }
+}
+
+// Generate column utility
+@mixin generate-column-utility($infix: '') {
+  [class*="col#{$infix}-"] {
+    flex-shrink: 0;
+    width: 100%;
+
+    padding-inline: calc($grid-gutter-x / 2);
+    padding-block: calc($grid-gutter-y / 2);
+  }
+}
+
+// Generate column widths
+@mixin generate-column-widths($infix: '') {
+  @for $i from 1 through 12 {
+    .col#{$infix}-#{$i} {
+      flex: 0 0 auto;
+      width: percentage(calc($i / 12));
+    }
+  }
+
+  .col#{$infix}-auto {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
 // Base utilities: all screen sizes
 @include generate-responsive-utilities();
+@include generate-row-utility();
+@include generate-column-utility();
+@include generate-column-widths();
 
 // Responsive utilities: apply at breakpoint and above
 @each $name, $min-width in $breakpoints {
   @media (min-width: $min-width) {
     @include generate-responsive-utilities('-#{$name}');
+    @include generate-row-utility('-#{$name}');
+    @include generate-column-utility('-#{$name}');
+    @include generate-column-widths('-#{$name}');
   }
 }

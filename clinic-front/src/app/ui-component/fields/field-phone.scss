@@ -3,61 +3,50 @@
   display: block;
   width: 100%;
 
-  --phone-height: 46px;
+  --phone-height: var(--control-height-md);
   --phone-radius: var(--radius-md);
-
-  --phone-bg: var(--color-surface);
-  --phone-color: var(--color-text);
-  --phone-border: var(--color-border);
-  --phone-placeholder: var(--color-text-muted);
 }
-
-// ========================================
-// intlTelInput wrapper
-// ========================================
 
 :host ::ng-deep .iti {
   display: block;
-  width: 100%;
   position: relative;
+  width: 100%;
+  height: var(--phone-height);
   direction: ltr;
   font-family: var(--font-family);
 }
 
-// ========================================
-// Input
-// ========================================
-
 :host ::ng-deep .ui-phone__input {
   display: block;
   width: 100%;
-  height: var(--phone-height);
+  height: 100%;
+  box-sizing: border-box;
 
-  padding: 0 14px;
+  padding-block: 0;
+  padding-inline: 90px 14px;
 
-  border: 1px solid var(--phone-border);
+  border: var(--border-width) solid var(--color-border);
   border-radius: var(--phone-radius);
 
-  background: var(--phone-bg);
-  color: var(--phone-color);
+  background: var(--color-surface);
+  color: var(--color-text);
 
   font-family: var(--font-family);
   font-size: var(--font-size-md);
-  font-weight: 400;
-  line-height: 1.5;
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
 
   outline: none;
   box-shadow: none;
 
   transition:
     border-color 160ms ease,
-    box-shadow 160ms ease,
-    background-color 160ms ease;
+    box-shadow 160ms ease;
 
   &::placeholder {
-    color: var(--phone-placeholder);
+    color: var(--color-text-muted);
     opacity: 1;
-    font-size: 14px;
+    font-size: var(--font-size-sm);
   }
 
   &:hover:not(:disabled):not(:read-only) {
@@ -65,19 +54,14 @@
   }
 
   &:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(
-      in srgb,
-      var(--color-primary) 14%,
-      transparent
-    );
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
   }
 
   &:disabled {
-    background: var(--color-surface-secondary);
-    color: var(--color-text-muted);
+    background: var(--color-disabled-background);
+    color: var(--color-text-disabled);
     cursor: not-allowed;
-    opacity: 0.65;
   }
 
   &:read-only {
@@ -85,37 +69,34 @@
   }
 
   &.is-invalid {
-    border-color: var(--color-danger, #dc3545);
+    border-color: var(--color-danger);
 
     &:focus {
-      box-shadow: 0 0 0 3px color-mix(
-        in srgb,
-        var(--color-danger, #dc3545) 12%,
-        transparent
-      );
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--color-danger) 12%, transparent);
     }
   }
 }
 
-// ========================================
-// Country selector
-// ========================================
-
 :host ::ng-deep .iti__country-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
   height: 100%;
 }
 
 :host ::ng-deep .iti__selected-country {
+  display: flex;
+  align-items: center;
   height: 100%;
   padding-inline: 10px;
 
   border: 0;
   background: transparent;
 
-  transition: background-color 150ms ease;
-
   &:hover {
-    background: var(--color-surface-secondary);
+    background: var(--color-hover);
   }
 }
 
@@ -128,8 +109,8 @@
 :host ::ng-deep .iti__selected-dial-code {
   color: var(--color-text);
   font-family: var(--font-family);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
 }
 
 :host ::ng-deep .iti__arrow {
@@ -140,117 +121,9 @@
   }
 }
 
-// ========================================
-// Country dropdown
-// ========================================
-
-:host ::ng-deep .iti__dropdown-content {
-  margin-top: 6px;
-
-  overflow: hidden;
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-
-  background: var(--color-surface);
-  color: var(--color-text);
-
-  box-shadow: 0 10px 30px rgba(9, 45, 89, 0.12);
-
-  z-index: 1050;
-}
-
-:host ::ng-deep .iti__search-input {
-  width: calc(100% - 20px);
-  margin: 10px;
-  padding: 9px 12px;
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-
-  background: var(--color-surface);
-  color: var(--color-text);
-
-  font-family: var(--font-family);
-  font-size: 13px;
-
-  outline: none;
-
-  &:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(
-      in srgb,
-      var(--color-primary) 12%,
-      transparent
-    );
-  }
-
-  &::placeholder {
-    color: var(--color-text-muted);
-  }
-}
-
-:host ::ng-deep .iti__country-list {
-  max-height: 240px;
-
-  border: 0;
-  background: var(--color-surface);
-
-  color: var(--color-text);
-
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
-}
-
-:host ::ng-deep .iti__country {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  padding: 10px 12px;
-
-  color: var(--color-text);
-  font-family: var(--font-family);
-  font-size: 13px;
-
-  transition: background-color 120ms ease;
-
-  &:hover,
-  &.iti__highlight {
-    background: var(--color-surface-secondary);
-  }
-}
-
-:host ::ng-deep .iti__dial-code {
-  margin-inline-start: auto;
-  color: var(--color-text-muted);
-}
-
-:host ::ng-deep .iti__divider {
-  border-color: var(--color-border);
-}
-
-// ========================================
-// RTL
-// ========================================
-
-:host-context([dir='rtl']) ::ng-deep {
-  .iti__country-list {
-    text-align: right;
-  }
-}
-
-// ========================================
-// Responsive
-// ========================================
-
 @media (max-width: 575.98px) {
   :host {
-    --phone-height: 44px;
+    --phone-height: var(--control-height-sm);
     --phone-radius: var(--radius-sm);
-  }
-
-  :host ::ng-deep .iti__country-list {
-    max-height: 200px;
   }
 }
